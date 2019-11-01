@@ -1,0 +1,255 @@
+<script type="text/javascript">
+       if(sessionStorage.getItem('securityContext')==null){
+         window.location.href="/APPLETPC/login.html";
+        }
+        var securityContext = JSON.parse(sessionStorage.getItem('securityContext'));
+
+        var path = sessionStorage.getItem('path');
+</script>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+<title>推广人管理</title>
+
+<link type="text/css" rel="stylesheet" href="/APPLETPC/css/common/common.css">
+<script type="text/javascript" src="/APPLETPC/js/common/common.js"></script>
+<script type="text/javascript" src="/APPLETPC/js/common/util.js"></script>
+<script type="text/javascript" src="/APPLETPC/js/jquery/jquery-2.2.3.min.js"></script>
+<script type="text/javascript" src="/APPLETPC/js/json/json2.js"></script>
+<link type="text/css" rel="stylesheet" href="/APPLETPC/js/bootstrap/css/bootstrap.css">
+<script type="text/javascript" src="/APPLETPC/js/bootstrap/js/bootstrap.js"></script>
+<!-- bootstrap-table -->
+<link type="text/css" rel="stylesheet" href="/APPLETPC/js/plugins/bootstrap-table/css/bootstrap-table.css">
+
+<script type="text/javascript" src="/APPLETPC/js/plugins/bootstrap-table/js/bootstrap-table.js"></script>
+
+<script type="text/javascript" src="/APPLETPC/js/plugins/bootstrap-table/local/bootstrap-table-zh-CN.js"></script>
+</head>
+<body style="font-size:12px;">
+	<div class="container-fluid" style="margin:0px;padding-top:1px;padding-right:5px;padding-bottom:1px;padding-left:5px;">
+		<div id="userToolbar">
+			<button id="addpromoterBtn" class="btn  btn-sm" onclick="addPromoter();">
+				<i class="glyphicon glyphicon-plus"></i>&nbsp;新增
+			</button>
+			<button id="editpromoterBtn" class="btn  btn-sm" onclick="editPromoter();">
+				<i class="glyphicon glyphicon-plus"></i>&nbsp;编辑
+			</button>
+			<button id="delpromoterBtn" class="btn  btn-sm" style="margin-right:585px" onclick="delPromoter();">
+				<i class="glyphicon glyphicon-remove"></i>&nbsp;离职
+			</button>
+		</div>
+
+		<table id="promoterTable" class="table table-condensed " data-toggle="table" data-toolbar="#userToolbar" data-pagination="true" data-page-size="10" data-page-list="[10,15,20,25,30]" data-height="550" data-search="true">
+			<thead>
+				<tr>
+					<th data-field="store_code" data-halign="center" data-align="left">所属门店编码</th>
+					<th data-field="promoter_id" data-halign="center" data-align="left">推广人工号</th>
+					<th data-field="promoter_name" data-halign="center" data-align="left">推广人名称</th>
+					<th data-field="promoter_tel" data-halign="center" data-align="left">推广人电话</th>
+					<th data-field="create_date" data-halign="center" data-align="left">创建日期</th>
+					<th data-field="last_update_date" data-halign="center" data-align="left">最后修改日期</th>
+					<th data-field="promoter_status" data-halign="center" data-align="left" data-formatter="clerkStatus">状态</th>
+				</tr>
+			</thead>
+		</table>
+	</div>
+</body>
+</html>
+
+<script type="text/javascript">
+var store_code;
+var  promoter_id;
+
+$(".btn").addClass("btn-"+bootstrapSkin);
+$(document).ready(function() {
+
+queryPromoterList();
+	//单击获取当前行
+	$("#promoterTable").on('click-row.bs.table', function (e, row, $element) {
+        $('.warning').removeClass('warning');
+        $($element).addClass('warning');
+        promoter_id=row.promoter_id;
+        store_code = row.store_code;
+        
+    });
+	//双击获取当前行
+    $("#promoterTable").on('dbl-click-row.bs.table', function (e, row, $element) {
+        $('.warning').removeClass('warning');
+        $($element).addClass('warning');
+        promoter_id=row.promoter_id;
+        store_code = row.store_code;
+    	editPromoter();
+    });
+	
+	
+});
+
+// 获取推广员列表
+function queryPromoterList() {
+	
+	var url =path+"api/sys/store/selectStoPromoterList";
+	
+    /* url += "?currentTime=" + new Date();  */
+    
+    $.ajax({
+		type: "get",
+		url: url,
+		headers:{"token":securityContext.token},
+		success: function(data) {
+			
+			if (data.code == "S") {
+				$("#promoterTable").bootstrapTable("load", JSON.parse(data.data));
+				  promoter_id=null;
+        	      store_code =null;
+			} else {
+				$.growl.error({title: "提示信息",message:data.data});
+			}
+		}
+	});
+}
+
+
+// 编辑推广员(修改删除)
+function editPromoter() {
+
+	if (!promoter_id) {
+		window.top.bootbox.dialog({ 
+			title:"提示信息",
+		    size: 'small',
+		    message: "请选择需要编辑的推广员！",
+		     buttons: {
+			saveType: {
+	      		label: "确定",
+	      		className: "btn-success",
+	      		callback: function() {
+	      		return true;
+	      		}
+	      		  }
+	      		}
+		});
+		return;
+	}
+	
+	var url = "/APPLETPC/html/modules/system/store/PromoterEdit.html";
+	sessionStorage.setItem('promoter_id', promoter_id);
+	sessionStorage.setItem('store_code', store_code);
+	var promoterEditFrame = '<iframe id="promoterEditFrame" class="my-modal-iframe" width="100%" height="400px" src="' + url + '"></iframe>';
+	
+	window.top.bootbox.dialog({
+		title: "推广员-编辑",
+		size: "small",
+		message: promoterEditFrame,
+		buttons: {
+			saveType: {
+	      		label: "保存",
+	      		className: "btn-success",
+	      		callback: function() {
+	      			var result = window.top.document.getElementById("promoterEditFrame").contentWindow.doEditPromoter();
+	      			if (result) {
+	      				queryPromoterList();
+	      			}
+	      			return result;
+	      		}
+			},
+			cancelType: {
+	      		label: "取消",
+	      		className: "btn-default",
+	      		callback: function() {
+	      			return true;
+	      		}
+			}
+		}
+	});
+}
+
+
+// 新建推广员
+function addPromoter() {
+
+	var url = "/APPLETPC/html/modules/system/store/PromoterAdd.html";
+	var promoterAddFrame = '<iframe id="promoterAddFrame" class="my-modal-iframe" width="100%" height="350px" src="' + url + '"></iframe>';
+	
+	window.top.bootbox.dialog({
+		title: "推广员-新建",
+		size: "small",
+		message: promoterAddFrame,
+		buttons: {
+			saveType: {
+	      		label: "保存",
+	      		className: "btn-success",
+	      		callback: function() {
+	      			var result = window.top.document.getElementById("promoterAddFrame").contentWindow.doAddPromoter();
+	      			if (result) {
+	      				queryPromoterList();
+	      			}
+	      			return result;
+	      		}
+			},
+			cancelType: {
+	      		label: "取消",
+	      		className: "btn-default",
+	      		callback: function() {
+	      			return true;
+	      		}
+			}
+		}
+	});
+}
+//离职推广员信息
+function delPromoter(){
+       if(promoter_id){
+		 window.top.bootbox.dialog({
+				title: "提示信息",
+				message: "请确认是否离职",
+				size: "middle",
+				buttons: {
+					OkType: {
+			      		label: "确定",
+			      		className: "btn-success",
+			      		callback: function() {
+			      		if(promoter_id){
+						    var url = path+"api/sys/store/deleteStoPromoter";
+							$.ajax({
+								type: "POST",
+							    url: url,
+							    data:{"token":securityContext.token,"promoter_id":promoter_id,"store_code":store_code,"last_update_by":securityContext.user_id},
+							    async: false,
+							    success: function(data){
+									if (data.code == "S") {
+										result = true;
+										$.growl.notice({title: "提示信息",message:"人员离职设置成功"});
+										queryPromoterList();
+										promoter_id=null;
+								    
+									} else {
+										result = false;
+											$.growl.error({title: "提示信息",message:data.data});
+					
+									}
+		    }
+		});
+			      		}else{
+								      		  $.growl.warning({title: "提示信息",message:"请不要重复点击"});
+					      		}
+					      		
+					      		}
+					},
+					cancelType: {
+			      		label: "取消",
+			      		className: "btn-success",
+			      		callback: function() {
+			      			return true;
+			      		}
+					}
+				}
+			});
+			}else{
+				$.growl.warning({title: "提示信息",message:"请选择人员"});
+			}
+
+}
+</script>

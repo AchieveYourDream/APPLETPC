@@ -1,0 +1,280 @@
+<script type="text/javascript">
+       if(sessionStorage.getItem('securityContext')==null){
+         window.location.href="../../../login.html";
+        }
+        var securityContext = JSON.parse(sessionStorage.getItem('securityContext'));
+
+        var path = sessionStorage.getItem('path');
+</script>
+<!DOCTYPE html>
+<html style="overflow: hidden;">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+<title>小程序量体师列表</title>
+
+	<link type="text/css" rel="stylesheet" href="/APPLETPC/css/common/common.css">
+	<script type="text/javascript" src="/APPLETPC/js/common/common.js"></script>
+	<script type="text/javascript" src="/APPLETPC/js/common/util.js"></script>
+	<script type="text/javascript"src="/APPLETPC/js/jquery/jquery-2.2.3.min.js"></script>
+    <script type="text/javascript" src="/APPLETPC/js/json/json2.js"></script>
+    <link type="text/css" rel="stylesheet" href="/APPLETPC/js/bootstrap/css/bootstrap.css">
+    <script type="text/javascript" src="/APPLETPC/js/bootstrap/js/bootstrap.js"></script>
+     <script type="text/javascript" src="/APPLETPC/js/plugins/bootstrap-box/js/bootbox.min.js"></script>
+    <link type="text/css" rel="stylesheet"
+		href="/APPLETPC/js/plugins/bootstrap-datetime/css/bootstrap-datetimepicker.min.css">
+		
+	<script type="text/javascript"
+		src="/APPLETPC/js/plugins/bootstrap-datetime/js/bootstrap-datetimepicker.min.js"></script>
+		
+	<script type="text/javascript"
+		src="/APPLETPC/js/plugins/bootstrap-datetime/js/locales/bootstrap-datetimepicker.zh-CN.js"></script>
+	
+<!-- bootstrap-table -->
+<link type="text/css" rel="stylesheet" href="/APPLETPC/js/plugins/bootstrap-table/css/bootstrap-table.css">
+
+<script type="text/javascript" src="/APPLETPC/js/plugins/bootstrap-table/js/bootstrap-table-500.js"></script>
+
+<script type="text/javascript" src="/APPLETPC/js/plugins/bootstrap-table/local/bootstrap-table-zh-CN.js"></script>
+<body style="font-size:12px;" >
+<div id="view">
+	<div id="clerk">
+					<button id="refreshTypeBtn" class="btn  btn-sm btn-success" onclick="addClerk();">
+			            <i class="glyphicon glyphicon-add"></i>&nbsp;新建
+			        </button>
+            		<button id="refreshTypeBtn" class="btn  btn-sm btn-info" onclick="redresh();">
+			            <i class="glyphicon glyphicon-refresh"></i>&nbsp;刷新
+			        </button>
+			        <button id="refreshTypeBtn" class="btn  btn-sm btn-danger" onclick="deleteRedCollarCache();">
+			            <i class="glyphicon glyphicon-refresh"></i>&nbsp;全部上新
+			        </button>
+			        <button id="advanceSearchBtn" class="btn  btn-sm btn-primary" onclick="searchDataList();">
+			            <i class="glyphicon glyphicon-search"></i>&nbsp;高级搜索
+			        </button>
+			    </div>
+	
+	
+	
+	<table id="clerkTable"  
+		class="table table-condensed "
+			data-toggle="table" 
+			data-toolbar="#clerk"
+		    data-icon-size="sm"
+		    data-url="http://localhost:8080/SPMTM/api/appClerk/selectAppClerkList"
+            data-data-type="json"
+         	data-query-params="queryParams"
+            data-pagination="true"
+            data-side-pagination="server"
+			data-pagination="true" 
+			data-page-size="15" 
+		    data-page-list="[15,20,25,30,35,ALL]"
+		    data-undefined-text=""
+		    data-show-columns="true"
+		    >
+			<thead >
+				<tr >
+					<th data-field="store_name" data-halign="center" data-align="center" >所属门店</th>
+					<th data-field="clerk_id" 	data-halign="center" data-align="center" >量体师证号</th>
+					<th data-field="clerk_name" data-halign="center" data-align="center">量体师名称</th>
+					<th data-field="clerk_tel"  data-halign="center" data-align="center"  >量体师电话</th>
+					<th data-field="clerk_sex"  data-halign="center" data-align="center" >性别</th>
+					<th data-field="clerk_city" data-halign="center" data-align="center" >量体城市</th>
+					<th data-field="instruction"data-halign="center" data-align="center" data-visible="false">个性签名</th>
+					<th data-field="is_dimission"data-halign="center" data-align="center" data-formatter="isDimission">是否离职</th>
+					<th data-field="create_date"data-halign="center" data-align="center">创建时间</th>
+					<th data-field="wx_number" 	data-halign="center" data-align="center" >微信号</th>
+					<th data-field="dimission_date"data-halign="center" data-align="center" data-visible="false">离职日期</th>
+					<th data-halign="center" 		 data-align="center" data-events="operateEvents" data-formatter="operateFormatter">操作</th>
+				</tr>
+			</thead>
+		</table>
+	
+	</div>
+</body>
+</html>
+
+<script type="text/javascript">
+var searchCondition;
+$(document).ready(function() {
+});
+function queryParams(params) {
+return {offset:params.offset, limit:params.limit,token:securityContext.token,search:searchCondition
+};
+}
+function  redresh(){
+$('#clerkTable').bootstrapTable('refresh');
+}
+function searchDataList() {
+	var url ="/APPLETPC/html/modules/system/search/AdvanceSearch.html";
+	sessionStorage.setItem("searchCode", 'app_clerk');
+	var app_clerkSearchFrame = '<iframe id="app_clerkSearchFrame" class="my-modal-iframe" width="100%" height="350px" src="' + url + '"></iframe>';
+	
+	window.top.bootbox.dialog({
+		title: "高级搜索",
+		message: app_clerkSearchFrame,
+		size: "small",
+		buttons: {
+			saveType: {
+	      		label: "确定",
+	      		className: "btn-success",
+	      		callback: function() {
+	      			var sscVO = window.top.document.getElementById("app_clerkSearchFrame").contentWindow.getAdvanceSearchConditions();
+	      			searchCondition = JSON.stringify(sscVO);
+	      			sessionStorage.setItem("app_clerkSearchCondition", searchCondition);
+	      			if (sscVO) {
+	      				$("#clerkTable").bootstrapTable('refresh');
+	      			}
+	      			return true;
+	      		}
+			},
+			cancelType: {
+	      		label: "取消",
+	      		className: "btn-default",
+	      		callback: function() {
+	      			return true;
+	      		}
+			}
+		}
+	});
+}
+function operateFormatter(value, row, index) {
+var array=new Array();
+ 			if(row.is_dimission!='Y'){
+              array.push( '<a type="button" class="editBtn" style="margin-right:15px;"><i class="glyphicon glyphicon-eye-open"></i>编辑</a>',
+              '<a type="button" class="delBtn" style="margin-right:15px;"><i class="glyphicon glyphicon-eye-open"></i>离职</a>');
+          }       
+             return array.join('');
+         }
+         
+window.operateEvents = {
+             'click .editBtn': function (e, value, row, index) {
+                	editClerk(row.store_code,row.clerk_id) ;
+                 },
+              'click .delBtn': function (e, value, row, index) {
+                	deleteClerk(row.store_code,row.clerk_id) ;
+                 },
+         }; 
+function isDimission(value,row,index){
+ 	var dimission = "";  
+         if(value == "N") {  
+             var dimission = '<span style="color:#34df48;font-weight:bold;">正常</span>';  
+         }else{  
+             var dimission = '<span style="color:#f50a05;font-weight:bold;">离职</span>';  
+         }  
+         return dimission;  
+} 
+
+
+// 新建量体师
+function addClerk() {
+	var url = "/APPLETPC/html/modules/redcollar/clerk/ClerkAdd.html";
+	var ClerkAddFrame = '<iframe id="ClerkAddFrame" class="my-modal-iframe" width="100%" height="600px" src="' + url + '"></iframe>';
+	window.top.bootbox.dialog({
+		title: "量体师-新建",
+		message: ClerkAddFrame,
+		size: "small",
+		buttons: {
+			saveType: {
+	      		label: "保存",
+	      		className: "btn-success",
+	      		callback: function() {
+	      			var result = window.top.document.getElementById("ClerkAddFrame").contentWindow.uploadImage();
+	      			if (result) {
+	      			$.growl.notice({title: "提醒标题", message: "保存成功" });
+	      			redresh();
+	      			}
+	      			return result;
+	      		}
+			},
+			cancelType: {
+	      		label: "取消",
+	      		className: "btn-default",
+	      		callback: function() {
+	      			return true;
+	      		}
+			}
+		}
+	});
+}
+
+// 编辑量体师
+function editClerk(store_code,clerk_id) {
+	
+	var url = "/APPLETPC/html/modules/redcollar/clerk/ClerkEdit.html";
+	sessionStorage.setItem('store_code', store_code);
+	sessionStorage.setItem('clerk_id', clerk_id);
+	var ClerkEditFrame = '<iframe id="ClerkEditFrame" class="my-modal-iframe" width="100%" height="600px" src="' + url + '"></iframe>';
+	
+	window.top.bootbox.dialog({
+		title: "量体师-编辑",
+		message: ClerkEditFrame,
+		size: "small",
+		buttons: {
+			saveType: {
+	      		label: "保存",
+	      		className: "btn-success",
+	      		callback: function() {
+	      			var result = window.top.document.getElementById("ClerkEditFrame").contentWindow.doEditClerk();
+	      			if (result) {
+	      				$.growl.notice({title: "提醒标题", message: "保存成功" });
+	      				redresh();
+	      			}
+	      			return result;
+	      		}
+			},
+			cancelType: {
+	      		label: "取消",
+	      		className: "btn-default",
+	      		callback: function() { 
+	      			return true;
+	      		}
+			}
+		}
+	});
+}
+
+//量体师离职
+ function deleteClerk(store_code,clerk_id){
+	 window.top.bootbox.dialog({
+				title: "提示信息",
+				message: "请确认是否人员离职",
+				size: "middle",
+				buttons: {
+					OkType: {
+			      		label: "确定",
+			      		className: "btn-info",
+			      		callback: function() {
+						    var url = path+"api/appClerk/updateClerkDimission";
+						   	    url += "?t=" + new Date();
+								$.ajax({
+									type: "POST",
+								    url: url,
+								    data:{"token":securityContext.token,"store_code":store_code,"clerk_id":clerk_id},
+								    success: function(data){
+										if (data.code == "S") {
+											result = true;
+											$.growl.notice({    title: "错误标题", message:"人员离职成功"});
+											redresh();
+											      		
+										} else {
+											result = false;
+											$.growl.error({    title: "错误标题", message: data.data});
+											}
+									    }
+									});
+			      		}
+					},
+					cancelType: {
+			      		label: "取消",
+			      		className: "btn-warning",
+			      		callback: function() {
+			      			return true;
+			      		}
+					}
+				}
+			});
+
+}     
+</script>

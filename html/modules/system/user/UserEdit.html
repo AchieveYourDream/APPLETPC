@@ -1,0 +1,302 @@
+<script type="text/javascript">
+ 		if(sessionStorage.getItem('securityContext')==null){
+         window.location.href="/APPLETPC/login.html";
+        }
+        var securityContext = JSON.parse(sessionStorage.getItem('securityContext'));
+
+        var path = sessionStorage.getItem('path');
+        var userId = sessionStorage.getItem('userId');
+</script>
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+	<title>用户-编辑</title>
+
+	<link type="text/css" rel="stylesheet" href="/APPLETPC/css/common/common.css">
+	<script type="text/javascript" src="/APPLETPC/js/common/common.js"></script>
+	<script type="text/javascript" src="/APPLETPC/js/common/util.js"></script>
+	<script type="text/javascript"src="/APPLETPC/js/jquery/jquery-2.2.3.min.js"></script>
+    <script type="text/javascript" src="/APPLETPC/js/json/json2.js"></script>
+    <link type="text/css" rel="stylesheet" href="/APPLETPC/js/bootstrap/css/bootstrap.css">
+    <script type="text/javascript" src="/APPLETPC/js/bootstrap/js/bootstrap.js"></script>
+	
+	
+	<script type='text/javascript' src='/APPLETPC/js/json/model/AdminUser.js'></script>
+    <script type='text/javascript' src='/APPLETPC/js/json/model/SysLog.js'></script>
+		
+	<!-- jquery-validator -->
+	<script type="text/javascript"
+		src="/APPLETPC/js/plugins/jquery-validate/jquery.validate.min.js"></script>
+	<script type="text/javascript"
+		src="/APPLETPC/js/plugins/jquery-validate/jquery.validate.plu.js"></script>
+    
+    <!-- bootstrap-table -->
+	<link type="text/css" rel="stylesheet"
+		href="/APPLETPC/js/plugins/bootstrap-table/css/bootstrap-table.css">
+		
+	<script type="text/javascript"
+		src="/APPLETPC/js/plugins/bootstrap-table/js/bootstrap-table.js"></script>
+	
+	<script type="text/javascript"
+		src="/APPLETPC/js/plugins/bootstrap-table/local/bootstrap-table-zh-CN.js"></script>
+			
+</head>
+<body class="my-body-content">
+	
+	<div id="roleToolbar">
+		<button id="addRoleBtn" class="btn  btn-sm" onclick="addRole();">
+            <i class="glyphicon glyphicon-plus"></i>&nbsp;新增角色
+        </button>
+        <button id="delRoleBtn" class="btn  btn-sm" style="margin-right:585px" onclick="delRole();">
+            <i class="glyphicon glyphicon-remove"></i>&nbsp;删除角色
+        </button>
+	</div>
+
+    <table id="roleTable"
+   	       class="table table-condensed"
+           data-toggle="table"
+           data-toolbar="#roleToolbar"
+           data-unique-id="role_id"
+           data-height="250"
+           data-striped="true">
+		<thead>
+        	<tr>
+                <th data-field="role_id" data-halign="center" data-align="right">角色编号</th>
+                <th data-field="role_name" data-halign="center" data-align="left">角色名称</th>
+            </tr>
+		</thead>
+	</table>
+</body>
+</html>
+
+<script type="text/javascript">
+$(".btn").addClass("btn-"+bootstrapSkin);
+var validator;
+
+var currentRoleRow;
+
+var addRoleIdArr = new Array();
+var delRoleIdArr = new Array();
+
+$(document).ready(function() {
+	
+	getUserRoleList();
+	$("#roleTable").on('click-row.bs.table', function (e, row, $element) {
+        $('.warning').removeClass('warning');
+        $($element).addClass('warning');
+        
+        currentRoleRow = row;
+    });
+});
+
+
+
+// 获取当前用户角色列表
+function getUserRoleList(){
+	var url = path+"api/sys/user/getUserRoleList";
+    url += "?currentTime=" + new Date();
+    url += "&userId=" + userId;
+    
+ 	$.ajax({
+		type: "get",
+		url: url,
+		async:false,
+		headers:{"token":securityContext.token},
+		success: function(data) {
+			if (data.result_code == "Y") {
+				$("#roleTable").bootstrapTable("load", JSON.parse(data.result_info));
+			} else if (data.result_code == "N") {
+				window.top.bootbox.dialog({
+					title: "错误信息",
+					message: "数据加载失败！" + "<br><br>" + data.result_info,
+					size: "middle",
+					buttons: {
+						cancelType: {
+				      		label: "确定",
+				      		className: "btn-"+bootstrapSkin,
+				      		callback: function() {
+				      			return true;
+				      		}
+						}
+					}
+				});
+			}
+		}
+	});
+}
+
+// 新增角色
+function addRole() {
+	var url = "/APPLETPC/jsp/common/lov/lov.html";
+	sessionStorage.setItem('lovCode', 'lov_role');
+	sessionStorage.setItem('lovType', 'single');
+	sessionStorage.setItem('message', '角色');
+	var roleFrame = '<iframe id="roleFrame" class="my-modal-iframe" width="100%" height="405px" src="' + url + '"></iframe>';
+	
+	window.top.bootbox.dialog({
+		title: "角色",
+		message: roleFrame,
+		buttons: {
+			saveType: {
+	      		label: "确定",
+	      		className: "btn-"+bootstrapSkin,
+	      		callback: function() {
+	      			var row = window.top.document.getElementById("roleFrame").contentWindow.getLovData();
+	      			
+	      			
+	      			if (row) {
+	      				if (!$("#roleTable").bootstrapTable("getRowByUniqueId", row.lov_value)) {
+	      					$("#roleTable").bootstrapTable("append", {user_id: "", role_id: row.lov_value, role_name: row.lov_text});
+	      					
+	      					addRoleIdArr.push(row.lov_value);
+	      					
+		      				
+	      				} else {
+	      					window.top.bootbox.dialog({ 
+	      					    size: 'small',
+	      					    message: "当前角色[！" + row.lov_text+ "]已经存在！",
+	      					    buttons: {
+			saveType: {
+	      		label: "确定",
+	      		className: "btn-"+bootstrapSkin,
+	      		callback: function() {
+	      		return true;
+	      		}
+	      		  }
+	      		}
+	      					});
+	      					
+	      				}
+	      			}
+	      			return row;
+	      		}
+			},
+			cancelType: {
+	      		label: "取消",
+	      		className: "btn-default",
+	      		callback: function() {
+	      			return true;
+	      		}
+			}
+		}
+	});
+}
+
+// 删除角色
+function delRole(){
+   if (!currentRoleRow) {
+		window.top.bootbox.dialog({ 
+		    size: 'small',
+		    message: "请先选择要删除的角色！",
+		    buttons: {
+			saveType: {
+	      		label: "确定",
+	      		className: "btn-"+bootstrapSkin,
+	      		callback: function() {
+	      		return true;
+	      		}
+	      		  }
+	      		}
+		});
+		return;
+	}
+   
+    $("#roleTable").bootstrapTable("removeByUniqueId", currentRoleRow.role_id);
+    
+    if (currentRoleRow.user_id) {
+    	delRoleIdArr.push(currentRoleRow.role_id);
+    }
+}	
+
+// 编辑
+function doEditUser() {
+	var result = false;
+	
+		var roleData = $("#roleTable").bootstrapTable("getData");
+		
+	    if(!roleData){
+	    	window.top.bootbox.dialog({ 
+		   		size: 'small',
+		    	message: "请为当前用户分配角色！",
+		    	buttons: {
+			saveType: {
+	      		label: "确定",
+	      		className: "btn-"+bootstrapSkin,
+	      		callback: function() {
+	      		return true;
+	      		}
+	      		  }
+	      		}
+			});
+			return result;
+	    }
+		
+		var url = path+"api/sys/user/editUser";
+		url += "?t=" + new Date();
+		url +="&id="+userId;
+		url += "&addRoleIds=" + addRoleIdArr.join(",");;
+		url += "&delRoleIds=" + delRoleIdArr.join(",");;
+		$.ajax({
+			type: "POST",
+		    url: url,
+		    async: false,
+		    headers:{"token":securityContext.token},
+		    success: function(data){
+				if (data.result_code == "Y") {
+				
+// 				var source= "系统管理>用户管理>编辑用户";
+// 				var content="账号:"+su.username+".保存成功";
+// 				var id = <%=securityContext.getUser_id()%>;		
+// 				var con ="/APPLETPC";
+// 		         createOperationLog(source,content,id,con);						
+					result = true;
+					window.top.bootbox.dialog({
+						title: "提示信息",
+						message: "保存成功！",
+						size: "middle",
+						buttons: {
+							cancelType: {
+					      		label: "确定",
+					      		className: "btn-"+bootstrapSkin,
+					      		callback: function() {
+					      			return true;
+					      		}
+							}
+						}
+					});
+				} else if (data.result_code == "N") {
+// 				var source= "系统管理>用户管理>编辑用户";
+// 				var content="账号:"+su.username+".保存失败"+ data.result_info;
+// 				var id = <%=securityContext.getUser_id()%>;		
+// 				var con ="/APPLETPC";
+// 		         createOperationLog(source,content,id,con);					
+					result = false;
+					
+					window.top.bootbox.dialog({
+						title: "错误信息",
+						message: "保存失败！" + "<br><br>" + data.result_info,
+						size: "middle",
+						buttons: {
+							cancelType: {
+					      		label: "确定",
+					      		className: "btn-"+bootstrapSkin,
+					      		callback: function() {
+					      			return true;
+					      		}
+							}
+						}
+					});
+				}
+		    }
+		});
+	
+	return result;
+}
+
+
+
+</script>

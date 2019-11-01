@@ -1,0 +1,729 @@
+<script type="text/javascript">
+	if (sessionStorage.getItem('securityContext') == null) {
+		window.location.href = "/APPLETPC/login.html";
+	}
+	var securityContext = JSON.parse(sessionStorage.getItem('securityContext'));
+	var bootstrapSkin = securityContext.bootstrapSkin;
+	var path = sessionStorage.getItem('path');
+	var currentStoreId = sessionStorage.getItem('currentStoreId');
+</script>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport"
+	content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+<title>门店详情信息</title>
+<link type="text/css" rel="stylesheet"
+	href="/APPLETPC/css/common/common.css">
+<script type="text/javascript" src="/APPLETPC/js/common/common.js"></script>
+<script type="text/javascript" src="/APPLETPC/js/common/util.js"></script>
+<script type="text/javascript"
+	src="/APPLETPC/js/jquery/jquery-2.2.3.min.js"></script>
+<script type="text/javascript" src="/APPLETPC/js/json/json2.js"></script>
+<link type="text/css" rel="stylesheet"
+	href="/APPLETPC/js/bootstrap/css/bootstrap.css">
+<script type="text/javascript"
+	src="/APPLETPC/js/bootstrap/js/bootstrap.js"></script>
+<script type='text/javascript'
+	src='/APPLETPC/js/json/model/StoInformation.js'></script>
+<script type='text/javascript' src='/APPLETPC/js/json/model/SysLog.js'></script>
+<!-- jquery-validator -->
+<script type="text/javascript"
+	src="/APPLETPC/js/plugins/jquery-validate/jquery.validate.min.js"></script>
+<script type="text/javascript"
+	src="/APPLETPC/js/plugins/jquery-validate/jquery.validate.plu.js"></script>
+<link type="text/css" rel="stylesheet"
+		href="/APPLETPC/js/plugins/bootstrap-datetime/css/bootstrap-datetimepicker.min.css">
+<script type="text/javascript"
+	src="/APPLETPC/js/plugins/bootstrap-datetime/js/bootstrap-datetimepicker.min.js"></script>
+	
+<script type="text/javascript"
+	src="/APPLETPC/js/plugins/bootstrap-datetime/js/locales/bootstrap-datetimepicker.zh-CN.js"></script>
+
+</head>
+<body class="my-body-content">
+	<form id="typeAddForm" name="typeAddForm" class="my-form-content">
+		<table class="my-form-table-content">
+
+			<tr>
+				<td class="my-form-table-td-label">
+					<label class="control-label" style="margin:5px;padding:0px;">门店编码</label>
+				</td>
+				<td class="my-form-table-td-content">
+					<input readonly id="store_code" name="store_code" type="text" class="form-control input-sm" style="width:180px;padding:5px;float:left;">
+				</td>
+			
+				<td class="my-form-table-td-label">
+					<label class="control-label" style="margin:5px;padding:0px;">门店名称</label>
+				</td>
+				<td class="my-form-table-td-content" style="width:210px;padding:0px;float:left;">
+					<input readonly id="store_name" name="store_name" type="text" class="form-control input-sm" style="width:180px;padding:5px;float:left;">
+				</td>
+			
+				<td class="my-form-table-td-label">
+					<label class="control-label" style="margin:5px;padding:0px;">门店类型</label>
+				</td>
+				<td class="my-form-table-td-content">
+					<input readonly id="attribute5" name="attribute5" class="form-control input-sm" style="width:180px;padding:5px;float:left;"></input> 
+					
+				</td>
+			</tr>
+
+			<tr>
+				<td class="my-form-table-td-label">
+					<label class="control-label" style="margin:5px;padding:0px;" >省</label>
+				</td>
+				<td class="my-form-table-td-content">
+					<input readonly id="attribute6" name="attribute6" class="form-control input-sm" onchange="initCity()"style="width:180px;padding:5px;float:left;"></input> 
+				</td>
+			
+				<td class="my-form-table-td-label">
+					<label class="control-label" style="margin:5px;padding:0px;">市</label>
+				</td>
+				<td class="my-form-table-td-content">
+					<input readonly id="attribute7" name="attribute7" class="form-control input-sm"onchange="initCounty()" style="width:180px;padding:5px;float:left;"></input> 
+				</td>
+			
+				<td class="my-form-table-td-label">
+					<label class="control-label" style="margin:5px;padding:0px;" >县</label>
+				</td>
+				<td class="my-form-table-td-content">
+					<input readonly id="attribute8" name="attribute8" class="form-control input-sm" style="width:180px;padding:5px;float:left;"></input> 
+				</td>
+			</tr>
+			
+			<tr>
+				<td class="my-form-table-td-label">
+					<label class="control-label" style="margin:5px;padding:0px;">详细地址</label>
+				</td>
+				<td class="my-form-table-td-content"  colspan="3">
+					<input readonly id="store_address" name="store_address" type="text" class="form-control input-sm" style="width:440px;padding:5px;float:left;">
+				</td>
+				<td class="my-form-table-td-label">
+					<label class="control-label" style="margin:5px;padding:0px;">SAP工厂编码</label>
+				</td>
+				<td class="my-form-table-td-content" style="width:220px;padding:0px;float:left;">
+					<input id="attribute11" name="attribute11" type="text" class="form-control input-sm" style="width:180px;padding:5px;float:left;">
+				</td>
+			</tr>
+			<tr>
+				<td class="my-form-table-td-label">
+					<label class="control-label" style="margin:5px;padding:0px;">负责人</label>
+				</td>
+				<td class="my-form-table-td-content">
+				<input readonly id="store_leader" name="store_leader" type="text" class="form-control input-sm" style="width:180px;padding:5px;float:left;">
+					<!--<input type="text" id="leader_name" name="leader_name" class="form-control input-sm" style="width:143px;padding:5px;float:left;background-color:#fff" readOnly>
+						 <span class="input-group-btn">
+        					<button id="lov_btn" class="btn btn-default" type="button" style="padding:7px 6px" onclick="openLovLov()">
+        						<i class="glyphicon glyphicon-search"></i>
+        					</button>
+      					</span> -->
+				</td>
+			
+				<td class="my-form-table-td-label">
+					<label class="control-label" style="margin:5px;padding:0px;">负责人电话</label>
+				</td>
+				<td class="my-form-table-td-content">
+					<input readonly id="leader_telephone" name="leader_telephone" type="text" class="form-control input-sm" style="width:180px;padding:5px;float:left;">
+				</td>
+			</tr>
+			<tr>
+				<td class="my-form-table-td-label">
+					<label class="control-label" style="margin:5px;padding:0px;">收货人</label>
+				</td>
+				<td class="my-form-table-td-content">
+				<input readonly id="consignee" name="consignee" type="text" class="form-control input-sm" style="width:180px;padding:5px;float:left;">
+				<!--<input id="store_leader" name="store_leader" type="text"  style="display: none;">
+					<input type="text" id="leader_name" name="leader_name" class="form-control input-sm" style="width:143px;padding:5px;float:left;background-color:#fff" readOnly>
+						 <span class="input-group-btn">
+        					<button id="lov_btn" class="btn btn-default" type="button" style="padding:7px 6px" onclick="openLovLov()">
+        						<i class="glyphicon glyphicon-search"></i>
+        					</button>
+      					</span> -->
+				</td>
+			
+				<td class="my-form-table-td-label">
+					<label class="control-label" style="margin:5px;padding:0px;">收货人电话</label>
+				</td>
+				<td class="my-form-table-td-content">
+					<input readonly id="consignee_telephone" name="consignee_telephone" type="text" class="form-control input-sm" style="width:180px;padding:5px;float:left;">
+				</td>
+			</tr>
+			<tr>
+				<td class="my-form-table-td-label">
+					<label class="control-label" style="margin:5px;padding:0px;line-height:30px;" >营业时间(始)</label>
+				</td>
+				<td class="my-form-table-td-content">
+					<div id="business_hours1" class="input-group date form_datetime">
+						<input readonly class="form-control input-sm" type="text" id="attribute1" name="attribute1" style="width:145px;padding:5px;float:left;background-color:#fff" readonly>
+						<span class="input-group-addon" style="padding:7px 10px;float:left"><span class="glyphicon glyphicon-calendar" ></span></span>
+					</div>
+				</td>
+				
+				<td class="my-form-table-td-label">
+					<label class="control-label" style="margin:5px;padding:0px;line-height:30px;" >营业时间(止)</label>
+				</td>
+				<td class="my-form-table-td-content">
+					<div id="business_hours2" class="input-group date form_datetime">
+						<input readonly class="form-control input-sm" type="text" id="attribute2" name="attribute2" style="width:145px;padding:5px;float:left;background-color:#fff" readonly>
+						<span class="input-group-addon" style="padding:7px 10px;float:left"><span class="glyphicon glyphicon-calendar" ></span></span>
+					</div>
+				</td>
+				
+			</tr>
+			<tr>
+				<td class="my-form-table-td-label">
+					<label class="control-label" style="margin:5px;padding:4px;line-height:30px;">有效时间(始)</label>
+				</td>
+				</td>
+				<td class="my-form-table-td-content">
+					<div id="start_date1" class="input-group date form_datetime" data-date-format="yyyy-mm-dd hh:ii:ss" data-link-format="yyyy-mm-dd hh:ii:ss">
+						<input readonly class="form-control input-sm" type="text" id="start_date" name="start_date" style="width:145px;padding:5px;float:left;background-color:#fff" readonly>
+						<span class="input-group-addon" style="padding:7px 10px;float:left"><span class="glyphicon glyphicon-calendar" ></span></span>
+					</div>
+				</td>
+
+				<td class="my-form-table-td-label">
+					<label class="control-label" style="margin:5px;line-height:30px;">有效时间(止)</label>
+				</td>
+				</td>
+				<td class="my-form-table-td-content">
+					<div id="end_date1" class="input-group date form_datetime" data-date-format="yyyy-mm-dd hh:ii:ss" data-link-format="yyyy-mm-dd hh:ii:ss">
+						<input readonly class="form-control input-sm" type="text" id="end_date" name="end_date" style="width:145px;padding:5px;float:left;background-color:#fff" readonly>
+						<span class="input-group-addon" style="padding:7px 10px;float:left"><span class="glyphicon glyphicon-calendar" ></span></span>
+					</div>
+				</td>
+
+			</tr>
+			<tr>
+				<td class="my-form-table-td-label">
+					<label class="control-label" style="margin:5px;padding:0px;">SPMTM前台账号</label>
+				</td>
+				<td class="my-form-table-td-content"  colspan="5">
+					<input readonly id="membername" name="membername" type="text" class="form-control input-sm" style="width:710px;padding:5px;float:left;">
+				</td>
+			</tr>
+			<tr>
+				<td class="my-form-table-td-label">
+					<label class="control-label" style="margin:5px;padding:0px;">店员</label>
+				</td>
+				<td class="my-form-table-td-content"  colspan="5">
+					<input readonly id="clerk_name" name="clerk_name" type="text" class="form-control input-sm" style="width:710px;padding:5px;float:left;">
+				</td>
+			</tr>
+
+		</table>
+	</form>
+</body>
+</html>
+
+<script type="text/javascript">
+	var currentNodeId;
+	 var date = new Date();
+    var seperator1 = "-";
+    var year = date.getFullYear();
+    var month = date.getMonth() + 1;
+    var strDate = date.getDate();
+    if (month >= 1 && month <= 9) {
+        month = "0" + month;
+    }
+    if (strDate >= 0 && strDate <= 9) {
+        strDate = "0" + strDate;
+    }
+    var currentdate = year + seperator1 + month + seperator1 + strDate;        
+	$("#business_hours").val(currentdate);
+	$("#start_date").val(currentdate);
+	$("#end_date").val(currentdate);
+	$(".btn").addClass("btn-" + bootstrapSkin);
+	$(document).ready(function() {
+
+	});
+
+	
+var validator;
+
+$(document).ready(function() {
+initstoreTypeList();
+initProvince();
+selectStoInformationByPk();
+jQuery.validator.addMethod("telephone", function(value,element) {
+	
+		 var length = value.length;
+   		
+     		
+     	var mobile=/^(((13[0-9]{1})|(15[0-9]{1})|(18[0-9]{1})|(17[0-9]{1})|(14[0-9]{1}))+\d{8})$/;  
+ 		var telephoneRule =/^(?:(?:0\d{2,3})-)?(?:\d{7,8})(-(?:\d{3,}))?$/;
+    	return this.optional(element) || (length == 11 && mobile.test(value))||telephoneRule.test(value);
+
+}, "请正确填写联系电话");
+jQuery.validator.addMethod("checkname", function(value,element) {
+							
+			var pattern = /^(\w|[\u4E00-\u9FA5])*$/;
+	    	return this.optional(element) ||pattern.test(value);
+	
+	}, "请输入合法字符");
+	validator = $("#typeAddForm").validate({
+		debug: true,
+		showErrors: showErrors,
+		rules: {
+			
+			store_name : {
+				
+				required : true,
+				maxlength : 50,
+				checkname:true
+			},
+			store_address : {
+				required : true,
+				maxlength : 100,
+			},
+			store_leader : {
+				required : true,
+				maxlength : 20,
+				
+			},
+			leader_telephone : {
+				required : true,
+				telephone : true,
+				maxlength : 13,
+			},
+			consignee : {
+				required : true,
+				maxlength : 20,
+				
+			},
+			consignee_telephone : {
+				required : true,
+				telephone : true,
+				maxlength : 13,
+				}
+			},
+		messages: {
+			
+			store_name: {
+				required: "[门店名称]不能为空！",
+				maxlength: "[门店名称]最大长度为50！",
+				checkname:"请输入合法字符"
+			},
+			store_address: {
+				required: "[门店详细地址]不能为空！",
+				maxlength: "[门店详细地址]最大长度为100！",
+				
+			},
+			store_leader: {
+				required: "[门店负责人]不能为空！",
+				maxlength: "[门店负责人]最大长度为20！",
+				
+			},
+			leader_telephone: {
+				required: "[负责人电话]不能为空！",
+				telephone:"输入正确的手机号码或者固定电话！固定电话例:xxxx-xxxxxxxx或xxxxxxxx！",
+				maxlength: "[负责人电话]最大长度为12！",
+				
+			},
+			consignee: {
+				required: "[收货人]不能为空！",
+				maxlength: "[收货人]最大长度为20！",
+				
+			},
+			consignee_telephone: {
+				required: "[收货人电话]不能为空！",
+				telephone:"输入正确的手机号码或者固定电话！固定电话例:xxxx-xxxxxxxx或xxxxxxxx！",
+				maxlength: "[收货人电话]最大长度为12！",
+				
+			}
+		}
+	});
+});
+
+
+	// 依据id获取门店列表
+	function selectStoInformationByPk() {
+
+		var url = path + "api/sys/store/selectStoInformationByPk";
+		url += "?currentTime=" + new Date();
+
+		$.ajax({
+			type : "post",
+			url : url,
+			data:{"token":securityContext.token,"store_code":currentStoreId},
+			success : function(data) {
+				if (data.code == "S") {
+				recordLog("O","APPLETPC","获取门店成功",securityContext.user_id);
+					var store = JSON.parse(data.data);
+					
+					initCityLinkage(store.province);
+					initCountyLinkage(store.city);
+					
+					dwr.util.setValues(store);
+				} else {
+				recordLog("OF","APPLETPC","获取门店列表失败",securityContext.user_id);
+					window.top.bootbox.dialog({
+						title : "错误信息",
+						message : "数据加载失败！" + "<br><br>" + data.data,
+						size : "middle",
+						buttons : {
+							cancelType : {
+								label : "确定",
+								className : "btn-" + bootstrapSkin,
+								callback : function() {
+									return true;
+								}
+							}
+						}
+					});
+				}
+			}
+		});
+	}
+
+	// 初始化门店类型
+	function initstoreTypeList() {
+		var url = path + "api/common/list/getSingleDataDictItemList";
+		url += "?typeCode=store_type&enabledFlag=Y";
+
+		$.ajax({
+			type : "get",
+			url : url,
+			async : false,
+			headers:{"token":securityContext.token},
+			success : function(data) {
+				if (data.code == "S") {
+					recordLog("O","APPLETPC","初始化门店类型成功",securityContext.user_id);
+					$("#store_type").html("");
+					$.each(JSON.parse(data.data), function(index, d) {
+						$("#store_type").append(
+								'<option value="' + d.item_code + '">'
+										+ d.item_name + '</option')
+					});
+				} else {
+				recordLog("OF","APPLETPC","初始化门店类型失败",securityContext.user_id);
+					window.top.bootbox.dialog({
+						title : "错误信息",
+						message : "数据加载失败！" + "<br><br>" + data.data,
+						size : "middle",
+						buttons : {
+							cancelType : {
+								label : "确定",
+								className : "btn-" + bootstrapSkin,
+								callback : function() {
+									return true;
+								}
+							}
+						}
+					});
+				}
+			}
+		});
+	}
+
+	// 初始化年份
+	function initYearList() {
+		var url = path + "api/common/list/getSingleDataDictItemList";
+		url += "?typeCode=year_po&enabledFlag=Y";
+
+		$.ajax({
+			type : "get",
+			url : url,
+			async : false,
+			headers:{"token":securityContext.token},
+			success : function(data) {
+				if (data.code == "S") {
+				recordLog("O","APPLETPC","初始化年份失败",securityContext.user_id);
+					$("#year").html("");
+					$.each(JSON.parse(data.data), function(index, d) {
+						$("#year").append(
+								'<option value="' + d.item_code + '">'
+										+ d.item_name + '</option')
+					});
+
+				} else {
+				recordLog("OF","APPLETPC","初始化年份失败",securityContext.user_id);
+					window.top.bootbox.dialog({
+						title : "错误信息",
+						message : "数据加载失败！" + "<br><br>" + data.data,
+						size : "middle",
+						buttons : {
+							cancelType : {
+								label : "确定",
+								className : "btn-" + bootstrapSkin,
+								callback : function() {
+									return true;
+								}
+							}
+						}
+					});
+				}
+			}
+		});
+	}
+
+	// 初始化省
+	function initProvince() {
+		var url = path + "api/sys/store/getCtiyCountyList";
+		url += "?parent_node_code=ROOT";
+		$.ajax({
+			type : "get",
+			url : url,
+			async : false,
+			headers:{"token":securityContext.token},
+			success : function(data) {
+				if (data.code == "S") {
+					recordLog("O","APPLETPC","初始化省成功",securityContext.user_id);
+					$.each(JSON.parse(data.data), function(index, d) {
+						$("#province").append(
+								'<option value="' + d.node_code + '">'
+										+ d.node_name + '</option')
+					});
+				} else {
+				recordLog("OF","APPLETPC","初始化省失败",securityContext.user_id);
+					window.top.bootbox.dialog({
+						title : "错误信息",
+						message : "数据加载失败！" + "<br><br>" + data.data,
+						size : "middle",
+						buttons : {
+							cancelType : {
+								label : "确定",
+								className : "btn-" + bootstrapSkin,
+								callback : function() {
+									return true;
+								}
+							}
+						}
+					});
+				}
+			}
+		});
+	}
+	// 初始化市
+	function initCity() {
+		var url = path + "api/sys/store/getCtiyCountyList";
+		url += "?parent_node_code=" + $("#province").val();
+
+		$.ajax({
+			type : "get",
+			url : url,
+			async : false,
+			headers:{"token":securityContext.token},
+			success : function(data) {
+				if (data.code == "S") {
+				recordLog("O","APPLETPC","初始化市成功",securityContext.user_id);
+					$("#city").html("");
+					$("#county").html("");
+					$.each(JSON.parse(data.result_info), function(index, d) {
+						$("#city").append(
+								'<option value="' + d.node_code + '">'
+										+ d.node_name + '</option')
+					});
+					initCounty();
+				} else {
+				recordLog("OF","APPLETPC","初始化市失败",securityContext.user_id);
+					window.top.bootbox.dialog({
+						title : "错误信息",
+						message : "数据加载失败！" + "<br><br>" + data.result_info,
+						size : "middle",
+						buttons : {
+							cancelType : {
+								label : "确定",
+								className : "btn-" + bootstrapSkin,
+								callback : function() {
+									return true;
+								}
+							}
+						}
+					});
+				}
+			}
+		});
+	}
+	// 初始化县
+	function initCounty() {
+		var url = path + "api/sys/store/getCtiyCountyList";
+		url += "?parent_node_code=" + $("#city").val();
+
+		$.ajax({
+			type : "get",
+			url : url,
+			async : false,
+			headers:{"token":securityContext.token},
+			success : function(data) {
+				if (data.code == "S") {
+				recordLog("O","APPLETPC","初始化县成功",securityContext.user_id);
+					$("#county").html("");
+					$.each(JSON.parse(data.result_info), function(index, d) {
+						$("#county").append(
+								'<option value="' + d.node_code + '">'
+										+ d.node_name + '</option')
+					});
+
+				} else {
+					recordLog("OF","APPLETPC","初始化县失败",securityContext.user_id);
+					window.top.bootbox.dialog({
+						title : "错误信息",
+						message : "数据加载失败！" + "<br><br>" + data.result_info,
+						size : "middle",
+						buttons : {
+							cancelType : {
+								label : "确定",
+								className : "btn-" + bootstrapSkin,
+								callback : function() {
+									return true;
+								}
+							}
+						}
+					});
+				}
+			}
+		});
+	}
+	// 编辑
+function doEditStore() {
+	var result = false ;
+	if (validator.form()) {
+		var cc = new StoInformation();
+		dwr.util.getValues(cc);
+		cc.last_updated_by=securityContext.user_id;
+		
+		
+		var url = path+"api/sys/store/update";
+		url += "?t=" + new Date();
+		url+="&token="+securityContext.token;
+
+	$.ajax({
+		type: "post",
+		url: url,
+		data:cc,
+		async:false,
+		success: function(data) {
+				if (data.code == "S") {
+				recordLog("O","APPLETPC","门店编辑成功",securityContext.user_id);
+				 result = true;
+
+					window.top.bootbox.dialog({
+						title: "提示信息",
+						message: "保存成功！",
+						size: "middle",
+						buttons: {
+							cancelType: {
+					      		label: "确定",
+					      		className: "btn-"+bootstrapSkin,
+					      		callback: function() {
+					      			return true;
+					      		}
+							}
+						}
+					});
+        
+				} else {
+				recordLog("OF","APPLETPC","门店编辑失败",securityContext.user_id);
+					result = false;
+
+					
+					window.top.bootbox.dialog({
+						title: "错误信息",
+						message: "保存失败！" + "<br><br>" + data.result_info,
+						size: "middle",
+						buttons: {
+							cancelType: {
+					      		label: "确定",
+					      		className: "btn-"+bootstrapSkin,
+					      		callback: function() {
+					      			return true;
+					      		}
+							}
+						}
+					});
+				}
+		    }
+		});
+	}
+	return result;
+	
+}
+
+
+// 初始化市
+	function initCityLinkage(province) {
+		var url = path + "api/sys/store/getCtiyCountyList";
+		url += "?parent_node_code=" +province;
+
+		$.ajax({
+			type : "get",
+			url : url,
+			async : false,
+			headers:{"token":securityContext.token},
+			success : function(data) {
+				if (data.code == "S") {
+				recordLog("O","APPLETPC","省市联动成功",securityContext.user_id);
+					$("#city").html("");
+					$("#county").html("");
+					$.each(JSON.parse(data.result_info), function(index, d) {
+						$("#city").append(
+								'<option value="' + d.node_code + '">'
+										+ d.node_name + '</option')
+					});
+
+				} else {
+				recordLog("OF","APPLETPC","省市联动失败",securityContext.user_id);
+					window.top.bootbox.dialog({
+						title : "错误信息",
+						message : "数据加载失败！" + "<br><br>" + data.result_info,
+						size : "middle",
+						buttons : {
+							cancelType : {
+								label : "确定",
+								className : "btn-" + bootstrapSkin,
+								callback : function() {
+									return true;
+								}
+							}
+						}
+					});
+				}
+			}
+		});
+	}
+	// 初始化县
+	function initCountyLinkage(city) {
+		var url = path + "api/sys/store/getCtiyCountyList";
+		url += "?parent_node_code=" + city;
+
+		$.ajax({
+			type : "get",
+			url : url,
+			async : false,
+			headers:{"token":securityContext.token},
+			success : function(data) {
+				if (data.code == "S") {
+					recordLog("O","APPLETPC","市县联动成功",securityContext.user_id);
+					$("#county").html("");
+					$.each(JSON.parse(data.result_info), function(index, d) {
+						$("#county").append(
+								'<option value="' + d.node_code + '">'
+										+ d.node_name + '</option')
+					});
+
+				} else {
+				recordLog("OF","APPLETPC","市县联动失败",securityContext.user_id);
+					window.top.bootbox.dialog({
+						title : "错误信息",
+						message : "数据加载失败！" + "<br><br>" + data.result_info,
+						size : "middle",
+						buttons : {
+							cancelType : {
+								label : "确定",
+								className : "btn-" + bootstrapSkin,
+								callback : function() {
+									return true;
+								}
+							}
+						}
+					});
+				}
+			}
+		});
+	}
+</script>

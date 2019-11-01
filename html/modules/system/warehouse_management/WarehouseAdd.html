@@ -1,0 +1,335 @@
+<script type="text/javascript">
+         if(sessionStorage.getItem('securityContext')==null){
+         window.location.href="/APPLETPC/login.html";
+        }
+        var securityContext = JSON.parse(sessionStorage.getItem('securityContext'));
+
+        var path = sessionStorage.getItem('path');
+        var code=sessionStorage.getItem('warehouseCode');
+        var stores=sessionStorage.getItem('stores');
+</script>
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+	<title>仓库新建</title>
+
+	<link   type="text/css" rel="stylesheet" href="/APPLETPC/css/common/common.css">
+    <link   type="text/css" rel="stylesheet" href="/APPLETPC/js/bootstrap/css/bootstrap.css">
+	<script type="text/javascript" src="/APPLETPC/js/common/common.js"></script>
+	<script type="text/javascript" src="/APPLETPC/js/common/util.js"></script>
+	<script type="text/javascript" src="/APPLETPC/js/jquery/jquery-2.2.3.min.js"></script>
+    <script type="text/javascript" src="/APPLETPC/js/json/json2.js"></script>
+    <script type="text/javascript" src="/APPLETPC/js/bootstrap/js/bootstrap.js"></script>
+	
+	<script type='text/javascript' src='/APPLETPC/js/json/model/InvWarehouseManagement.js'></script>
+	
+	<!-- jquery-validator -->
+	<script type="text/javascript"
+		src="/APPLETPC/js/plugins/jquery-validate/jquery.validate.min.js"></script>
+	<script type="text/javascript"
+		src="/APPLETPC/js/plugins/jquery-validate/jquery.validate.plu.js"></script>
+</head>
+<body class="my-body-content">
+	<form id="structDefineAddForm" name="structDefineAddForm" class="my-form-content">
+		<table class="my-form-table-content">
+		<tr>
+				<td class="my-form-table-td-label">
+					<label class="control-label" style="margin:5px;padding:0px;">所属门店</label>
+				</td>
+				<td class="my-form-table-td-content">
+					<div class="input-group">
+						<input type="hidden" id="stores" name="stores">
+						<input type="text" id="stores_name"   class="form-control input-sm"  name="stores_name" class="form-control input-sm" style="width:120px;padding:5px;float:left;background-color:#fff; border-radius: 3px;" readOnly>
+						<span class="input-group-btn" style="float: left">
+        					<button id="lov_btn" class="btn btn-default" type="button" style="padding:7px 10px;" onclick="openLovLov();">
+        						<i class="glyphicon glyphicon-search"></i>
+        					</button>
+      					</span>
+				
+				</td>
+				
+			</tr>
+			<tr>
+				<td class="my-form-table-td-label" style="width:85px;">
+					<label class="control-label" style="margin:5px;padding:0px;">仓库编码</label>
+				</td>
+				<td class="my-form-table-td-content" style="width:175px;">
+				
+					<input id="code" name="code" type="text" class="form-control input-sm" style="width:155px;padding:5px;float:left;"/>
+									
+					
+				</td>
+			</tr>
+			
+			<tr>
+				<td class="my-form-table-td-label">
+					<label class="control-label" style="margin:5px;padding:0px;">仓库名称</label>
+				</td>
+				<td class="my-form-table-td-content">
+					<input id="name" name="name" type="text" class="form-control input-sm" style="width:155px;padding:5px;float:left;"/>
+				</td>
+			</tr>
+			
+			<tr>
+				<td class="my-form-table-td-label">
+					<label class="control-label" style="margin:5px;padding:0px;">仓库地址</label>
+				</td>
+				<td class="my-form-table-td-content">
+					<input id="address" name="address" class="form-control input-sm" style="width:155px;padding:5px;float:left;" />
+				</td>
+			</tr>
+			
+			<tr>
+				<td class="my-form-table-td-label">
+					<label class="control-label" style="margin:5px;padding:0px;">仓管员</label>
+				</td>
+				<td class="my-form-table-td-content">
+					<input id="warehous_keeper" name="warehous_keeper" type="text" class="form-control input-sm" style="width:155px;padding:5px;float:left;"/>
+				</td>
+			</tr>
+			
+			<tr>
+				<td class="my-form-table-td-label">
+					<label class="control-label" style="margin:5px;padding:0px;">仓管员电话</label>
+				</td>
+				<td class="my-form-table-td-content">
+					<input id="telephone" name="telephone" type="text" class="form-control input-sm" style="width:155px;padding:5px;float:left;"/>
+				</td>
+			</tr>
+			
+			
+			<tr>
+				<td class="my-form-table-td-label">
+					<label class="control-label" style="margin:5px;padding:0px;">备注</label>
+				</td>
+				<td class="my-form-table-td-content">
+					<input id="remarks" name="remarks" type="text" class="form-control input-sm" style="width:155px;padding:5px;float:left;"/>
+				</td>
+			</tr>
+			<tr>
+				<td class="my-form-table-td-label">
+					<label class="control-label" style="margin:5px;padding:0px;">是否允许负库存</label>
+				</td>
+				<td class="my-form-table-td-content">
+					<input id="whether" name="whether" type="checkbox">
+				</td>
+			</tr>
+			
+		</table>
+	</form>
+</body>
+</html>
+
+<script type="text/javascript">
+var validator;
+
+$(document).ready(function() {
+	jQuery.validator.addMethod("telephone", function(value,element) {
+	
+		 var length = value.length;
+   		
+     		
+     	var mobile=/^(((13[0-9]{1})|(15[0-9]{1})|(18[0-9]{1})|(17[0-9]{1})|(14[0-9]{1}))+\d{8})$/;  
+ 		var telephoneRule =/^(?:(?:0\d{2,3})-)?(?:\d{7,8})(-(?:\d{3,}))?$/;
+    	return this.optional(element) || (length == 11 && mobile.test(value))||telephoneRule.test(value);
+
+}, "请正确填写联系电话");
+	jQuery.validator.addMethod("checkname", function(value,element) {
+							
+			var pattern = /^(\w|[\u4E00-\u9FA5])*$/;
+	    	return this.optional(element) ||pattern.test(value);
+	
+	}, "请输入合法字符");
+	validator = $("#structDefineAddForm").validate({
+		debug: true,
+		showErrors: showErrors,
+		rules: {
+			code:{
+				required: true,
+				maxlength: 50,
+				isCode: true,
+				remote: {
+					url:path+"api/sys/Warehouse/checkWarehouse" ,
+					type: "POST",
+					data: {
+						code: function(){return $('#code').val()},
+						stores: function(){return $('#stores').val()},
+						token:function(){return securityContext.token}	
+						
+					}
+				}
+				
+			},
+			stores_name: {
+				required: true,
+			},
+			name: {
+				required: true,
+				maxlength: 50,
+				checkname:true
+			},
+			address:{
+				
+				maxlength: 50
+			},
+			warehous_keeper:{
+				
+				maxlength: 50
+			},
+			telephone:{
+				maxlength: 13,
+				
+				telephone:true
+				
+			},
+			
+			remarks:{
+				
+				maxlength: 100
+			},
+			
+		},
+		messages: {
+			code: {
+				required: "不能为空！",
+				maxlength: "最大长度为50！",
+				remote:"仓库编号已存在"
+			},
+			stores_name: {
+				required: "门店编码不能为空！",
+				
+			},
+			name: {
+				required: "不能为空！",
+				maxlength: "最大长度为50！",
+				checkname:"请输入合法字符！"
+				
+			},
+			address:{
+				maxlength: "最大长度为50！",
+				
+			},
+			warehous_keeper:{
+				maxlength: "最大长度为100！",
+				
+			},
+			
+			telephone:{
+				maxlength: "最大长度为13！",
+				
+				telephone:"输入正确的手机号码或者固定电话！固定电话例:xxxx-xxxxxxxx或xxxxxxxx！"
+			},
+			remarks:{
+				
+				maxlength: "[说明]最大值为100！"
+			},
+			
+		}
+	});
+	$("#whether").prop("checked", false);
+});
+
+function openLovLov() {
+	var url = "/APPLETPC/jsp/common/lov/lov.html";
+	sessionStorage.setItem('lovCode', 'lov_store');//值列表的编码
+	sessionStorage.setItem('lovType', 'single');//值列表选值数量(单个)
+	sessionStorage.setItem('message', '门店');
+	var lovLovFrame = '<iframe id="lovLovFrame" class="my-modal-iframe" width="100%" height="350px" src="' + url + '"></iframe>';
+	window.top.bootbox.dialog({
+		title: "门店列表",
+		message: lovLovFrame,
+		size: "middle",
+		buttons: {
+			saveType: {
+	      		label: "确定",
+	      		className: "btn-"+bootstrapSkin,
+	      		callback: function() {
+	      			var result = window.top.document.getElementById("lovLovFrame").contentWindow.getLovData();
+	      			if(result){
+	      			$("#stores").val(result.lov_value);//将获取到的门店ID写入隐藏框
+	      			$("#stores_name").val(result.lov_text);//将获取到的门店名称写入文本框
+	      			};
+	      			return result;
+	      		}
+			},
+			cancelType: {
+	      		label: "取消",
+	      		className: "btn-default",
+	      		callback: function() {
+	 
+     			return true;
+	      		}
+			}
+		}
+	});
+}
+function doAddWarehouse() {
+	var result = false;
+	if (validator.form()) {
+		var dsd = new InvWarehouseManagement();
+		dwr.util.getValues(dsd);
+
+		if ($("#whether").prop("checked")) {
+			dsd.whether = "Y";
+		} else {
+			dsd.whether = "N";
+		}
+		
+		dsd.creater=securityContext.user_id;
+		var url = path+"api/sys/Warehouse/addWarehouse";
+		url += "?t=" + new Date();
+		url +="&token="+securityContext.token;
+
+		$.ajax({
+			type: "POST",
+		    url: url,
+		    data: dsd,
+		    async: false,
+		    success: function(data){
+				
+				if (data.result_code == "Y") {
+					recordLog("O","APPLETPC","新建仓库成功",securityContext.user_id);
+					result = true;
+					window.top.bootbox.dialog({
+						title: "提示信息",
+						message: "保存成功！",
+						size: "small",
+						buttons: {
+							cancelType: {
+					      		label: "确定",
+					      		className: "btn-"+bootstrapSkin,
+					      		callback: function() {
+					      			return true;
+					      		}
+							}
+						}
+					});
+				} else if (data.result_code == "N") {
+					result = false;
+					recordLog("OF","APPLETPC","新建仓库失败"+dsd,securityContext.user_id);
+					window.top.bootbox.dialog({
+						title: "错误信息",
+						message: "保存失败！" + "<br><br>" + data.result_info,
+						size: "middle",
+						buttons: {
+							cancelType: {
+					      		label: "确定",
+					      		className: "btn-"+bootstrapSkin,
+					      		callback: function() {
+					      			return true;
+					      		}
+							}
+						}
+					});
+				}
+		    }
+		});
+	}
+	return result;
+}
+
+</script>

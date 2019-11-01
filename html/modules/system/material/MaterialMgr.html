@@ -1,0 +1,1002 @@
+<script type="text/javascript">
+       if(sessionStorage.getItem('securityContext')==null){
+         window.location.href="/APPLETPC/login.html";
+        }
+        var securityContext = JSON.parse(sessionStorage.getItem('securityContext'));
+
+        var path = sessionStorage.getItem('path');
+</script>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+<title>物料管理</title>
+
+	<link type="text/css" rel="stylesheet" href="/APPLETPC/css/common/common.css">
+	<script type="text/javascript" src="/APPLETPC/js/common/common.js"></script>
+	<script type="text/javascript" src="/APPLETPC/js/common/util.js"></script>
+	<script type="text/javascript"src="/APPLETPC/js/jquery/jquery-2.2.3.min.js"></script>
+    <script type="text/javascript" src="/APPLETPC/js/json/json2.js"></script>
+    <link type="text/css" rel="stylesheet" href="/APPLETPC/js/bootstrap/css/bootstrap.css">
+    <script type="text/javascript" src="/APPLETPC/js/bootstrap/js/bootstrap.js"></script>
+     <script type="text/javascript" src="/APPLETPC/js/plugins/bootstrap-box/js/bootbox.min.js"></script>
+    
+	
+<!-- bootstrap-treeview 多级列表树 插件-->
+	<link type="text/css" rel="stylesheet"
+		href="/APPLETPC/js/plugins/bootstrap-treeview/css/bootstrap-treeview.css">
+	
+	<script type="text/javascript"
+		src="/APPLETPC/js/plugins/bootstrap-treeview/js/bootstrap-treeview.js"></script>
+		
+		
+<script type='text/javascript' src='/APPLETPC/js/json/model/SysLog.js'></script>
+<!--  -->
+<!-- bootstrap-table -->
+<link type="text/css" rel="stylesheet" href="/APPLETPC/js/plugins/bootstrap-table/css/bootstrap-table.css">
+
+<script type="text/javascript" src="/APPLETPC/js/plugins/bootstrap-table/js/bootstrap-table-400.js"></script>
+
+<script type="text/javascript" src="/APPLETPC/js/plugins/bootstrap-table/local/bootstrap-table-zh-CN.js"></script>
+</head>
+<body style="font-size:12px;">
+	<div class="container-fluid" style="margin:0px;padding:0px;">
+		<div class="row" style="margin:0px;padding:0px;">
+			
+			<div class="col-md-4" style="padding-left:5px;padding-right:5px;"><!-- class="col-md-4"讲一个页面划分为12份此DIV占4份 -->
+  				<div class="bootstrap-table">
+					<div class="fixed-table-toolbar">
+						<div class="bars pull-left">
+							
+							<div id="dsdToolbar">
+								<!-- <label class="control-label" style="margin:5px;padding:0px;float: left">物料类别</label>
+ -->								<input id="material_store" name="material_store" type="text"  style="display: none;">
+								<!-- <label class="control-label" style="margin:5px;">物料类别</label> -->
+							    <div style="margin:5px;padding:0px;">
+								<!-- <input type="text" id="store_name" name="store_name" class="form-control input-sm" style="width:143px;float:left;background-color:#fff" readOnly>
+									<span class="input-group-btn" >
+			        					<button id="lov_btn" class="btn btn-default" type="button" style="padding:7px 6px" onclick="openLovLov()">
+			        						<i class="glyphicon glyphicon-search"></i>
+			        					</button>
+			      					</span> -->
+			      				</div>	
+								<!-- <button id="refreshDSNBtn" class="btn btn-sm" onclick="initDSNTree();">
+						            <i class="glyphicon glyphicon-refresh"></i>&nbsp;刷新
+						        </button> -->
+								<button id="addDSNBtn" class="btn btn-sm" onclick="addDSN();">
+						            <i class="glyphicon glyphicon-plus"></i>&nbsp;新建
+						        </button>
+						        <button id="editDSNBtn" class="btn btn-sm" onclick="editDSN();">
+						            <i class="glyphicon glyphicon-pencil"></i>&nbsp;编辑
+						        </button>
+						         <button id="editDSNBtn" class="btn btn-sm" onclick="delDSN();">
+						            <i class="glyphicon glyphicon-remove"></i>&nbsp;删除
+						        </button>
+						        <button id="configNodeAttributeBtn" class="btn btn-sm" onclick="configNodeAttribute();">
+						            <i class="glyphicon glyphicon-list-alt"></i>&nbsp;扩展属性
+						        </button>
+							</div>
+						</div>
+					</div>
+					<div class="fixed-table-container" style="padding-top:5px;padding-bottom:0px;border:0px;">
+						<div class="fixed-table-body">
+							<div id="dsnTree" style="font-size:12px;height:450px">
+								
+							</div>
+						</div>
+					</div>
+				</div>
+  			</div> 
+  			<div class="col-md-8" style="padding-left:5px;padding-right:5px;">
+		 	<div class="container-fluid" style="margin:0px;padding-top:1px;padding-right:5px;padding-bottom:1px;padding-left:5px;">
+				
+				<div id="userToolbar">
+					
+					<!-- <button id="refreshTypeBtn" class="btn  btn-sm" onclick="selectStoreInformationByPk();">
+					   <i class="glyphicon glyphicon-refresh"></i>&nbsp;刷新
+					</button> -->
+					<button id="addMaterialBtn" class="btn  btn-sm" onclick="addMaterial();">
+		            	<i class="glyphicon glyphicon-plus"></i>&nbsp;新增
+			        </button>
+			        <button id="editMaterialBtn" class="btn  btn-sm" onclick="editMaterial();">
+			            <i class="glyphicon glyphicon-plus"></i>&nbsp;编辑
+			        </button>
+			        <button id="delStoreBtn" class="btn  btn-sm"  onclick="checkMaterialByPk();">
+			            <i class="glyphicon glyphicon-remove"></i>&nbsp;删除
+			        </button>
+			        <button id="editAttributeBtn" class="btn  btn-sm" onclick="AttributeDefine();">
+			            <i class="glyphicon glyphicon-list-alt"></i>&nbsp;扩展属性
+			        </button>
+				</div>
+		
+			<table id="storeTable"  
+				class="table table-condensed "
+					data-toggle="table" 
+					 data-url="http://localhost:8080/SPMTM//api/sys/material/getInvMaterialsList"
+		             data-data-type="json"
+		             data-query-params="queryParams"
+		             data-side-pagination="server"
+					 data-toggle="table" 
+					 data-pagination="true" 
+					 data-page-size="10" 
+					 data-page-list="[10,15,20,25,30]"   
+					 data-search="true" 
+					 data-undefined-text=''
+				    >
+					<thead >
+						<tr >
+							<th data-field="material_code" data-halign="center" data-align="center">物料编码</th>
+							<th data-field="material_name" data-halign="center" data-align="left">物料名称</th>
+							<!-- <th data-field="material_category" data-halign="center" data-align="left">物料类别</th> -->
+							<th data-field="material_specifications" data-halign="center" data-align="left">规格型号</th>
+							<th data-field="unit" data-halign="center" data-align="left">单位</th>
+<!-- 							<th data-field="price" data-halign="center" data-align="left">单价</th> -->
+<!-- 							<th data-field="material_type" data-halign="center" data-align="left">物料类型</th> -->
+							<th data-field="material_instruction" data-halign="center" data-align="left">物料说明</th>
+							<!-- <th data-field="material_status" data-halign="center" data-align="left">物料状态</th> -->
+							<!-- <th data-field="attribute1" data-halign="center" data-align="left">所属门店</th> -->
+							<!-- <th data-field="create_date" data-halign="center" data-align="left">创建日期</th>
+							<th data-field="created_by" data-halign="center" data-align="left">创建人</th> -->
+		
+						</tr>
+					</thead>
+				</table>
+			</div>
+			 </div>			
+  			
+		</div>
+	</div>
+	
+	
+</body>
+</html>
+
+<script type="text/javascript">
+var currentMaterialId;
+var currentNodeId;
+var currentExpandNodeArr;
+var currentDSDCode;//当前的结构编码
+var materialTypeCode;//当前的节点编码
+/* currentDSDCode = $("#material_store").val(); */
+// var judgeMaterial;//判断对应节点有无物料
+$(".btn").addClass("btn-"+bootstrapSkin);
+$(document).ready(function() {
+	
+/* queryMaterialList(); */
+
+initDSNTree();
+
+/* selectStoreInformationByPk(); */
+	//单击获取当前行
+	$("#storeTable").on('click-row.bs.table', function (e, row, $element) {
+        $('.warning').removeClass('warning');
+        $($element).addClass('warning');
+        
+        currentMaterialId = row.material_code;		//物料编码
+        currentDSDCode = $("#material_store").val();//所属门店
+        
+    });
+	//双击获取当前行
+    $("#storeTable").on('dbl-click-row.bs.table', function (e, row, $element) {
+ 	  	editMaterial();
+ 	 	
+        $('.warning').removeClass('warning');
+        $($element).addClass('warning');
+        currentMaterialId = row.material_code;
+        currentDSDCode = $("#material_store").val();
+    });
+	
+	
+
+});
+function queryParams(params) {
+	return {offset:params.offset, limit:params.limit,search:params.search,token:securityContext.token,"material_category":materialTypeCode};
+	}	
+// 依据节点编码 获取物料列表
+function selectStoreInformationByPk() {
+	$('#storeTable').bootstrapTable('refresh');
+     currentMaterialId = null;
+}
+
+
+
+
+// 编辑门店(修改删除)
+function editMaterial() {
+	/* if (!currentDSDCode) {
+		window.top.bootbox.dialog({ 
+		    size: 'small',
+		    message: "请选择门店！",
+		     buttons: {
+			saveType: {
+	      		label: "确定",
+	      		className: "btn-"+bootstrapSkin,
+	      		callback: function() {
+	      		return true;
+	      		}
+	      		  }
+	      		}
+		});
+		return;
+	} */
+	if (!materialTypeCode) {
+		window.top.bootbox.dialog({ 
+		    size: 'small',
+		    message: "请选择对应的节点！",
+		     buttons: {
+			saveType: {
+	      		label: "确定",
+	      		className: "btn-"+bootstrapSkin,
+	      		callback: function() {
+	      		return true;
+	      		}
+	      		  }
+	      		}
+		});
+		return;
+	}
+	if (!currentMaterialId) {
+		window.top.bootbox.dialog({ 
+		    size: 'small',
+		    message: "请选择需要编辑的物料！",
+		     buttons: {
+			saveType: {
+	      		label: "确定",
+	      		className: "btn-"+bootstrapSkin,
+	      		callback: function() {
+	      		return true;
+	      		}
+	      		  }
+	      		}
+		});
+		return;
+	}
+	var url = "/APPLETPC/html/modules/system/material/MaterialEdit.html";
+	sessionStorage.setItem('material_category', materialTypeCode);
+	sessionStorage.setItem('currentMaterialId', currentMaterialId);
+	var materialEditFrame = '<iframe id="materialEditFrame" class="my-modal-iframe" width="100%" height="400px" src="' + url + '"></iframe>';
+	
+	window.top.bootbox.dialog({
+		title: "物料-编辑",
+		size: "large",
+		message: materialEditFrame,
+		buttons: {
+			saveType: {
+	      		label: "保存",
+	      		className: "btn-"+bootstrapSkin,
+	      		callback: function() {
+	      			
+	      			var result = window.top.document.getElementById("materialEditFrame").contentWindow.doeditMaterial();
+	      			if (result) {
+	      				selectStoreInformationByPk();
+	      			}
+	      			return result;
+	      		}
+			},
+			cancelType: {
+	      		label: "取消",
+	      		className: "btn-default",
+	      		callback: function() {
+	      			return true;
+	      		}
+			}
+		}
+	});
+}
+
+
+// 新建物料
+function addMaterial() {
+	if (!materialTypeCode) {
+		window.top.bootbox.dialog({ 
+		    size: 'small',
+		    message: "请选择对应的节点！",
+		     buttons: {
+			saveType: {
+	      		label: "确定",
+	      		className: "btn-"+bootstrapSkin,
+	      		callback: function() {
+	      		return true;
+	      		}
+	      		  }
+	      		}
+		});
+		return;
+	}
+	sessionStorage.setItem('material_category', materialTypeCode);
+	sessionStorage.setItem('material_code', currentMaterialId);
+	
+	var url = "/APPLETPC/html/modules/system/material/MaterialAdd.html";
+	var materialAddFrame = '<iframe id="materialAddFrame" class="my-modal-iframe" width="100%" height="400px" src="' + url + '"></iframe>';
+	
+	window.top.bootbox.dialog({
+		title: "物料-新建",
+		size: "large",
+		message: materialAddFrame,
+		buttons: {
+			saveType: {
+	      		label: "保存",
+	      		className: "btn-"+bootstrapSkin,
+	      		callback: function() {
+	      			var result = window.top.document.getElementById("materialAddFrame").contentWindow.doaddMaterial();
+	      			if (result) {
+	      				selectStoreInformationByPk();
+	      			}
+	      			return result;
+	      		}
+			},
+			cancelType: {
+	      		label: "取消",
+	      		className: "btn-default",
+	      		callback: function() {
+	      			return true;
+	      		}
+			}
+		}
+	});
+}
+//删除物料信息
+function delMaterial(){
+       if(currentMaterialId){
+		 window.top.bootbox.dialog({
+				title: "提示信息",
+				message: "请确认是否删除",
+				size: "middle",
+				buttons: {
+					OkType: {
+			      		label: "确定",
+			      		className: "btn-"+bootstrapSkin,
+			      		callback: function() {
+	    var url = path+"api/sys/material/removeMaterial";
+		$.ajax({
+			type: "post",
+		    url: url,
+		    async: false,
+		    data:{"material_code":currentMaterialId,
+		    	"material_category":materialTypeCode,
+		    	"last_updated_by":securityContext.user_id,
+		    	"token":securityContext.token	
+		    },
+		    success: function(data){
+		    	recordLog("O","APPLETPC","物料删除成功",securityContext.user_id);
+				if (data.code == "S") {
+				currentMaterialId==null;
+					result = true;
+					window.top.bootbox.dialog({
+						title: "提示信息",
+						message: "删除成功！",
+						size: "middle",
+						buttons: {
+							cancelType: {
+					      		label: "确定",
+					      		className: "btn-"+bootstrapSkin,
+					      		callback: function() {
+					      		}
+							}
+						}
+					});
+					
+					selectStoreInformationByPk()
+					      		
+				} else {
+					recordLog("OF","APPLETPC","物料删除失败",securityContext.user_id);
+					result = false;
+
+					window.top.bootbox.dialog({
+						title: "错误信息",
+						message: "保存失败！" + "<br><br>" + data.data,
+						size: "middle",
+						buttons: {
+							cancelType: {
+					      		label: "确定",
+					      		className: "btn-"+bootstrapSkin,
+					      		callback: function() {
+					      			return true;
+					      		}
+							}
+						}
+					});
+				}
+		    }
+		});
+			      		}
+					},
+					cancelType: {
+			      		label: "取消",
+			      		className: "btn-"+bootstrapSkin,
+			      		callback: function() {
+			      			return true;
+			      		}
+					}
+				}
+			});
+    	   
+			}else{
+					window.top.bootbox.dialog({ 
+				    size: 'small',
+				    message: "请先选择物料！",
+				    buttons: {
+			saveType: {
+	      		label: "确定",
+	      		className: "btn-"+bootstrapSkin,
+	      		callback: function() {
+	      		return true;
+	      		}
+	      		  }
+	      		}
+				});
+			}
+
+}
+//同上,删除物料但不弹窗
+function delMaterials(){
+	    var url = path+"api/sys/material/removeMaterial";
+		$.ajax({
+			type: "post",
+		    url: url,
+		    async: false,
+		    data:{"material_code":currentMaterialId,
+		    	"material_category":materialTypeCode,
+		    	"last_updated_by":securityContext.user_id,
+		    	"token":securityContext.token	
+		    },
+		    success: function(data){
+				
+				if (data.code == "S") {
+				recordLog("O","APPLETPC","物料删除成功",securityContext.user_id);
+				currentMaterialId==null;
+					result = true;
+					window.top.bootbox.dialog({
+						title: "提示信息",
+						message: "删除成功！",
+						size: "middle",
+						buttons: {
+							cancelType: {
+					      		label: "确定",
+					      		className: "btn-"+bootstrapSkin,
+					      		callback: function() {
+					      		}
+							}
+						}
+					});
+					
+					selectStoreInformationByPk()
+					      		
+				} else {
+					recordLog("OF","APPLETPC","物料删除失败",securityContext.user_id);
+					result = false;
+
+					window.top.bootbox.dialog({
+						title: "错误信息",
+						message: "保存失败！" + "<br><br>" + data.data,
+						size: "middle",
+						buttons: {
+							cancelType: {
+					      		label: "确定",
+					      		className: "btn-"+bootstrapSkin,
+					      		callback: function() {
+					      			return true;
+					      		}
+							}
+						}
+					});
+				}
+		    }
+		});
+ 	   
+			
+
+}
+//删除之前先判断库存事务中有无对应物料的出入库,调拨操作如果有给出必要的提示
+function checkMaterialByPk() {
+
+	var url = path + "api/sys/material/checkMaterialByPk";
+	url += "?currentTime=" + new Date();
+
+	$.ajax({
+		type : "post",
+		url : url,
+		data:{"token":securityContext.token,"material_code":currentMaterialId},
+		success : function(data) {
+			if (data == "true") {
+				delMaterial();
+				
+			} else if (data == "false") {
+				window.top.bootbox.dialog({
+					title : "警示信息",
+					message : "此物料正在进行库存操作！确认删除吗?",
+					size : "middle",
+					buttons : {
+							OkType: {
+				      		label: "确定",
+				      		className: "btn-"+bootstrapSkin,
+				      		callback: function() {
+				      			delMaterials();
+				      			}
+				      		}
+						,cancelType : {
+							label : "取消",
+							className : "btn-" + bootstrapSkin,
+							callback : function() {
+								return true;
+							}
+						}
+					}
+				});
+			}
+		}
+	});
+}
+
+//获取数据结构节点树
+function initDSNTree(){
+	/* if ($("#material_store").val()==null||$("#material_store").val()=="") {
+		return;
+	} */
+	var url = path+"api/sys/materialstruct/getMaterialStructNodeTree";
+	url += "?currentTime=" + new Date();//当前系统时间
+	url+="&token="+securityContext.token;
+	/* url += "&store_id=" +  $("#material_store").val(); */
+    $.ajax({
+		type: "post",
+		url: url,
+		async:false,
+		success: function(data) {
+			
+			if (data.code == "S") {
+				recordLog("O","APPLETPC","获取数据结构节点树成功",securityContext.user_id);
+				$('#dsnTree').treeview({
+					data: JSON.parse(data.data).nodes,
+					//选择节点,用jquery.on方法绑定nodeSelected事件
+					onNodeSelected: onTreeNodeSelectedHandler,
+					levels: 2,
+				});
+				
+				if (currentNodeId) {
+					$('#dsnTree').treeview('selectNode', [currentNodeId, {silent: true}]);
+				}
+				
+				if (currentExpandNodeArr) {
+					$.each(currentExpandNodeArr, function(index, d){
+						$('#dsnTree').treeview('expandNode', [d.nodeId, {silent: true}]);
+					});
+				}
+				materialTypeCode=null;
+			} else {
+				recordLog("OF","APPLETPC","获取数据结构节点树失败",securityContext.user_id);
+				window.top.bootbox.dialog({
+					title: "错误信息",
+					message: "数据加载失败！" + "<br><br>" + data.data,
+					size: "middle",
+					buttons: {
+						cancelType: {
+				      		label: "确定",
+				      		className: "btn-"+bootstrapSkin,
+				      		callback: function() {
+				      			return true;
+				      		}
+						}
+					}
+				});
+			}
+		}
+	});
+}
+
+// 树节点单击事件
+function onTreeNodeSelectedHandler(event, data) {
+	//节点选择事件,获取到当前所选节点
+	materialTypeCode = data.data.node_code;//M为根节点不允许编辑，删除操作
+	currentNodeId = data.nodeId;
+	selectStoreInformationByPk();
+}
+
+function expandAllParentNode(nodeId) {
+	if (nodeId) {
+		$('#dsnTree').treeview('expandNode', [nodeId, {silent: true}]);
+		
+		var parentNode = $('#dsnTree').treeview('getParent', nodeId);
+		if (parentNode) {
+			expandAllParentNode(parentNode.nodeId);
+		}
+	}
+}
+
+//新建数据结构节点
+function addDSN() {
+	
+	if (!materialTypeCode) {
+		window.top.bootbox.dialog({ 
+		    size: 'small',
+		    message: "请先选择节点！",
+		    buttons: {
+			saveType: {
+	      		label: "确定",
+	      		className: "btn-"+bootstrapSkin,
+	      		callback: function() {
+	      		return true;
+	      		}
+	      		  }
+	      		}
+		});
+		return;
+	}
+	//依据点击获取的节点查询此节点是否存在物料,存在就不能创建子节点
+// 	if(judgeMaterial!=""){
+// 		window.top.bootbox.dialog({ 
+// 		    size: 'small',
+// 		    message: "该节点下存在物料不能添加子节点！",
+// 		    buttons: {
+// 			saveType: {
+// 	      		label: "确定",
+// 	      		className: "btn-"+bootstrapSkin,
+// 	      		callback: function() {
+// 	      		return true;
+// 	      		}
+// 	      		  }
+// 	      		}
+// 		});
+// 		return;
+// 	}else{
+		
+	
+	
+	var url = "/APPLETPC/html/modules/system/material/MaterialStructNodeAdd.html";
+	
+	/* sessionStorage.setItem('store_id', currentDSDCode); */
+	sessionStorage.setItem('parent_node_code', materialTypeCode);
+	
+	var structNodeAddFrame = '<iframe id="structNodeAddFrame" class="my-modal-iframe" width="100%" height="200px" src="' + url + '"></iframe>';
+	window.top.bootbox.dialog({
+		title: "物料结构节点-新建",
+		message: structNodeAddFrame,
+		size: "small",
+		buttons: {
+			saveType: {
+	      		label: "保存",
+	      		className: "btn-"+bootstrapSkin,
+	      		callback: function() {
+	      			var result = window.top.document.getElementById("structNodeAddFrame").contentWindow.doAddMaterialStructNode();
+	      			if (result) {
+	      				currentExpandNodeArr = $('#dsnTree').treeview('getExpanded');
+	      				initDSNTree();
+	      			}
+	      			return result;
+	      		}
+			},
+			cancelType: {
+	      		label: "取消",
+	      		className: "btn-default",
+	      		callback: function() {
+	      			return true;
+	      		}
+			}
+		}
+	});
+// }
+}
+// 编辑数据结构节点
+function editDSN() {
+	/* currentDSDCode = $("#material_store").val();
+	if (!currentDSDCode) {
+		window.top.bootbox.dialog({ 
+		    size: 'small',
+		    message: "请先选择门店！",
+		    buttons: {
+			saveType: {
+	      		label: "确定",
+	      		className: "btn-"+bootstrapSkin,
+	      		callback: function() {
+	      		return true;
+	      		}
+	      		  }
+	      		}
+		});
+		return;
+	} */
+	if (!materialTypeCode) {
+		window.top.bootbox.dialog({ 
+		    size: 'small',
+		    message: "请先选择节点！",
+		    buttons: {
+			saveType: {
+	      		label: "确定",
+	      		className: "btn-"+bootstrapSkin,
+	      		callback: function() {
+	      		return true;
+	      		}
+	      		  }
+	      		}
+		});
+		return;
+	}
+	if (materialTypeCode =='M') {
+		window.top.bootbox.dialog({ 
+		    size: 'small',
+		    message: "根节点不允许编辑操作！",
+		    buttons: {
+			saveType: {
+	      		label: "确定",
+	      		className: "btn-"+bootstrapSkin,
+	      		callback: function() {
+	      		return true;
+	      		}
+	      		  }
+	      		}
+		});
+		return;
+	}
+	/* if (materialTypeCode==currentDSDCode) {
+		
+		return;
+	} */
+	
+	var url = "/APPLETPC/html/modules/system/material/MaterialStructNodeEdit.html";
+	/* sessionStorage.setItem('store_id', currentDSDCode); */
+	sessionStorage.setItem('nodeCode', materialTypeCode);
+	
+	var structNodeEditFrame = '<iframe id="structNodeEditFrame" class="my-modal-iframe" width="100%" height="200px" src="' + url + '"></iframe>';
+	window.top.bootbox.dialog({
+		title: "物料结构节点-编辑",
+		message: structNodeEditFrame,
+		size: "small",
+		buttons: {
+			saveType: {
+	      		label: "保存",
+	      		className: "btn-"+bootstrapSkin,
+	      		callback: function() {
+	      			var result = window.top.document.getElementById("structNodeEditFrame").contentWindow.doEditMaterialStructNode();
+	      			if (result) {
+	      				/* currentExpandNodeArr = $('#dsnTree').treeview('getExpanded'); */
+	      				initDSNTree();
+	      			}
+	      			return result;
+	      		}
+			},
+			cancelType: {
+	      		label: "取消",
+	      		className: "btn-default",
+	      		callback: function() {
+	      			return true;
+	      		}
+			}
+		}
+	});
+}
+//删除数据结构节点
+function delDSN(){
+		if (materialTypeCode == 'M') {
+		window.top.bootbox.dialog({ 
+		    size: 'small',
+		    message: "根节点不允许删除操作！",
+		    buttons: {
+			saveType: {
+	      		label: "确定",
+	      		className: "btn-"+bootstrapSkin,
+	      		callback: function() {
+	      		return true;
+	      		}
+	      		  }
+	      		}
+		});
+		return;
+	}
+       if(materialTypeCode){
+		 window.top.bootbox.dialog({
+				title: "提示信息",
+				message: "请确认是否删除",
+				size: "middle",
+				buttons: {
+					OkType: {
+			      		label: "确定",
+			      		className: "btn-"+bootstrapSkin,
+			      		callback: function() {
+	    var url = path+"api/sys/materialstruct/delMaterialStructureNode";
+	    url += "?t=" + new Date();
+		/* url += "&node_code="  + materialTypeCode; */
+		$.ajax({
+			type: "post",
+		    url: url,
+		    async: false,
+		    data:{"node_code":materialTypeCode,"token":securityContext.token},
+		    success: function(data){
+				
+				if (data.code == "S") {
+					recordLog("O","APPLETPC","数据节点删除成功",securityContext.user_id);
+//				var source= "系统管理>数据结构>删除数据结构节点";
+//				var content="数据结构节点:"+node_name+"删除成功";
+//				var id = <%=securityContext.getUser_id()%>;		
+//				var con ="<%=context%>";
+//		         createOperationLog(source,content,id,con);
+					result = true;
+					window.top.bootbox.dialog({
+						title: "提示信息",
+						message: "删除成功！",
+						size: "middle",
+						buttons: {
+							cancelType: {
+					      		label: "确定",
+					      		className: "btn-"+bootstrapSkin,
+					      		callback: function() {
+					      		}
+							}
+						}
+					});
+					initDSNTree();
+				} else {
+					recordLog("OF","APPLETPC","数据节点删除失败",securityContext.user_id);
+					result = false;
+//					var source= "系统管理>数据结构>删除数据结构节点";
+//				var content="数据结构节点:"+node_name+"删除失败";
+//				var id = <%=securityContext.getUser_id()%>;		
+//				var con ="<%=context%>";
+					window.top.bootbox.dialog({
+						title: "错误信息",
+						message: "保存失败！" + "<br><br>" + data.data,
+						size: "middle",
+						buttons: {
+							cancelType: {
+					      		label: "确定",
+					      		className: "btn-"+bootstrapSkin,
+					      		callback: function() {
+					      			return true;
+					      		}
+							}
+						}
+					});
+				}
+		    }
+		});
+			      		}
+					},
+					cancelType: {
+			      		label: "取消",
+			      		className: "btn-"+bootstrapSkin,
+			      		callback: function() {
+			      			return true;
+			      		}
+					}
+				}
+			});
+			}else{
+					window.top.bootbox.dialog({ 
+				    size: 'small',
+				    message: "请先选泽数据结构属性！",
+				    buttons: {
+			saveType: {
+	      		label: "确定",
+	      		className: "btn-"+bootstrapSkin,
+	      		callback: function() {
+	      		return true;
+	      		}
+	      		  }
+	      		}
+				});
+			}
+
+}
+
+//配置物料结构属性
+function configNodeAttribute() {
+	/* currentDSDCode = $("#material_store").val();
+	if (!currentDSDCode) {
+		window.top.bootbox.dialog({ 
+		    size: 'small',
+		    message: "请先选择门店！",
+		    buttons: {
+			saveType: {
+	      		label: "确定",
+	      		className: "btn-"+bootstrapSkin,
+	      		callback: function() {
+	      		return true;
+	      		}
+	      		  }
+	      		}
+		});
+		return;
+	} */
+	/* if (!materialTypeCode) {
+		window.top.bootbox.dialog({ 
+		    size: 'small',
+		    message: "请先选择节点！",
+		    buttons: {
+			saveType: {
+	      		label: "确定",
+	      		className: "btn-"+bootstrapSkin,
+	      		callback: function() {
+	      		return true;
+	      		}
+	      		  }
+	      		}
+		});
+		return;
+	} */
+	/* if (materialTypeCode==currentDSDCode) {
+		
+		return;
+	} */
+	
+	
+	var url = "/APPLETPC/html/modules/system/material/MaterialStructAttributeConfig.html"
+	
+	/* alert(materialTypeCode);
+	sessionStorage.setItem('store_id', currentDSDCode); */
+	sessionStorage.setItem('node_code', materialTypeCode);
+	
+	var structAttributeConfigFrame = '<iframe id="structAttributeConfigFrame" class="my-modal-iframe" width="100%" height="375px" src="' + url + '"></iframe>';
+	
+	window.top.bootbox.dialog({
+		title: "节点-扩展属性",
+		message: structAttributeConfigFrame,
+		size: "large"
+	});
+}
+
+//配置物料结构节点属性
+function AttributeDefine() {
+	if (!currentMaterialId) {
+		window.top.bootbox.dialog({ 
+		    size: 'small',
+		    message: "请先选择物料！",
+		    buttons: {
+			saveType: {
+	      		label: "确定",
+	      		className: "btn-"+bootstrapSkin,
+	      		callback: function() {
+	      		return true;
+	      		}
+	      		  }
+	      		}
+		});
+		return;
+	}
+	
+	/* if (!materialTypeCode) {
+		window.top.bootbox.dialog({ 
+		    size: 'small',
+		    message: "请先选择数据结构节点！",
+		    buttons: {
+			saveType: {
+	      		label: "确定",
+	      		className: "btn-"+bootstrapSkin,
+	      		callback: function() {
+	      		return true;
+	      		}
+	      		  }
+	      		}
+		});
+		return;
+	} */
+	
+	var url = "/APPLETPC/html/modules/system/material/MaterialStructNodeAttributeConfig.html";
+	sessionStorage.setItem('node_code', materialTypeCode);
+	sessionStorage.setItem('material_code', currentMaterialId);
+	
+	var nodeAttributeConfigFrame = '<iframe id="nodeAttributeConfigFrame" class="my-modal-iframe" width="100%" height="300px" src="' + url + '"></iframe>';
+	
+	window.top.bootbox.dialog({
+		title: "物料结构节点-扩展属性",
+		message: nodeAttributeConfigFrame,
+		size: "small",
+		buttons: {
+			saveType: {
+	      		label: "保存",
+	      		className: "btn-"+bootstrapSkin,
+	      		callback: function() {
+	      			return window.top.document.getElementById("nodeAttributeConfigFrame").contentWindow.saveDataStrucNodeAttributes();
+	      		}
+			},
+			cancelType: {
+	      		label: "取消",
+	      		className: "btn-default",
+	      		callback: function() {
+	      			return true;
+	      		}
+			}
+		}
+	});
+}
+</script>

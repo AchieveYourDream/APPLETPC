@@ -1,0 +1,291 @@
+<script type="text/javascript">
+       if(sessionStorage.getItem('securityContext')==null){
+         window.location.href="/APPLETPC/login.html";
+        }
+        var securityContext = JSON.parse(sessionStorage.getItem('securityContext'));
+
+        var path = sessionStorage.getItem('path');
+</script>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+<title>红领小程序会员管理</title>
+
+<link type="text/css" rel="stylesheet" href="/APPLETPC/css/common/common.css">
+<script type="text/javascript" src="/APPLETPC/js/common/common.js"></script>
+<script type="text/javascript" src="/APPLETPC/js/common/util.js"></script>
+<script type="text/javascript" src="/APPLETPC/js/jquery/jquery-2.2.3.min.js"></script>
+<script type="text/javascript" src="/APPLETPC/js/json/json2.js"></script>
+<link type="text/css" rel="stylesheet" href="/APPLETPC/js/bootstrap/css/bootstrap.css">
+<script type="text/javascript" src="/APPLETPC/js/bootstrap/js/bootstrap.js"></script>
+<!-- bootstrap-table -->
+<link type="text/css" rel="stylesheet" href="/APPLETPC/js/plugins/bootstrap-table/css/bootstrap-table.css">
+
+<script type="text/javascript" src="/APPLETPC/js/plugins/bootstrap-table/js/bootstrap-table-500.js"></script>
+
+<script type="text/javascript" src="/APPLETPC/js/plugins/bootstrap-table/local/bootstrap-table-zh-CN.js"></script>
+</head>
+<body style="font-size:12px;">
+	<div class="container-fluid" style="margin:0px;padding-top:1px;padding-right:5px;padding-bottom:1px;padding-left:5px;">
+		<div id="userToolbar">
+			<button id="addAppMemberBtn" class="btn  btn-sm" onclick="addAppMember();">
+				<i class="glyphicon glyphicon-plus"></i>&nbsp;新增
+			</button>
+			<button id="editAppMemberBtn" class="btn  btn-sm" onclick="editAppMember();">
+				<i class="glyphicon glyphicon-edit"></i>&nbsp;编辑
+			</button>
+			<button id="delAppMemberBtn" class="btn  btn-sm"  onclick="updateAppMember();">
+				<i class="glyphicon glyphicon-cog"></i>&nbsp;设置营销会员
+			</button>
+		</div>
+
+		<table id="AppMemberTable" 
+		       data-toggle="table" 
+			    data-icon-size="sm"
+			    data-toolbar="#userToolbar"
+			    data-url="http://localhost:8080/SPMTM/api/appmember/selectAppMemberList"
+	            data-data-type="json"
+	         	data-query-params="queryParams"
+	            data-pagination="true"
+	            data-side-pagination="server"
+				data-pagination="true" 
+				data-page-size="15" 
+			    data-page-list="[15,20,25,30,35,ALL]"
+			    data-undefined-text=""
+			    >
+			<thead>
+				<tr>
+					<th data-field="member_tel" data-halign="center" data-align="left">手机号</th>
+					<th data-field="member_source" data-halign="center" data-align="left">来源</th>
+					<th data-field="member_type" data-halign="center" data-align="left" data-formatter="settlement">类型</th>
+					<th data-field="user_name" data-halign="center" data-align="left">姓名</th>
+					<th data-field="create_date" data-halign="center" data-align="left">创建日期</th>
+					<th data-field="last_update_date" data-halign="center" data-align="left">最后修改日期</th>
+				</tr>
+			</thead>
+		</table>
+	</div>
+</body>
+</html>
+
+<script type="text/javascript">
+var  member_tel;
+var searchCondition;
+$(".btn").addClass("btn-"+bootstrapSkin);
+$(document).ready(function() {
+
+redresh();
+	//单击获取当前行
+	$("#AppMemberTable").on('click-row.bs.table', function (e, row, $element) {
+        $('.warning').removeClass('warning');
+        $($element).addClass('warning');
+        member_tel=row.member_tel;
+        
+    });
+	//双击获取当前行
+    $("#AppMemberTable").on('dbl-click-row.bs.table', function (e, row, $element) {
+        $('.warning').removeClass('warning');
+        $($element).addClass('warning');
+        member_tel=row.member_tel;
+    	editAppMember();
+    });
+	
+	
+});
+
+function queryParams(params) {
+	return {offset:params.offset, limit:params.limit,token:securityContext.token,search:searchCondition}
+};
+
+
+function  redresh(){
+$('#AppMemberTable').bootstrapTable('refresh');
+}
+
+// 编辑推广员(修改删除)
+function editAppMember() {
+
+	if (!member_tel) {
+		window.top.bootbox.dialog({ 
+			title:"提示信息",
+		    size: 'small',
+		    message: "请选择需要编辑的小程序会员！",
+		     buttons: {
+			saveType: {
+	      		label: "确定",
+	      		className: "btn-"+bootstrapSkin,
+	      		callback: function() {
+	      		return true;
+	      		}
+	      		  }
+	      		}
+		});
+		return;
+	}
+	
+	var url = "/APPLETPC/jsp/modules/appMember/AppMemberEdit.html";
+	sessionStorage.setItem('member_tel', member_tel);
+	var AppMemberEditFrame = '<iframe id="AppMemberEditFrame" class="my-modal-iframe" width="100%" height="300px" src="' + url + '"></iframe>';
+	
+	window.top.bootbox.dialog({
+		title: "小程序会员-编辑",
+		message: AppMemberEditFrame,
+		size: "small",
+		buttons: {
+			saveType: {
+	      		label: "保存",
+	      		className: "btn-"+bootstrapSkin,
+	      		callback: function() {
+	      			var result = window.top.document.getElementById("AppMemberEditFrame").contentWindow.doEditAppMember();
+	      			if (result) {
+	      				redresh();
+	      			}
+	      			return result;
+	      		}
+			},
+			cancelType: {
+	      		label: "取消",
+	      		className: "btn-default",
+	      		callback: function() {
+	      			return true;
+	      		}
+			}
+		}
+	});
+}
+
+
+// 新建推广员
+function addAppMember() {
+
+	var url = "/APPLETPC/jsp/modules/appMember/AppMemberAdd.html";
+	var AppMemberAddFrame = '<iframe id="AppMemberAddFrame" class="my-modal-iframe" width="100%" height="300px" src="' + url + '"></iframe>';
+	
+	window.top.bootbox.dialog({
+		title: "小程序会员-新建",
+		message: AppMemberAddFrame,
+		size: "small",
+		buttons: {
+			saveType: {
+	      		label: "保存",
+	      		className: "btn-"+bootstrapSkin,
+	      		callback: function() {
+	      			var result = window.top.document.getElementById("AppMemberAddFrame").contentWindow.doAddAppMember();
+	      			if (result) {
+	      				redresh();
+	      			}
+	      			return result;
+	      		}
+			},
+			cancelType: {
+	      		label: "取消",
+	      		className: "btn-default",
+	      		callback: function() {
+	      			return true;
+	      		}
+			}
+		}
+	});
+}
+//修改会员为营销会员
+function updateAppMember(){
+       if(member_tel){
+		 window.top.bootbox.dialog({
+				title: "提示信息",
+				message: "请确认是否修改",
+				size: "middle",
+				buttons: {
+					OkType: {
+			      		label: "确定",
+			      		className: "btn-"+bootstrapSkin,
+			      		callback: function() {
+			      		if(member_tel){
+						    var url = path+"api/appmember/updateMemberStatus";
+							$.ajax({
+								type: "POST",
+							    url: url,
+							    data:{"token":securityContext.token,"member_tel":member_tel},
+							    async: false,
+							    success: function(data){
+									if (data.result_code == "Y") {
+										result = true;
+										$.growl.notice({title: "提示信息",message:"修改成功"});
+										redresh();
+										member_tel=null;
+								    
+									} else if (data.result_code == "N") {
+										result = false;
+											$.growl.error({title: "提示信息",message:data.result_info});
+					
+									}
+		    }
+		});
+			      		}else{
+								      		  $.growl.warning({title: "提示信息",message:"请不要重复点击"});
+					      		}
+					      		
+					      		}
+					},
+					cancelType: {
+			      		label: "取消",
+			      		className: "btn-"+bootstrapSkin,
+			      		callback: function() {
+			      			return true;
+			      		}
+					}
+				}
+			});
+			}else{
+				$.growl.warning({title: "提示信息",message:"请选择人员"});
+			}
+
+}
+
+function searchDataList() {
+	var url ="/APPLETPC/jsp/modules/system/search/AdvanceSearch.html";
+	sessionStorage.setItem("searchCode", 'collect_Money');
+	var app_memberSearchFrame = '<iframe id="app_memberSearchFrame" class="my-modal-iframe" width="100%" height="350px" src="' + url + '"></iframe>';
+	
+	window.top.bootbox.dialog({
+		title: "高级搜索",
+		message: app_memberSearchFrame,
+		size: "small",
+		buttons: {
+			saveType: {
+	      		label: "确定",
+	      		className: "btn-"+bootstrapSkin,
+	      		callback: function() {
+	      			var sscVO = window.top.document.getElementById("app_memberSearchFrame").contentWindow.getAdvanceSearchConditions();
+	      			searchCondition = JSON.stringify(sscVO);
+	      			sessionStorage.setItem("collect_MoneySearchCondition", searchCondition);
+	      			if (sscVO) {
+	      				$("#collectMoneyTable").bootstrapTable('refresh');
+	      			}
+	      			return true;
+	      		}
+			},
+			cancelType: {
+	      		label: "取消",
+	      		className: "btn-default",
+	      		callback: function() {
+	      			return true;
+	      		}
+			}
+		}
+	});
+}
+
+function settlement(value,row,index){
+ 	var settlement = "";  
+         if(value == "N") {  
+             var settlement = '<span style="color:#34df48;font-weight:bold;">普通会员</span>';  
+         }else{  
+             var settlement = '<span style="color:#f50a05;font-weight:bold;">营销会员</span>';  
+         }  
+         return settlement;  
+}
+</script>

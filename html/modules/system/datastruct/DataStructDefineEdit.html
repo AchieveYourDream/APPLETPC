@@ -1,0 +1,293 @@
+<script type="text/javascript">
+        if(sessionStorage.getItem('securityContext')==null){
+         window.location.href="/APPLETPC/login.html";
+        }
+        var securityContext = JSON.parse(sessionStorage.getItem('securityContext'));
+        var bootstrapSkin=securityContext.bootstrapSkin;
+        var path = sessionStorage.getItem('path');
+        var structCode = sessionStorage.getItem('structCode');
+</script>
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+	<title>数据结构-编辑</title>
+
+	<link   type="text/css" rel="stylesheet" href="/APPLETPC/css/common/common.css">
+    <link   type="text/css" rel="stylesheet" href="/APPLETPC/js/bootstrap/css/bootstrap.css">
+	<script type="text/javascript" src="/APPLETPC/js/common/common.js"></script>
+	<script type="text/javascript" src="/APPLETPC/js/common/util.js"></script>
+	<script type="text/javascript" src="/APPLETPC/js/jquery/jquery-2.2.3.min.js"></script>
+    <script type="text/javascript" src="/APPLETPC/js/json/json2.js"></script>
+    <script type="text/javascript" src="/APPLETPC/js/bootstrap/js/bootstrap.js"></script>
+	
+	<script type='text/javascript' src='/APPLETPC/js/json/model/SysDataStructDefine.js'></script>
+	
+	<!-- jquery-validator -->
+	<script type="text/javascript"
+		src="/APPLETPC/js/plugins/jquery-validate/jquery.validate.min.js"></script>
+	<script type="text/javascript"
+		src="/APPLETPC/js/plugins/jquery-validate/jquery.validate.plu.js"></script>
+</head>
+<body class="my-body-content">
+	<form id="structDefineEditForm" name="structDefineEditForm" class="my-form-content">
+		<table class="my-form-table-content">
+			<tr>
+				<td class="my-form-table-td-label" style="width:85px;">
+					<label class="control-label" style="margin:5px;padding:0px;">数据结构编码</label>
+				</td>
+				<td class="my-form-table-td-content" style="width:175px;">
+					<input id="struct_code" name="struct_code" type="text" class="form-control input-sm" style="width:155px;padding:5px;float:left;" readOnly>
+				</td>
+			</tr>
+			
+			<tr>
+				<td class="my-form-table-td-label">
+					<label class="control-label" style="margin:5px;padding:0px;">数据结构名称</label>
+				</td>
+				<td class="my-form-table-td-content">
+					<input id="struct_name" name="struct_name" type="text" class="form-control input-sm" style="width:155px;padding:5px;float:left;">
+				</td>
+			</tr>
+			
+			<tr>
+				<td class="my-form-table-td-label">
+					<label class="control-label" style="margin:5px;padding:0px;">节点编码规则</label>
+				</td>
+				<td class="my-form-table-td-content">
+					<select id="node_code_rule" name="node_code_rule" class="form-control input-sm" style="width:155px;padding:5px;float:left;" onchange="nodeCodeRuleChange();"></select>
+				</td>
+			</tr>
+			
+			<tr>
+				<td class="my-form-table-td-label">
+					<label class="control-label" style="margin:5px;padding:0px;">节点编码前缀</label>
+				</td>
+				<td class="my-form-table-td-content">
+					<input id="rule_prefix" name="rule_prefix" type="text" class="form-control input-sm" style="width:155px;padding:5px;float:left;">
+				</td>
+			</tr>
+			
+			<tr>
+				<td class="my-form-table-td-label">
+					<label class="control-label" style="margin:5px;padding:0px;">节点编码长度</label>
+				</td>
+				<td class="my-form-table-td-content">
+					<input id="rule_length" name="rule_length" type="text" class="form-control input-sm" style="width:155px;padding:5px;float:left;">
+				</td>
+			</tr>
+			
+			<tr>
+				<td class="my-form-table-td-label">
+					<label class="control-label" style="margin:5px;padding:0px;">说明</label>
+				</td>
+				<td class="my-form-table-td-content">
+					<input id="description" name="description" type="text" class="form-control input-sm" style="width:155px;padding:5px;float:left;">
+				</td>
+			</tr>
+		</table>
+	</form>
+</body>
+</html>
+
+<script type="text/javascript">
+
+var validator;
+
+$(document).ready(function() {
+	validator = $("#structDefineEditForm").validate({
+		debug: true,
+		showErrors: showErrors,
+		rules: {
+			struct_name: {
+				required: true,
+				maxlength: 100
+			},
+			'rule_prefix':{
+				maxlength: 10,
+				isCode: true
+			},
+			'rule_length':{
+				maxlength: 10,
+				number: true
+			},
+			'description':{
+				maxlength: 200
+			}
+		},
+		messages: {
+			struct_name: {
+				required: "[数据结构名称]不能为空！",
+				maxlength: "[数据结构名称]最大长度为100！"
+			},
+			'rule_prefix':{
+				maxlength: "[节点编码前缀]最大长度为10！",
+				isCode: "[节点编码前缀]只能包括字母、数字、点、下划线、横线！"
+			},
+			'rule_length':{
+				maxlength: "[节点编码长度]最大长度为100！",
+				number: "[显示顺序]必须是数字！"
+			},
+			'description':{
+				maxlength: "[说明]最大值为200！"
+			}
+		}
+	});
+	
+	initNodeCodeRuleList();
+	
+	initDataStructDefineInfo();
+	
+	nodeCodeRuleChange();
+});
+
+// 初始化节点编码规则数据字典类型
+function initNodeCodeRuleList(){
+	var url = path+"api/common/list/getSingleDataDictItemList";
+    url += "?typeCode=code_rule";
+    url += "&enabledFlag=Y";
+    
+	
+	$.ajax({
+		type: "get",
+		url: url,
+		async: false,
+		headers:{"token":securityContext.token},
+		success: function(data) {
+			if (data.result_code == "Y") {
+			    $("#node_code_rule").html("");
+			    $.each(JSON.parse(data.result_info), function(index, d){
+			        $("#node_code_rule").append('<option value="' + d.item_code + '">' + d.item_name + '</option>')
+			    });
+			    nodeCodeRuleChange();
+			} else if (data.result_code == "N") {
+				window.top.bootbox.dialog({
+					title: "错误信息",
+					message: "数据加载失败！" + "<br><br>" + data.result_info,
+					size: "middle",
+					buttons: {
+						cancelType: {
+				      		label: "确定",
+				      		className: "btn-"+bootstrapSkin,
+				      		callback: function() {
+				      			return true;
+				      		}
+						}
+					}
+				});
+			}
+		}
+	});
+}
+
+// 初始化数据结构定义信息
+function initDataStructDefineInfo() {
+	var url = path+"api/sys/datastruct/getDataStructDefineInfo";
+	url += "?t=" + new Date();
+	url += "&structCode=" + structCode;
+	
+	$.ajax({
+		type: "get",
+		url: url,
+		async: false,
+		headers:{"token":securityContext.token},
+		success: function(data) {
+			if (data.result_code == "Y") {
+				var dsd = JSON.parse(data.result_info);
+				dwr.util.setValues(dsd);
+			} else if (data.result_code == "N") {
+				window.top.bootbox.dialog({
+					title: "错误信息",
+					message: "数据加载失败！" + "<br><br>" + data.result_info,
+					size: "middle",
+					buttons: {
+						cancelType: {
+				      		label: "确定",
+				      		className: "btn-"+bootstrapSkin,
+				      		callback: function() {
+				      			return true;
+				      		}
+						}
+					}
+				});
+			}
+		}
+	});
+}
+
+function nodeCodeRuleChange() {
+	var nodeCodeRule = $("#node_code_rule").val();
+	if (nodeCodeRule == "auto") {
+		$("#rule_prefix").attr("disabled", false);
+		$("#rule_length").attr("disabled", false);
+	} else if (nodeCodeRule == "manual") {
+		$("#rule_prefix").attr("disabled", true);
+		$("#rule_length").attr("disabled", true);
+		$("#rule_prefix").val("");
+		$("#rule_length").val("");
+	}
+}
+
+function doEditDataStructDefine() {
+	var result = false;
+	if (validator.form()) {
+		var dsd = new SysDataStructDefine();
+		
+		dwr.util.getValues(dsd);
+		
+		
+		var url = path+"api/sys/datastruct/editDataStructDefine";
+		url += "?t=" + new Date();
+		url+="&token="+securityContext.token;
+
+		$.ajax({
+			type: "get",
+		    url: url,
+		    data: dsd,
+		    async: false,
+		    success: function(data){
+				
+				if (data.result_code == "Y") {
+				recordLog("O","APPLETPC","数据结构"+structCode+"编辑成功" ,securityContext.user_id);
+					result = true;
+					window.top.bootbox.dialog({
+						title: "提示信息",
+						message: "保存成功！",
+						size: "small",
+						buttons: {
+							cancelType: {
+					      		label: "确定",
+					      		className: "btn-"+bootstrapSkin,
+					      		callback: function() {
+					      			return true;
+					      		}
+							}
+						}
+					});
+				} else if (data.result_code == "N") {
+					result = false;
+					recordLog("OF","APPLETPC","数据结构"+structCode+"编辑失败"+ data.result_info ,securityContext.user_id);
+					window.top.bootbox.dialog({
+						title: "错误信息",
+						message: "保存失败！" + "<br><br>" + data.result_info,
+						size: "middle",
+						buttons: {
+							cancelType: {
+					      		label: "确定",
+					      		className: "btn-"+bootstrapSkin,
+					      		callback: function() {
+					      			return true;
+					      		}
+							}
+						}
+					});
+				}
+		    }
+		});
+	}
+	return result;
+}
+</script>

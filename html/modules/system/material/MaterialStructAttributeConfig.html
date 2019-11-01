@@ -1,0 +1,334 @@
+<script type="text/javascript">
+         if(sessionStorage.getItem('securityContext')==null){
+         window.location.href="/APPLETPC/login.html";
+        }
+        var securityContext = JSON.parse(sessionStorage.getItem('securityContext'));
+
+        var path = sessionStorage.getItem('path');
+        /* var store_id = sessionStorage.getItem('store_id'); */
+    	var node_code = sessionStorage.getItem('node_code');
+</script>
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+	<title>物料结构-扩展属性</title>
+
+	<link   type="text/css" rel="stylesheet" href="/APPLETPC/css/common/common.css">
+    <link   type="text/css" rel="stylesheet" href="/APPLETPC/js/bootstrap/css/bootstrap.css">
+	<script type="text/javascript" src="/APPLETPC/js/common/common.js"></script>
+	<script type="text/javascript" src="/APPLETPC/js/common/util.js"></script>
+	<script type="text/javascript" src="/APPLETPC/js/jquery/jquery-2.2.3.min.js"></script>
+    <script type="text/javascript" src="/APPLETPC/js/json/json2.js"></script>
+    <script type="text/javascript" src="/APPLETPC/js/bootstrap/js/bootstrap.js"></script>
+
+	<!-- bootstrap-table -->
+	<link type="text/css" rel="stylesheet"
+		href="/APPLETPC/js/plugins/bootstrap-table/css/bootstrap-table.css">
+		
+	<script type="text/javascript"
+		src="/APPLETPC/js/plugins/bootstrap-table/js/bootstrap-table.js"></script>
+	
+	<script type="text/javascript"
+		src="/APPLETPC/js/plugins/bootstrap-table/local/bootstrap-table-zh-CN.js"></script>
+</head>
+<body>
+	<div class="container-fluid" style="margin:0px;padding:0px;">
+				<div id="structAttributeToolbar"  >
+					<button id="addStructAttributeBtn" class="btn  btn-sm" onclick="addStructAttribute();">
+			            <i class="glyphicon glyphicon-plus"></i>&nbsp;新建
+			        </button>
+			        <button id="editStructAttributeBtn" class="btn  btn-sm" onclick="editStructAttribute();">
+			            <i class="glyphicon glyphicon-pencil"></i>&nbsp;编辑
+			        </button>
+			        <button id="editStructAttributeBtn" class="btn  btn-sm" onclick="delStructAttribute();">
+			            <i class="glyphicon glyphicon-cremove"></i>&nbsp;删除
+			        </button>
+			    </div>
+			    
+			    <table id="structAttributeTable"
+			    	   class="table table-condensed"
+			           data-toggle="table"
+			           data-toolbar="#structAttributeToolbar"
+			           data-width="100%"
+			           data-height="50%"
+			           data-icon-size="sm"
+			           data-striped="true"
+			           data-search="true">
+			        <thead >
+			           	<tr>
+			                <!-- <th data-field="store_id" data-halign="center" data-align="left" data-sortable="true">所属门店</th> -->
+			                <th data-field="attribute_code" data-halign="center" data-align="left" data-sortable="true">物料属性编码</th>
+			                <th data-field="attribute_name" data-halign="center" data-align="left" data-sortable="true">物料属性名称</th>
+			                <th data-field="element_type" data-halign="center" data-align="left" data-sortable="true">元素类型</th>
+			                <th data-field="ddt_code" data-halign="center" data-align="left" data-sortable="true">数据字典类型</th>
+			                <th data-field="ds_code" data-halign="center" data-align="left" data-sortable="true">数据结构</th>
+			                <th data-field="lov_code" data-halign="center" data-align="left" data-sortable="true">值列表</th>
+			                <th data-field="description" data-halign="center" data-align="left">说明</th>
+			            </tr>
+			        </thead>
+				</table>
+	</div>
+</body>
+</html>
+
+<script type="text/javascript">
+$(".btn").addClass("btn-"+bootstrapSkin);
+var currentAttributeCode;
+
+$(document).ready(function() {
+	$("#structAttributeTable").on('click-row.bs.table', function (e, row, $element) {
+        $('.warning').removeClass('warning');
+        $($element).addClass('warning');
+        
+        currentAttributeCode = row.attribute_code;
+    });
+	
+	$("#structAttributeTable").on('dbl-click-row.bs.table', function (e, row, $element) {
+        $('.warning').removeClass('warning');
+        $($element).addClass('warning');
+        
+        currentAttributeCode = row.attribute_code;
+        
+        editStructAttribute();
+    });
+	
+	queryStructAttributeList();
+});
+
+
+// 获取数据结构属性列表
+function queryStructAttributeList() {
+	$("#structAttributeTable").bootstrapTable('removeAll');
+	
+	var url = path+"api/sys/materialstruct/getDataStructAttributeList";
+    url += "?currentTime=" + new Date();
+	/* url += "&node_code=" + node_code; */
+    
+    $.ajax({
+		type: "post",
+		url: url,
+		async:false,
+		data:{"node_code":node_code,"token":securityContext.token},
+		success: function(data) {
+			
+			if (data.result_code == "Y") {
+			recordLog("O","APPLETPC","获取数据结构属性列表成功",securityContext.user_id);
+				$("#structAttributeTable").bootstrapTable("load", JSON.parse(data.result_info));
+				
+				currentAttributeCode = null;
+			} else if (data.result_code == "N") {
+				recordLog("OF","APPLETPC","获取数据结构属性列表失败",securityContext.user_id);
+				window.top.bootbox.dialog({
+					title: "错误信息",
+					message: "数据加载失败！" + "<br><br>" + data.result_info,
+					size: "middle",
+					buttons: {
+						cancelType: {
+				      		label: "确定",
+				      		className: "btn-success",
+				      		callback: function() {
+				      			return true;
+				      		}
+						}
+					}
+				});
+			}
+		}
+	});
+}
+
+// 新建数据结构属性
+function addStructAttribute() {
+	var url = "/APPLETPC/html/modules/system/material/MaterialStructAttributeAdd.html";
+	/* sessionStorage.setItem('store_id', store_id); */
+	sessionStorage.setItem('node_code', node_code);
+	
+	var structAttributeAddFrame = '<iframe id="structAttributeAddFrame" class="my-modal-iframe" width="100%" height="300px" src="' + url + '"></iframe>';
+	window.top.bootbox.dialog({
+		title: "物料结构-扩展属性-新建",
+		message: structAttributeAddFrame,
+		size: "small",
+		buttons: {
+			saveType: {
+	      		label: "保存",
+	      		className: "btn-success",
+	      		callback: function() {
+	      			var result = window.top.document.getElementById("structAttributeAddFrame").contentWindow.doAddDataStructAttribute();
+	      			if (result) {
+	      				queryStructAttributeList();
+	      			}
+	      			return result;
+	      		}
+			},
+			cancelType: {
+	      		label: "取消",
+	      		className: "btn-default",
+	      		callback: function() {
+	      			return true;
+	      		}
+			}
+		}
+	});
+}
+
+// 编辑数据结构属性
+function editStructAttribute() {
+	if (!currentAttributeCode) {
+		window.top.bootbox.dialog({ 
+		    size: 'small',
+		    message: "请先选择物料结构属性！",
+		    buttons: {
+					OkType: {
+			      		label: "确定",
+			      		className: "btn-success",
+			      		callback: function() {
+			      		}
+			      	}
+			      }		
+		});
+		return;
+	}
+	
+	var url = "/APPLETPC/html/modules/system/material/MaterialStructAttributeEdit.html";
+	/* sessionStorage.setItem('store_id', store_id); */
+	sessionStorage.setItem('node_code', node_code);
+	sessionStorage.setItem('attributeCode', currentAttributeCode);
+	var structAttributeEditFrame = '<iframe id="structAttributeEditFrame" class="my-modal-iframe" width="100%" height="300px" src="' + url + '"></iframe>';
+	
+	window.top.bootbox.dialog({
+		title: "物料结构-扩展属性-编辑",
+		message: structAttributeEditFrame,
+		size: "small",
+		buttons: {
+			saveType: {
+	      		label: "保存",
+	      		className: "btn-success",
+	      		callback: function() {
+	      			var result = window.top.document.getElementById("structAttributeEditFrame").contentWindow.doEditDataStructAttribute();
+	      			if (result) {
+	      				queryStructAttributeList();
+	      					      			}
+	      			return result;
+	      		}
+			},
+			cancelType: {
+	      		label: "取消",
+	      		className: "btn-default",
+	      		callback: function() {
+	      			return true;
+	      		}
+			}
+		}
+		
+	});
+	
+	 
+	}
+
+//删除数据结构节点
+ function delStructAttribute(){
+    if (!currentAttributeCode) {
+		window.top.bootbox.dialog({ 
+		    size: 'small',
+		    message: "请先选择物料结构属性！",
+		     buttons: {
+					OkType: {
+			      		label: "确定",
+			      		className: "btn-success",
+			      		callback: function() {
+			      		}
+			      	}
+			      }	
+		});
+		return;
+	}
+		 window.top.bootbox.dialog({
+				title: "提示信息",
+				message: "请确认是否删除",
+				size: "middle",
+				buttons: {
+					OkType: {
+			      		label: "确定",
+			      		className: "btn-success",
+			      		callback: function() {
+	    var url = path+"api/sys/materialstruct/delAttributeOrNodeAttrbuteValue";
+	    url += "?t=" + new Date();
+		/* url += "&attributeCode="  + currentAttributeCode;
+		url += "&node_code=" + node_code; */
+		$.ajax({
+			type: "post",
+		    url: url,
+		    async: false,
+		    data:{
+		    	"attributeCode":currentAttributeCode,
+		    	"token":securityContext.token
+		    },
+		    success: function(data){
+				
+				if (data.result_code == "Y") {
+				recordLog("O","APPLETPC","数据结构节点删除成功",securityContext.user_id);
+				currentAttributeCode==null;
+// 				var source= "系统管理>数据结构>删除数据结构节点";
+// 				var content="数据结构节点:"+node_name+"删除成功";
+// 				var id = <%=securityContext.getUser_id()%>;		
+// 				var con ="<%=context%>";
+// 		         createOperationLog(source,content,id,con);
+					result = true;
+					window.top.bootbox.dialog({
+						title: "提示信息",
+						message: "删除成功！",
+						size: "middle",
+						buttons: {
+							cancelType: {
+					      		label: "确定",
+					      		className: "btn-success",
+					      		callback: function() {
+					      		}
+							}
+						}
+					});
+					queryStructAttributeList();
+					      		
+				} else if (data.result_code == "N") {
+				recordLog("OF","APPLETPC","数据结构节点删除失败",securityContext.user_id);
+					result = false;
+// 					var source= "系统管理>数据结构>删除数据结构节点";
+// 				var content="数据结构节点:"+node_name+"删除失败";
+// 				var id = <%=securityContext.getUser_id()%>;		
+// 				var con ="<%=context%>";
+					window.top.bootbox.dialog({
+						title: "错误信息",
+						message: "保存失败！" + "<br><br>" + data.result_info,
+						size: "middle",
+						buttons: {
+							cancelType: {
+					      		label: "确定",
+					      		className: "btn-success",
+					      		callback: function() {
+					      			return true;
+					      		}
+							}
+						}
+					});
+				}
+		    }
+		});
+			      		}
+					},
+					cancelType: {
+			      		label: "取消",
+			      		className: "btn-success",
+			      		callback: function() {
+			      			return true;
+			      		}
+					}
+				}
+			});
+			
+
+}
+</script>

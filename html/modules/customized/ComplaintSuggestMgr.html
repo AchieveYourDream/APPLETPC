@@ -1,0 +1,150 @@
+<script type="text/javascript">
+       if(sessionStorage.getItem('securityContext')==null){
+         window.location.href="/APPLETPC/login.html";
+        }
+        var securityContext = JSON.parse(sessionStorage.getItem('securityContext'));
+
+        var path = sessionStorage.getItem('path');
+</script>
+<!DOCTYPE html>
+<html style="overflow: hidden;">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+<title>投诉建议列表</title>
+
+	<link type="text/css" rel="stylesheet" href="/APPLETPC/css/common/common.css">
+	<script type="text/javascript" src="/APPLETPC/js/common/common.js"></script>
+	<script type="text/javascript" src="/APPLETPC/js/common/util.js"></script>
+	<script type="text/javascript"src="/APPLETPC/js/jquery/jquery-2.2.3.min.js"></script>
+    <script type="text/javascript" src="/APPLETPC/js/json/json2.js"></script>
+    <link type="text/css" rel="stylesheet" href="/APPLETPC/js/bootstrap/css/bootstrap.css">
+    <script type="text/javascript" src="/APPLETPC/js/bootstrap/js/bootstrap.js"></script>
+     <script type="text/javascript" src="/APPLETPC/js/plugins/bootstrap-box/js/bootbox.min.js"></script>
+    <link type="text/css" rel="stylesheet"
+		href="/APPLETPC/js/plugins/bootstrap-datetime/css/bootstrap-datetimepicker.min.css">
+		
+	<script type="text/javascript"
+		src="/APPLETPC/js/plugins/bootstrap-datetime/js/bootstrap-datetimepicker.min.js"></script>
+		
+	<script type="text/javascript"
+		src="/APPLETPC/js/plugins/bootstrap-datetime/js/locales/bootstrap-datetimepicker.zh-CN.js"></script>
+	<!-- bootstrap-table -->
+	<link type="text/css" rel="stylesheet" href="/APPLETPC/js/plugins/bootstrap-table/css/bootstrap-table.css">
+	<script type="text/javascript" src="/APPLETPC/js/plugins/bootstrap-table/js/bootstrap-table-500.js"></script>
+	<script type="text/javascript" src="/APPLETPC/js/plugins/bootstrap-table/local/bootstrap-table-zh-CN.js"></script>
+	<body style="font-size:12px;" >
+<div id="view">
+	<div id="mainOrder">
+            		<button id="refreshTypeBtn" class="btn  btn-sm" onclick="redresh();">
+			            <i class="glyphicon glyphicon-refresh"></i>&nbsp;刷新
+			        </button>
+			        <button id="advanceSearchBtn" class="btn  btn-sm" onclick="searchDataList();">
+			            <i class="glyphicon glyphicon-search"></i>&nbsp;高级搜索
+			        </button>
+			    </div>
+	
+	
+	
+	<table id="ComplaintSuggestTable"  
+		class="table table-condensed "
+			data-toggle="table" 
+			data-toolbar="#mainOrder"
+		    data-icon-size="sm"
+		    data-url="http://localhost:8080/SPMTM//api/customized/selectAppComplaintSuggestByList"
+            data-data-type="json"
+         	data-query-params="queryParams"
+            data-pagination="true"
+            data-side-pagination="server"
+			data-pagination="true" 
+			data-page-size="15" 
+		    data-page-list="[15,20,25,30,35]"
+		    data-undefined-text=""
+		    >
+			<thead >
+				<tr >
+					<th data-field="member_tel" data-halign="center" data-align="center">投诉者手机号</th>
+					<th data-field="message" data-halign="center" data-align="center">投诉信息</th>
+					<th data-field="create_date" data-halign="center" data-align="center">投诉时间</th> 
+					<th data-halign="center" data-align="center" data-events="operateEvents" data-formatter="operateFormatter">操作</th>
+				</tr>
+			</thead>
+		</table>
+	
+	</div>
+</body>
+</html>
+
+<script type="text/javascript">
+$(".btn").addClass("btn-"+bootstrapSkin);
+var searchCondition;
+$(document).ready(function() {
+});
+
+function queryParams(params) {
+return {offset:params.offset, limit:params.limit,token:securityContext.token,search:searchCondition};
+}
+function  redresh(){
+$('#ComplaintSuggestTable').bootstrapTable('refresh');
+}
+function searchDataList() {
+	var url ="/APPLETPC/jsp/modules/system/search/AdvanceSearch.html";
+	sessionStorage.setItem("searchCode", 'complaint_suggest');
+	var main_orderSearchFrame = '<iframe id="main_orderSearchFrame" class="my-modal-iframe" width="100%" height="350px" src="' + url + '"></iframe>';
+	
+	window.top.bootbox.dialog({
+		title: "高级搜索",
+		message: main_orderSearchFrame,
+		size: "small",
+		buttons: {
+			saveType: {
+	      		label: "确定",
+	      		className: "btn-"+bootstrapSkin,
+	      		callback: function() {
+	      			var sscVO = window.top.document.getElementById("complaint_suggestSearchFrame").contentWindow.getAdvanceSearchConditions();
+	      			searchCondition = JSON.stringify(sscVO);
+	      			sessionStorage.setItem("complaint_suggestSearchCondition", searchCondition);
+	      			if (sscVO) {
+	      				$("#ComplaintSuggestTable").bootstrapTable('refresh');
+	      			}
+	      			return true;
+	      		}
+			},
+			cancelType: {
+	      		label: "取消",
+	      		className: "btn-default",
+	      		callback: function() {
+	      			return true;
+	      		}
+			}
+		}
+	});
+}
+function operateFormatter(value, row, index) {
+             return [
+                 '<a type="button" class="CSBtn editBtn" style="margin-right:15px;"><i class="glyphicon glyphicon-eye-open"></i>查看详情</a>',
+             ].join('');
+         }
+         
+window.operateEvents = {
+             'click .CSBtn ': function (e, value, row, index) {
+                	viewComplaintSuggestInfo(row.id) ;
+                 },
+             
+         }; 
+ function viewComplaintSuggestInfo(id) {
+	
+	var url="/APPLETPC/jsp/modules/customized/ComplaintSuggestInfo.html";
+	
+	sessionStorage.setItem('id', id);	
+	var CSFrame = '<iframe id="CSFrame" class="my-modal-iframe" width="100%" height="550px" src="' + url + '"></iframe>';
+	window.parent.bootbox.dialog({
+		title: "投诉建议详情",
+		message: CSFrame,
+		size: "large"
+	});
+} 
+    
+</script>

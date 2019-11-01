@@ -1,0 +1,303 @@
+<script type="text/javascript">
+       if(sessionStorage.getItem('securityContext')==null){
+         window.location.href="/APPLETPC/login.html";
+        }
+        var securityContext = JSON.parse(sessionStorage.getItem('securityContext'));
+
+        var path = sessionStorage.getItem('path');
+</script>
+<!DOCTYPE html>
+<html>
+<head>
+	<title>零售价格维护</title>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+	<link type="text/css" rel="stylesheet" href="/APPLETPC/css/common/common.css">
+    <link type="text/css" rel="stylesheet" href="/APPLETPC/js/bootstrap/css/bootstrap.css">
+	<link type="text/css" rel="stylesheet" href="/APPLETPC/js/plugins/bootstrap-treeview/css/bootstrap-treeview.css">
+	<link type="text/css" rel="stylesheet" href="/APPLETPC/js/plugins/bootstrap-table/css/bootstrap-table.css">
+	<script type="text/javascript"src="/APPLETPC/js/jquery/jquery-2.2.3.min.js"></script>
+	<script type="text/javascript" src="/APPLETPC/js/common/common.js"></script>
+	<script type="text/javascript" src="/APPLETPC/js/common/util.js"></script>
+    <script type="text/javascript" src="/APPLETPC/js/json/json2.js"></script>
+    <script type="text/javascript" src="/APPLETPC/js/bootstrap/js/bootstrap.js"></script>
+    <script type="text/javascript" src="/APPLETPC/js/plugins/bootstrap-box/js/bootbox.min.js"></script>
+	<script type="text/javascript" src="/APPLETPC/js/plugins/bootstrap-treeview/js/bootstrap-treeview.js"></script>
+	<script type='text/javascript' src='/APPLETPC/js/json/model/SysLog.js'></script>
+	<script type="text/javascript" src="/APPLETPC/js/plugins/bootstrap-table/js/bootstrap-table.js"></script>
+	<script type="text/javascript" src="/APPLETPC/js/plugins/bootstrap-table/local/bootstrap-table-zh-CN.js"></script>
+</head>
+<body style="font-size:12px;">
+	<div class="container-fluid" style="margin:0px;padding-top:1px;padding-right:5px;padding-bottom:1px;padding-left:5px;">
+		
+		<!-- 顶部三个按钮 -->
+		<div id="userToolbar">
+			<button id="addCraftworkPriceBtn" class="btn  btn-sm" onclick="addCraftworkPrice();">
+	            <i class="glyphicon glyphicon-plus"></i>&nbsp;新增
+	        </button>
+	        <button id="editCraftworkPriceBtn" class="btn  btn-sm" onclick="editCraftworkPrice();">
+	            <i class="glyphicon glyphicon-plus"></i>&nbsp;编辑
+	        </button>
+	        <button id="delCraftworkPriceBtn" class="btn  btn-sm"  onclick="delCraftworkPrice();">
+	            <i class="glyphicon glyphicon-remove"></i>&nbsp;删除
+	        </button>
+		</div>
+
+		<!-- 表单 -->
+		
+		<table id="CraftworkPriceTable"  class="table table-condensed " data-toggle="table" data-pagination="true" data-toolbar="#userToolbar" data-page-size="10" data-page-list="[10,30,50,100]"  data-height="550" data-search="true">
+				<thead>
+					<tr>
+						<th data-field="price_specification" data-halign="center" data-align="center">定价规范</th>
+						<th data-field="fabric_price_range" data-halign="center" data-align="center">面料价格区间</th>
+						<th data-field="category" data-halign="center" data-align="center">品类</th>
+						<th data-field="shirt_technics" data-halign="center" data-align="center">衬工艺</th>
+						<th data-field="is_def_shirt_technics" data-halign="center" data-align="center">是否默认衬工艺</th>
+						<th data-field="retail_price" data-halign="center" data-align="center" data-order="desc">零售价</th>
+					</tr>
+				</thead>
+		</table>
+		
+	</div>
+</body>
+</html>
+
+<script type="text/javascript">
+var currentCraftworkPriceId;
+$(".btn").addClass("btn-"+bootstrapSkin);
+$(document).ready(function() {
+	initPage();
+	//单击获取当前行
+	 $("#CraftworkPriceTable").on('click-row.bs.table', function (e, row, $element) {
+        $('.warning').removeClass('warning');
+        $($element).addClass('warning');
+        currentCraftworkPriceId = row.id;
+        
+    });
+	//双击获取当前行
+    $("#CraftworkPriceTable").on('dbl-click-row.bs.table', function (e, row, $element) {
+        $('.warning').removeClass('warning');
+        $($element).addClass('warning');
+        currentCraftworkPriceId = row.id;
+    	editCraftworkPrice();
+    }); 
+	 $(window).resize(function(){
+	    $("#CraftworkPriceTable").bootstrapTable("resetView");
+	}); 
+});
+
+/* function queryParams(params) {
+	return {offset:params.offset, limit:params.limit,"token":securityContext.token};
+} */
+//依据物料编码 获取价格
+function initPage() {
+	var url =path+"api/sys/price/getCraftworkPriceAll";
+	url += "?t=" + new Date();
+    $.ajax({
+		type: "GET",
+		url: url,
+		async:false,
+		headers:{"token":securityContext.token},
+		success: function(data) {
+			//因数据库原因，将物料名称在页面上赋值
+			if (data.result_code == "Y") {
+				recordLog("O","APPLETPC","物料价格获取成功",securityContext.user_id);
+				$("#CraftworkPriceTable").bootstrapTable("load", JSON.parse(data.data));
+			} else if (data.result_code == "N") {
+				recordLog("OF","APPLETPC","物料价格获取失败",securityContext.user_id);
+				window.top.bootbox.dialog({
+					title: "错误信息",
+					message: "数据加载失败！" + "<br><br>" + data.data,
+					size: "middle",
+					buttons: {
+						cancelType: {
+				      		label: "确定",
+				      		className: "btn-success",
+				      		callback: function() {
+				      			return true;
+				      		}
+						}
+					}
+				});
+			}
+		}
+	});
+}
+
+
+
+// 编辑零售价格 
+function editCraftworkPrice() {
+	if (!currentCraftworkPriceId) {
+		window.top.bootbox.dialog({ 
+			title:"提示信息",
+		    size: 'small',
+		    message: "请选择需要编辑的零售价格！",
+		     buttons: {
+			saveType: {
+	      		label: "确定",
+	      		className: "btn-success",
+	      		callback: function() {
+	      		return true;
+	      		}
+	      		  }
+	      		}
+		});
+		return;
+	}
+	
+	var url = "/APPLETPC/jsp/modules/system/priceMaintain/craftworkPrice/CraftworkPriceEdit.html";
+
+	sessionStorage.setItem('currentCraftworkPriceId', currentCraftworkPriceId);
+	var CraftworkPriceEditFrame = '<iframe id="CraftworkPriceEditFrame" class="my-modal-iframe" width="100%" height="400px" src="' + url + '"></iframe>';
+	
+	window.top.bootbox.dialog({
+		title: "零售价格-编辑",
+		size: "middle",
+		message: CraftworkPriceEditFrame,
+		buttons: {
+			saveType: {
+	      		label: "保存",
+	      		className: "btn-success",
+	      		callback: function() {
+	      			var result = window.top.document.getElementById("CraftworkPriceEditFrame").contentWindow.initEdit();
+	      			if (result) {
+	      				initPage();
+	      			}
+	      			return result;
+	      		}
+			},
+			cancelType: {
+	      		label: "取消",
+	      		className: "btn-default",
+	      		callback: function() {
+	      			return true;
+	      		}
+			}
+		}
+	});
+}
+
+//新增工艺价格
+function addCraftworkPrice() {
+	
+	var url = "/APPLETPC/jsp/modules/system/priceMaintain/craftworkPrice/CraftworkPriceAdd.html";
+	var CraftworkPriceAddFrame = '<iframe id="CraftworkPriceAddFrame" class="my-modal-iframe" width="100%" height="400px" src="' + url + '"></iframe>';
+	
+	window.top.bootbox.dialog({
+		title: "工艺价格-新建",
+		size: "middle",
+		message: CraftworkPriceAddFrame,
+		buttons: {
+			saveType: {
+	      		label: "保存",
+	      		className: "btn-success",
+	      		callback: function() {
+	      			var result = window.top.document.getElementById("CraftworkPriceAddFrame").contentWindow.initAdd();
+	      			if (result) {
+	      				initPage();
+	      			}
+	      			return result;
+	      		}
+			},
+			cancelType: {
+	      		label: "取消",
+	      		className: "btn-default",
+	      		callback: function() {
+	      			return true;
+	      		}
+			}
+		}
+	});
+}
+//删除定价信息
+function delCraftworkPrice(){
+       if(currentCraftworkPriceId){
+		 window.top.bootbox.dialog({
+				title: "提示信息",
+				message: "请确认是否删除",
+				size: "middle",
+				buttons: {
+					OkType: {
+			      		label: "确定",
+			      		className: "btn-success",
+			      		callback: function() {
+	    var url = path+"api/sys/price/remove";
+	    url += "?id=" + currentCraftworkPriceId;
+		$.ajax({
+			type: "get",
+		    url: url,
+		    headers:{"token":securityContext.token},
+		    async: false,
+		    success: function(data){
+				if (data.result_code == "Y") {
+					recordLog("O","APPLETPC","删除零售价格列成功",securityContext.user_id);
+					currentCraftworkPriceId=null;
+					result = true;
+					window.top.bootbox.dialog({
+						title: "提示信息",
+						message: "删除成功！",
+						size: "middle",
+						buttons: {
+							cancelType: {
+					      		label: "确定",
+					      		className: "btn-success",
+					      		callback: function() {
+					      		}
+							}
+						}
+					});
+					initPage();
+					      		
+				} else if (data.result_code == "N") {
+					recordLog("OF","APPLETPC","删除零售价格失败",securityContext.user_id);
+					result = false;
+					window.top.bootbox.dialog({
+						title: "错误信息",
+						message: "保存失败！" + "<br><br>" + data.data,
+						size: "middle",
+						buttons: {
+							cancelType: {
+					      		label: "确定",
+					      		className: "btn-success",
+					      		callback: function() {
+					      			return true;
+					      		}
+							}
+						}
+					});
+				}
+		    }
+		});
+			      		}
+					},
+					cancelType: {
+			      		label: "取消",
+			      		className: "btn-success",
+			      		callback: function() {
+			      			return true;
+			      		}
+					}
+				}
+			});
+			}else{
+					window.top.bootbox.dialog({ 
+				    size: 'small',
+				    message: "请先选择零售价格！",
+				    buttons: {
+			saveType: {
+	      		label: "确定",
+	      		className: "btn-success",
+	      		callback: function() {
+	      		return true;
+	      		}
+	      		  }
+	      		}
+				});
+			}
+
+}
+
+	
+</script>

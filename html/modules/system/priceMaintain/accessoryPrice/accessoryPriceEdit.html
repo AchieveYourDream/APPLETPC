@@ -1,0 +1,274 @@
+<script type="text/javascript">
+	if (sessionStorage.getItem('securityContext') == null) {
+		window.location.href = "/APPLETPC/login.html";
+	}
+	var securityContext = JSON.parse(sessionStorage.getItem('securityContext'));
+	var bootstrapSkin = securityContext.bootstrapSkin;
+	var path = sessionStorage.getItem('path');
+    var accessory_code = sessionStorage.getItem('accessory_code'); 			//物料编码id
+    var price_specification = sessionStorage.getItem('price_specification');//定价规范
+	var materialTypeCode = sessionStorage.getItem('materialTypeCode');		//当前的物料编码
+	
+	
+	
+</script>
+<!DOCTYPE html>
+<html>
+<head>
+	<title>编辑门店信息</title>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+	<script type="text/javascript" src="/APPLETPC/js/common/common.js"></script>
+	<script type="text/javascript" src="/APPLETPC/js/common/util.js"></script>
+	<script type="text/javascript" src="/APPLETPC/js/jquery/jquery-2.2.3.min.js"></script>
+	<script type="text/javascript" src="/APPLETPC/js/json/json2.js"></script>
+	<link type="text/css" rel="stylesheet" href="/APPLETPC/js/bootstrap/css/bootstrap.css">
+	<script type="text/javascript" src="/APPLETPC/js/bootstrap/js/bootstrap.js"></script>
+	<script type="text/javascript" src="../../../../../js/json/model/SysTechnologyMultiple.js"></script>
+	<script type='text/javascript' src='/APPLETPC/js/json/model/SysLog.js'></script>
+	<script type="text/javascript" src="/APPLETPC/js/plugins/jquery-validate/jquery.validate.min.js"></script>
+	<script type="text/javascript" src="/APPLETPC/js/plugins/jquery-validate/jquery.validate.plu.js"></script>
+	<link type="text/css" rel="stylesheet" href="/APPLETPC/js/plugins/bootstrap-datetime/css/bootstrap-datetimepicker.min.css">
+	<script type="text/javascript" src="/APPLETPC/js/plugins/bootstrap-datetime/js/bootstrap-datetimepicker.min.js"></script>
+	<script type="text/javascript" src="/APPLETPC/js/plugins/bootstrap-datetime/js/locales/bootstrap-datetimepicker.zh-CN.js"></script>
+	<script type="text/javascript" src="../../../../../js/json/model/SysAccessoryPrice.js"></script>
+	<script type="text/javascript" src="../../../../../js/plugins/layer/layer.js"></script>
+	
+</head>
+<body class="my-body-content">
+	<form id="typeAddForm" name="typeAddForm" class="my-form-content">
+		<table class="my-form-table-content">
+			<tr>
+				<td class="my-form-table-td-label">
+					<label class="control-label" style="margin:5px;padding:0px;">物料编码</label>
+				</td>
+				<td class="my-form-table-td-content" colspan="5">
+					<input id="accessory_code" name="accessory_code" type="text" class="form-control input-sm" style="width:300px;float:left;" readonly="readonly">
+				</td>
+			</tr>
+			<tr>
+				<td class="my-form-table-td-label">
+					<label class="control-label" style="margin:5px;padding:0px;">物料名称</label>
+				</td>
+				<td class="my-form-table-td-content" colspan="5">
+					<input id="attribute1" name="attribute1" type="text" class="form-control input-sm" style="width:300px;float:left;"readonly="readonly">
+				</td>
+			</tr>
+			<tr>
+				<td class="my-form-table-td-label">
+					<label class="control-label" style="margin:5px;padding:0px;">定价规范</label>
+				</td>
+				<td class="my-form-table-td-content" colspan="5">
+					<input id="attribute2" name="attribute2" type="text" class="form-control input-sm" style="width:300px;float:left;"readonly="readonly">
+				</td>
+			</tr>
+			<tr>
+				<td class="my-form-table-td-label">
+					<label class="control-label" style="margin:5px;padding:0px;">单价</label>
+				</td>
+				<td class="my-form-table-td-content" colspan="5">
+					<input id="retail_price" name="retail_price" type="text"  onkeyup="totalPracticalPrice(this)"   min="0" required="required" class="form-control input-sm" style="width:300px;float:left;">
+				</td>
+			</tr>
+		</table>
+
+	</form>
+</body>
+</html>
+
+<script type="text/javascript">
+var currentNodeId;
+var validator;
+var falg = false;//判断此倍率是否已经维护，为true已维护，执行更新，false则新增
+var created_by = "";//用于临时存储创建人
+var price_specification;
+var id;
+$(document).ready(function() {
+	selectStoInformationByPk();			//根据id初始化表单
+});
+
+
+// 依据 物料编码/价格规范查询
+function selectStoInformationByPk() {
+	var url = path + "api/sys/accessoryPrice/getByCodeAndStandard";
+	url += "?currentTime=" + new Date();
+	$.ajax({
+		type : "get",
+		url : url,
+		data:{"token":securityContext.token,"accessory_code":accessory_code,"price_specification":price_specification},
+		success : function(data) {
+			price_specification=JSON.parse(data.result_info).price_specification;
+			id=JSON.parse(data.result_info).id;
+			if(JSON.parse(data.result_info).retail_price !=""){
+				falg = true;
+			}
+			if (data.result_code == "Y") {
+				recordLog("O","APPLETPC","获取工艺价格列表成功",securityContext.user_id);
+				dwr.util.setValues(JSON.parse(data.result_info));
+			} else if (data.result_code == "N") {
+				recordLog("OF","APPLETPC","获取工艺价格列表失败",securityContext.user_id);
+					window.top.bootbox.dialog({
+						title : "错误信息",
+						message : "数据加载失败！" + "<br><br>" + data.result_info,
+						size : "middle",
+						buttons : {
+							cancelType : {
+								label : "确定",
+								className : "btn-" + bootstrapSkin,
+								callback : function() {
+									return true;
+								}
+							}
+						}
+					});
+			}
+		}
+	});
+}
+
+//编辑
+function doEditCraftworkPrice() {
+	if(!$("#retail_price")[0].validity.valid){
+		layer.msg("【零售价】不能为空")
+		$("#retail_price").focus();
+		return false;
+	}
+	var result = false ;
+	$.ajax({
+		type: "GET",
+		url: path + "api/sys/accessoryPrice/getById",
+		async:false,
+		data:{"token":securityContext.token,"id":id},
+		success: function(data) {
+			if(data.result_info != "null"){
+				falg= true
+			}
+		}
+	})
+	var cc = new SysAccessoryPrice();
+	dwr.util.getValues(cc);
+	cc.last_updated_by=securityContext.user_id;
+	cc.created_by=created_by;
+	cc.price_specification=price_specification;
+	cc.id=id;
+	if(falg){
+		//执行跟新
+		var url = path + "api/sys/accessoryPrice/updata";
+		url += "?t=" + new Date();
+		url+="&token="+securityContext.token;
+		$.ajax({
+			type:"POST",
+			url:url,
+			contentType: 'application/json',
+		 	data:JSON.stringify(cc),
+			async:false,
+			success: function(data) {
+					if (data.result_code == "Y") {
+					recordLog("O","APPLETPC","零售定价编辑成功",securityContext.user_id);
+					 result = true;
+						window.top.bootbox.dialog({
+							title: "提示信息",
+							message: "更新成功！",
+							size: "middle",
+							buttons: {
+								cancelType: {
+						      		label: "确定",
+						      		className: "btn-"+bootstrapSkin,
+						      		callback: function() {
+						      			return true;
+						      		}
+								}
+							}
+						});
+	        
+					} else if (data.result_code == "N") {
+					recordLog("OF","APPLETPC","零售定价编辑失败",securityContext.user_id);
+						result = false;
+	
+						
+						window.top.bootbox.dialog({
+							title: "错误信息",
+							message: "保存失败！" + "<br><br>" + json.result_info,
+							size: "middle",
+							buttons: {
+								cancelType: {
+						      		label: "确定",
+						      		className: "btn-"+bootstrapSkin,
+						      		callback: function() {
+						      			return true;
+						      		}
+					
+								}
+							}
+						});
+					}
+			    }
+			});
+	}else{
+		//新增
+		cc.created_by=securityContext.user_id;
+		var url = path + "api/sys/accessoryPrice/add";
+		url += "?t=" + new Date();
+		url+="&token="+securityContext.token;
+		$.ajax({
+			type:"POST",
+			url:url,
+			contentType: 'application/json',
+		 	data:JSON.stringify(cc),
+			async:false,
+			success: function(data) {
+					if (data.result_code == "Y") {
+					recordLog("O","APPLETPC","新增工艺价格成功",securityContext.user_id);
+					 result = true;
+						window.top.bootbox.dialog({
+							title: "提示信息",
+							message: "保存成功！",
+							size: "middle",
+							buttons: {
+								cancelType: {
+						      		label: "确定",
+						      		className: "btn-"+bootstrapSkin,
+						      		callback: function() {
+						      			return true;
+						      		}
+								}
+							}
+						});
+	        
+					} else if (data.result_code == "N") {
+					recordLog("OF","APPLETPC","新增工艺价格失败",securityContext.user_id);
+						result = false;
+						window.top.bootbox.dialog({
+							title: "错误信息",
+							message: "保存失败！" + "<br><br>" + json.result_info,
+							size: "middle",
+							buttons: {
+								cancelType: {
+						      		label: "确定",
+						      		className: "btn-"+bootstrapSkin,
+						      		callback: function() {
+						      			return true;
+						      		}
+								}
+							}
+						});
+					}
+			    }
+			});
+	}
+	
+	return result;
+}
+function totalPracticalPrice(obj){
+	if(obj){
+	obj.value = obj.value.replace(/[^\d.]/g,""); // 清除"数字"和"."以外的字符
+	obj.value = obj.value.replace(/^\./g,""); // 验证第一个字符是数字
+	obj.value = obj.value.replace(/\.{2,}/g,"."); // 只保留第一个, 清除多余的
+	obj.value = obj.value.replace(".","$#$").replace(/\./g,"").replace("$#$",".");
+	//obj.value = obj.value.replace(/^(\-)*(\d+)\.(\d\d).*$/,'$1$2.$3'); // 只能输入两个小数
+	}
+}
+
+
+</script>

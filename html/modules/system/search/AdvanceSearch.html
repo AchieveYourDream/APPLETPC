@@ -1,0 +1,485 @@
+<script type="text/javascript">
+         if(sessionStorage.getItem('securityContext')==null){
+         window.location.href="/APPLETPC/login.html";
+        }
+        var securityContext = JSON.parse(sessionStorage.getItem('securityContext'));
+
+        var path = sessionStorage.getItem('path');
+        var searchCode = sessionStorage.getItem('searchCode');
+</script>
+
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+	<title>高级搜索</title>
+
+	<link type="text/css" rel="stylesheet" href="/APPLETPC/css/common/common.css">
+	<script type="text/javascript" src="/APPLETPC/js/common/common.js"></script>
+	<script type="text/javascript" src="/APPLETPC/js/common/util.js"></script>
+	<script type="text/javascript"src="/APPLETPC/js/jquery/jquery-2.2.3.min.js"></script>
+    <script type="text/javascript" src="/APPLETPC/js/json/json2.js"></script>
+    <link type="text/css" rel="stylesheet" href="/APPLETPC/js/bootstrap/css/bootstrap.css">
+    <script type="text/javascript" src="/APPLETPC/js/bootstrap/js/bootstrap.js"></script>
+    <script type="text/javascript" src="/APPLETPC/js/plugins/bootstrap-box/js/bootbox.min.js"></script>
+	
+	<!-- bootstrap-datetime -->
+	<link type="text/css" rel="stylesheet"
+		href="/APPLETPC/js/plugins/bootstrap-datetime/css/bootstrap-datetimepicker.min.css">
+		
+	<script type="text/javascript"
+		src="/APPLETPC/js/plugins/bootstrap-datetime/js/bootstrap-datetimepicker.min.js"></script>
+		
+	<script type="text/javascript"
+		src="/APPLETPC/js/plugins/bootstrap-datetime/js/locales/bootstrap-datetimepicker.zh-CN.js"></script>
+</head>
+<body>
+	<div class="container-fluid" style="margin:0px;padding:0px;">
+	    <table id="AdvanceSearchTable" class="my-form-table-content">
+	    
+	    </table>
+	</div>
+</body>
+</html>
+
+<script type="text/javascript">
+
+var sscVO = null;
+
+var storageSSCVO = null;
+
+$(document).ready(function() {
+	var searchCondition = sessionStorage.getItem(searchCode + "SearchCondition");
+	if(searchCondition){
+		storageSSCVO = JSON.parse(searchCondition);
+	}
+	
+	var url = path+"/app/sys/search/getSearchColumnList";
+	url += "?t=" + new Date();
+	url += "&searchCode=" + searchCode;
+	url+="&token="+securityContext.token;
+	$.post(url, function(data) {
+		if (data.result_code == "Y") {
+			sscVO = JSON.parse(data.result_info);
+			
+			var html = '';
+			
+			$.each(sscVO, function(index, d){
+				html += '<tr>';
+				html += '	<td class="my-form-table-td-label" style="width:120px;">';
+				html += '		<label class="control-label" style="margin:5px;padding:0px;">' + d.column_name + '</label>';
+				html += '	</td>';
+				html += '	<td class="my-form-table-td-content">';
+				
+				if (d.element_type == 'text') {
+					html += '<input id="' + d.column_code + '" name="' + d.column_code + '" type="text" class="form-control input-sm" style="width:180px;padding:5px;float:left;">';
+				} else if (d.element_type == 'select') {
+					html += '<select id="' + d.column_code + '" name="' + d.column_code + '" class="form-control input-sm" style="width:180px;padding:5px;float:left;">';
+					html += '	<option value=""></option>';
+					
+					var data = getDataDictTypeList(d.ddt_code);
+					$.each(data, function(i, d1){
+						html += '	<option value="' + d1.item_code + '">' + d1.item_name + '</option>';
+					});
+					
+					html += '</select>';
+				} else if (d.element_type == 'radio') {
+					var data = getDataDictTypeList(d.ddt_code);
+					$.each(data, function(i, d1){
+						html += '<input type="radio" name="' + d.column_code + '">' + d1.item_name;
+						
+						html += '&nbsp;&nbsp;&nbsp;&nbsp;';
+					});
+				} else if (d.element_type == 'checkbox') {
+					if (d.ddt_code) {
+						var data = getDataDictTypeList(d.ddt_code);
+// 						var arry=d.attribute_value.split(",");
+						$.each(data, function(i, d1){
+// 							if (jQuery.inArray( d1.item_code, arry)!=-1) {
+// 								html += '<input type="checkbox" name="' + d.column_code + '" value="' + d1.item_code + '" checked="checked">' + d1.item_name;
+// 							} else {
+								html += '<input type="checkbox" name="' + d.column_code + '" value="' + d1.item_code + '">' + d1.item_name;
+// 							}
+							
+							html += '&nbsp;&nbsp;&nbsp;&nbsp;';
+						});
+					} else {
+						html += '<input type="checkbox" id="' + d.column_code + '">';
+					}
+				} else if (d.element_type == 'lov') {
+					html += '<div class="input-group">';
+					
+					html += '	<input type="hidden" id="' + d.column_code + '" name="' + d.column_code + '">';
+					html += '	<input type="text" id="' + d.column_code + '_text" name="' + d.column_code + '_text" class="form-control input-sm" style="width:155px;padding:5px;float:left;background-color:#fff" readOnly>';
+					
+					html += '	<span class="input-group-btn">';
+					html += '		<button id="' + d.column_code + '_btn" class="btn btn-default" type="button" style="padding:4px 6px" onclick="openLov(\'' + d.lov_code + '\',\'' + d.column_code + '\');">';
+					html += '			<i class="glyphicon glyphicon-search"></i>';
+					html += '		</button>';
+					html += '	</span>';
+					html += '</div>';
+				} else if (d.element_type == 'tree') {
+					html += '<div class="input-group">';
+					
+					html += '	<input type="hidden" id="' + d.column_code + '" name="' + d.column_code + '">';
+					html += '	<input type="text" id="' + d.column_code + '_text" name="' + d.column_code + '_text" class="form-control input-sm" style="width:155px;padding:5px;float:left;background-color:#fff" readOnly>';
+					
+					html += '	<span class="input-group-btn">';
+					html += '		<button id="' + d.column_code + '_btn" class="btn btn-default" type="button" style="padding:4px 6px" onclick="openTree(\'' + d.ds_code + '\',\'' + d.column_code + '\');">';
+					html += '			<i class="glyphicon glyphicon-search"></i>';
+					html += '		</button>';
+					html += '	</span>';
+					html += '</div>';
+				} else if (d.element_type == 'date') {
+					html += '<input type="hidden" id="' + d.column_code + '"/>';
+					html += '<div class="input-group date form_date" data-date-format="yyyy-mm-dd" data-link-field="' + d.column_code + '" data-link-format="yyyy-mm-dd">';
+					html += '	<input class="form-control input-sm" type="text" id="' + d.column_code + '_text" style="width:140px;padding:5px;float:left;background-color:#fff" readonly>';
+					html += '	<span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>';
+					html += '</div>';
+				} else if (d.element_type == 'time') {
+					html += '<input type="hidden" id="' + d.column_code + '"/>';
+					html += '<div class="input-group date form_time" data-date-format="hh:ii:ss" data-link-field="' + d.column_code + '" data-link-format="hh:ii:ss">';
+					html += '	<input class="form-control input-sm" type="text" id="' + d.column_code + '_text" style="width:140px;padding:5px;float:left;background-color:#fff" readonly>';
+					html += '	<span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>';
+					html += '</div>';
+				} else if (d.element_type == 'datetime') {
+					html += '<input type="hidden" id="' + d.column_code + '"/>';
+					html += '<div class="input-group date form_datetime" data-date-format="yyyy-mm-dd hh:ii:ss" data-link-field="' + d.column_code + '" data-link-format="yyyy-mm-dd hh:ii:ss">';
+					html += '	<input class="form-control input-sm" type="text" id="' + d.column_code + '_text" style="width:140px;padding:5px;float:left;background-color:#fff" readonly>';
+					html += '	<span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>';
+					html += '</div>';
+				} else if (d.element_type == 'monthtime') {
+					html += '<input type="hidden" id="' + d.column_code + '"/>';
+					html += '<div class="input-group date form_month form_month_date" data-date-format="yyyy-mm" data-link-field="' + d.column_code + '" data-link-format="yyyy-mm">';
+					html += '	<input class="form-control input-sm" type="text" id="' + d.column_code + '_text" style="width:140px;padding:5px;float:left;background-color:#fff" readonly>';
+					html += '	<span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>';
+					html += '</div>';
+				}
+				
+				html += '	</td>';
+				html += '</tr>';
+			});
+			
+			$("#AdvanceSearchTable").append(html);
+			
+			$('.form_date').datetimepicker({
+		        language: 'zh-CN',
+				autoclose: true,
+				startView: 2,
+				minView: 2
+		    });
+			
+			$('.form_time').datetimepicker({
+		        language: 'zh-CN',
+				autoclose: true,
+				startView: 1,
+				minView: 0
+		    });
+			
+			$('.form_datetime').datetimepicker({
+		        language: 'zh-CN',
+				autoclose: true,
+				startView: 2
+		    });
+		    
+		    $('.form_month').datetimepicker({
+			    //年月
+			    format: 'yyyy-mm',  
+			     weekStart: 1,  
+			     autoclose: true,  
+			     startView: 3,  
+			     minView: 3,  
+			     forceParse: false,  
+			     language: 'zh-CN'
+			});
+			
+			if (storageSSCVO) {
+				$.each(sscVO, function(index, d){
+					if (d.element_type == 'text') {
+						$("#" + d.column_code).val(getSearchColumnValue(d.column_code));
+					} else if (d.element_type == 'select') {
+						$("#" + d.column_code).val(getSearchColumnValue(d.column_code));
+						var count = $("#" + d.column_code + " option").length;
+						for(var i=0; i<count; i++) {
+							if($("#" + d.column_code).get(0).options[i].value == getSearchColumnValue(d.column_code)) {
+								$("#" + d.column_code).get(0).options[i].selected = true;
+								break;
+							}
+						}
+					} else if (d.element_type == 'radio') {
+						$("input[name='" + d.column_code + "'][value=" + getSearchColumnValue(d.column_code) + "]").attr("checked", true);
+					} else if (d.element_type == 'checkbox') {
+						$("input[name='" + d.column_code + "'][value=" + getSearchColumnValue(d.column_code) + "]").attr("checked", true);
+					} else if (d.element_type == 'lov') {
+						var lovText = getLovDisplayText(d.lov_code, getSearchColumnValue(d.column_code));
+						$("#" + d.column_code + "_text").val(lovText);
+					} else if (d.element_type == 'tree') {
+						var lotText = getTreeDisplayText(d.ds_code, getSearchColumnValue(d.column_code));
+						$("#" + d.column_code + "_text").val(lotText);
+					} else if (d.element_type == 'date') {
+						$("#" + d.column_code).val(getSearchColumnValue(d.column_code));
+						$("#" + d.column_code + "_text").val(getSearchColumnValue(d.column_code));
+					} else if (d.element_type == 'time') {
+						$("#" + d.column_code).val(getSearchColumnValue(d.column_code));
+						$("#" + d.column_code + "_text").val(getSearchColumnValue(d.column_code));
+					} else if (d.element_type == 'datetime') {
+						$("#" + d.column_code).val(getSearchColumnValue(d.column_code));
+						$("#" + d.column_code + "_text").val(getSearchColumnValue(d.column_code));
+					} else if (d.element_type == 'monthtime') {
+						$("#" + d.column_code).val(getSearchColumnValue(d.column_code));
+						$("#" + d.column_code + "_text").val(getSearchColumnValue(d.column_code));
+					}
+				});
+			}
+		} else if (data.result_code == "N") {
+			window.top.bootbox.dialog({
+				title: "错误信息",
+				message: "数据加载失败！" + "<br><br>" + data.result_info,
+				size: "middle",
+				buttons: {
+					cancelType: {
+			      		label: "确定",
+			      		className: "btn-default",
+			      		callback: function() {
+			      			return true;
+			      		}
+					}
+				}
+			});
+		}
+	});
+});
+
+function getSearchColumnValue(columnCode) {
+	var columnValue;
+	$.each(storageSSCVO, function(index, d){
+		if (d.search_code == searchCode && d.column_code == columnCode) {
+			columnValue = d.column_value;
+			return false;
+		}
+		
+	});
+	return columnValue;
+}
+
+// 初始化下拉列表
+function getDataDictTypeList(typeCode){
+	var ddi;
+	
+	var url = path+"api/common/list/getSingleDataDictItemList";
+    url += "?typeCode=" + typeCode;
+    url += "&enabledFlag=Y";
+	
+	$.ajax({
+		type: "GET",
+		url: url,
+		async: false,
+		headers:{"token":securityContext.token},
+		success: function(data) {
+			if (data.result_code == "Y") {
+				ddi = JSON.parse(data.result_info);
+			} else if (data.result_code == "N") {
+				window.top.bootbox.dialog({
+					title: "错误信息",
+					message: "数据加载失败！" + "<br><br>" + data.result_info,
+					size: "middle",
+					buttons: {
+						cancelType: {
+				      		label: "确定",
+				      		className: "btn-",
+				      		callback: function() {
+				      			return true;
+				      		}
+						}
+					}
+				});
+			}
+		}
+	});
+	
+	return ddi;
+}
+
+function openLov(lovCode, lovId) {
+	var url ="/APPLETPC/jsp/common/lov/lov.html";
+	sessionStorage.setItem('lovCode', lovCode);
+	sessionStorage.setItem('lovType', 'single');
+	sessionStorage.setItem('message', '值列表数据');
+	var lovFrame = '<iframe id="lovFrame" class="my-modal-iframe" width="100%" height="350px" src="' + url + '"></iframe>';
+	window.top.bootbox.dialog({
+		title: "值列表",
+		message: lovFrame,
+		size: "middle",
+		buttons: {
+			saveType: {
+	      		label: "确定",
+	      		className: "btn-default",
+	      		callback: function() {
+	      			var result = window.top.document.getElementById("lovFrame").contentWindow.getLovData();
+	      			if(result){
+	      			$("#" + lovId).val(result.lov_value);
+	      			$("#" + lovId + "_text").val(result.lov_text);
+	      			};
+	      			return result;
+	      		}
+			},
+			cancelType: {
+	      		label: "取消",
+	      		className: "btn-default",
+	      		callback: function() {
+	      			return true;
+	      		}
+			}
+		}
+	});
+}
+
+// 获取值列表某一项项显示文本
+function getLovDisplayText(lovCode, lovValue){
+	var lovText;
+	
+	var url = path+"/app/common/lov/getLovDisplayText";
+    url += "?lovCode=" + lovCode;
+    url += "&lovValue=" + lovValue;
+    
+	
+	$.ajax({
+		type: "POST",
+		url: url,
+		datatype: "json",
+		async: false,
+		headers:{"token":securityContext.token},
+		success: function(data) {
+			if (data.result_code == "Y") {
+				lovText = data.result_info;
+			} else if (data.result_code == "N") {
+				window.top.bootbox.dialog({
+					title: "错误信息",
+					message: "数据加载失败！" + "<br><br>" + data.result_info,
+					size: "middle",
+					buttons: {
+						cancelType: {
+				      		label: "确定",
+				      		className: "btn-default",
+				      		callback: function() {
+				      			return true;
+				      		}
+						}
+					}
+				});
+			}
+		}
+	});
+	
+	return lovText;
+}
+
+function openTree(structCode, lotId) {
+	var url = "/APPLETPC/jsp/common/lot/lot.html";
+	
+	sessionStorage.setItem('structCode', structCode);
+	sessionStorage.setItem('treeType', 'single');
+	
+	var lotFrame = '<iframe id="lotFrame" class="my-modal-iframe" width="100%" height="450px" src="' + url + '"></iframe>';
+	window.top.bootbox.dialog({
+		title: "&nbsp;&nbsp;",
+		message: lotFrame,
+		size: "middle",
+		buttons: {
+			saveType: {
+	      		label: "确定",
+	      		className: "btn-default",
+	      		callback: function() {
+	      			var result = window.top.document.getElementById("lotFrame").contentWindow.getLotData();
+	      			$("#" + lotId).val(result.lot_value);
+	      			$("#" + lotId + "_text").val(result.lot_text);
+	      			return result;
+	      		}
+			},
+			cancelType: {
+	      		label: "取消",
+	      		className: "btn-default",
+	      		callback: function() {
+	      			return true;
+	      		}
+			}
+		}
+	});
+}
+
+// 获取树列表显示文本
+function getTreeDisplayText(structCode, nodeCode){
+	var lotText;
+	
+	var url = path+"/app/common/lot/getTreeDisplayText";
+    url += "?structCode=" + structCode;
+    url += "&nodeCode=" + nodeCode;
+	
+	$.ajax({
+		type: "POST",
+		url: url,
+		datatype: "json",
+		async: false,
+		headers:{"token":securityContext.token},
+		success: function(data) {
+			if (data.result_code == "Y") {
+				lotText = data.result_info;
+			} else if (data.result_code == "N") {
+				window.top.bootbox.dialog({
+					title: "错误信息",
+					message: "数据加载失败！" + "<br><br>" + data.result_info,
+					size: "middle",
+					buttons: {
+						cancelType: {
+				      		label: "确定",
+				      		className: "btn-default",
+				      		callback: function() {
+				      			return true;
+				      		}
+						}
+					}
+				});
+			}
+		}
+	});
+	
+	return lotText;
+}
+
+function getAdvanceSearchConditions() {
+	$.each(sscVO, function(index, d){
+		if (sscVO[index].element_type == 'text'
+				|| sscVO[index].element_type == 'select'
+				|| sscVO[index].element_type == 'lov'
+				|| sscVO[index].element_type == 'tree'
+				|| sscVO[index].element_type == 'date'
+				|| sscVO[index].element_type == 'time'
+				|| sscVO[index].element_type == 'datetime'
+				|| sscVO[index].element_type == 'monthtime') {
+			sscVO[index].column_value = $('#' + d.column_code).val();
+		} else if (sscVO[index].element_type == 'radio') {
+			sscVO[index].column_value = $("input[name='" + sscVO[index].column_code + "']:checked").val();
+		} else if (sscVO[index].element_type == 'checkbox') {
+		debugger;
+			if (sscVO[index].ddt_code) {
+				$("input[name='" + sscVO[index].column_code + "']:checked").each(function(){
+									      sscVO[index].column_value+=$(this).val()+",";//将选中的值添加到数组chk_value中  
+				});
+			sscVO[index].column_value=sscVO[index].column_value.substring(0,sscVO[index].column_value.length-1);
+			}
+// 			 else {
+// 				if ($('#' + sscVO[index].column_code).is(':checked')) {
+// 					sscVO[index].column_value = 'Y';
+// 				} else {
+// 					sscVO[index].column_value = 'N';
+// 				}
+// 			}
+		}
+	});
+	
+	return sscVO;
+}
+</script>

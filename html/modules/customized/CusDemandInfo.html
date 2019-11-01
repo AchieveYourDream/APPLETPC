@@ -1,0 +1,179 @@
+<script type="text/javascript">
+         if(sessionStorage.getItem('securityContext')==null){
+         window.location.href="/APPLETPC/login.html";
+        }
+        var securityContext = JSON.parse(sessionStorage.getItem('securityContext'));
+
+        var path = sessionStorage.getItem('path');
+        var demand_id = sessionStorage.getItem('demand_id');
+</script>
+<!DOCTYPE html>
+<html style="overflow-x: hidden; ">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+	<title>定制需求详情</title>
+	<link type="text/css" rel="stylesheet" href="/APPLETPC/css/common/common.css">
+    <link type="text/css" rel="stylesheet" href="/APPLETPC/js/bootstrap/css/bootstrap.css">
+	<script type="text/javascript" src="/APPLETPC/js/common/common.js"></script>
+	<script type="text/javascript" src="/APPLETPC/js/common/util.js"></script>
+	<script type="text/javascript"src="/APPLETPC/js/jquery/jquery-2.2.3.min.js"></script>
+    <script type="text/javascript" src="/APPLETPC/js/json/json2.js"></script>
+    <script type="text/javascript" src="/APPLETPC/js/bootstrap/js/bootstrap.js"></script>
+	
+	
+<!-- bootstrap-table -->
+	<link type="text/css" rel="stylesheet"
+		href="/APPLETPC/js/plugins/bootstrap-table/css/bootstrap-table.css">
+		
+	<script type="text/javascript"
+		src="/APPLETPC/js/plugins/bootstrap-table/js/bootstrap-table.js"></script>
+	
+	<script type="text/javascript"
+		src="/APPLETPC/js/plugins/bootstrap-table/local/bootstrap-table-zh-CN.js"></script>
+</head>
+<body class="my-body-content">
+	<form id="CusDemandForm" name="CusDemandForm" class="my-form-content">
+	<div class="row" style="margin:0px;padding:0px;">	
+		<table class="my-form-table-content">
+		<tr>
+		      <td class="my-form-table-td-content" style="width:100px;">
+					<label class="control-label" style="margin:5px;padding:0px;">会员手机号</label>
+				</td>
+				
+		
+				<td class="my-form-table-td-content" style="width:100px;">
+					<label class="control-label" style="margin:5px;padding:0px;">需求品类</label>
+				</td>
+				
+				<td class="my-form-table-td-content" style="width:100px;">
+					<label class="control-label" style="margin:5px;padding:0px;">着装场合</label>
+				</td>
+			</tr>
+			
+			<tr>
+			<td class="my-form-table-td-content" style="width:280px;">
+					<input id="member_id" name="member_id" type="text" class="form-control input-sm" style="width:260px;padding:5px;float:left;">
+				
+				</td>
+				<td class="my-form-table-td-content" style="width:280px;">
+					<input id="user_category" name="user_category" type="text" class="form-control input-sm" style="width:260px;padding:5px;float:left;">
+				
+			
+				</td>
+				<td class="my-form-table-td-content" style="width:280px;">
+					<input id="dress_occasion" name="dress_occasion" type="text" class="form-control input-sm" style="width:260px;padding:5px;float:left;">
+				</td>
+			
+			
+			</tr>
+			
+			<tr>
+				<td class="my-form-table-td-content">
+					<label class="control-label" style="margin:5px;padding:0px;">预算区间</label>
+				</td>
+				<td class="my-form-table-td-content" style="width:100px;">
+					<label class="control-label" style="margin:5px;padding:0px;">推荐人手机号</label>
+				</td>
+				<td class="my-form-table-td-content" style="width:100px;">
+					<label class="control-label" style="margin:5px;padding:0px;">创建时间</label>
+				</td>
+				
+			</tr>
+			
+			
+			
+			<tr>
+			
+			<td class="my-form-table-td-content" style="width:280px;">
+						<input id="total_budget" name="total_budget" type="text" class="form-control input-sm" style="width:260px;padding:5px;float:left;">
+				</td>
+				<td class="my-form-table-td-content" style="width:280px;">
+						<input id="recommender_id" name="recommender_id" type="text" class="form-control input-sm" style="width:260px;padding:5px;float:left;">
+				</td>
+			<td class="my-form-table-td-content"  >
+					<input id="create_time" name="create_time" type="text" class="form-control input-sm" style="width:260px;padding:5px;float:left;">
+			</tr>
+			
+			<tr>	
+				<td class="my-form-table-td-content" style="width:100px;">
+					<label class="control-label" style="margin:5px;padding:0px;">备注</label>
+				</td>
+			</tr>
+			<tr>
+				<td class="my-form-table-td-content"  >
+					<input id="remark" name="remark" type="text" class="form-control input-sm" style="width:260px;padding:5px;float:left;">
+			</tr>
+			
+		</table>
+</div>
+<div class="row collectdiv">
+		<p  style="font-size: 14px;font-weight: 600;margin-bottom: 0;">定制需求行信息</p>
+</div>
+<div class="row " style="margin:0px;padding:0px;">
+			
+	 <table id="cusDemandLine"
+			class="table table-condensed"
+			           data-toggle="table"
+			           data-icon-size="sm"
+			           data-striped="true"
+			           >
+			        <thead>
+			           	<tr>
+			           		<th data-halign="center" data-align="center" data-formatter="indexNuber" >序号</th>
+			           		<th data-field="catename"data-halign="center" data-align="center">品类名称</th>
+			                <th data-field="numbers" data-halign="center" data-align="center">数量</th>
+			                <th data-field="price"   data-halign="center" data-align="center" >单价区间</th>
+			            </tr>
+			        </thead>
+		</table>
+</div>
+	</form>
+</body>
+</html>
+
+<script type="text/javascript">
+
+$(document).ready(function() {
+		
+		var url = path+"api/customized/selectAppCusDemandByPk";
+		url += "?t=" + new Date();
+		
+		$.ajax({
+			type: "POST",
+		    url: url,
+		    async: false,
+		    data:{"demand_id":demand_id,"token":securityContext.token},
+		    success: function(data){
+				
+				if (data.result_code == "Y") {
+				var cd=JSON.parse(data.result_info)
+					dwr.util.setValues(cd);
+					
+					$("#cusDemandLine").bootstrapTable("load", cd.list);
+					
+				} else if (data.result_code == "N") {
+					result = false;
+					window.parent.bootbox.dialog({
+						title: "错误信息",
+						message: "获取失败！" + "<br><br>" + data.result_info,
+						size: "middle",
+						buttons: {
+							cancelType: {
+					      		label: "确定",
+					      		className: "btn-"+bootstrapSkin,
+					      		callback: function() {
+					      			return true;
+					      		}
+							}
+						}
+					});
+				}
+		    }
+		});
+});
+
+
+</script>

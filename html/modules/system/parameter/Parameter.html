@@ -1,0 +1,477 @@
+<script type="text/javascript">
+    if(sessionStorage.getItem('securityContext')==null){
+        window.location.href="/APPLETPC/login.html";
+    }
+    var securityContext = JSON.parse(sessionStorage.getItem('securityContext'));
+    var path = sessionStorage.getItem('path');
+</script>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Data Table</title>
+
+    <!-- Styles -->
+    <script src="/APPLETPC/js/jquery/jquery-3.4.1.min.js"></script>
+
+</head>
+<style>
+
+    .card{
+        height: 350px;
+    }
+
+</style>
+<body>
+
+<div class="content-wrap">
+    <div class="main">
+            <!-- /# row -->
+            <section clase="mainSection">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="card">
+                            <div class="bootstrap-data-table-panel">
+                                <div class="table-responsive">
+                                        <div id="typeToolbar">
+                                            <button  class="btn  btn-sm btn-primary" onclick="queryParameterTypeList();">
+                                                <i class="glyphicon glyphicon-refresh"></i>&nbsp;刷新
+                                            </button>
+                                            <button class="btn  btn-sm btn-success" onclick="addParameterType();">
+                                                <i class="glyphicon glyphicon-plus"></i>&nbsp;新建
+                                            </button>
+                                            <button  class="btn  btn-sm btn-warning" onclick="editParameterType();">
+                                                <i class="glyphicon glyphicon-pencil"></i>&nbsp;编辑
+                                            </button>
+                                            <button  class="btn  btn-sm  btn-info" onclick="ParameterDefine();">
+                                                <i class="glyphicon glyphicon-list-alt"></i>&nbsp;设置
+                                            </button>
+                                        </div>
+
+                                        <table id="typeTable"
+                                               class="table table-condensed"
+                                               data-toggle="table"
+                                               data-toolbar="#typeToolbar"
+                                               data-icon-size="sm"
+                                               data-pagination="true"
+                                               data-page-size="5"
+                                               data-page-list="[5,10,15,20,25]"
+                                               data-striped="true"
+                                               data-search="true">
+                                            <thead>
+                                            <tr>
+                                                <th data-field="typeCode" data-halign="center" data-align="left" data-sortable="true">参数类型编码</th>
+                                                <th data-field="typeName" data-halign="center" data-align="left" data-sortable="true">参数类型名称</th>
+                                                <!-- 			                <th data-field="display_order" data-halign="center" data-align="right" data-sortable="true">显示顺序</th> -->
+                                                <th data-field="description" data-halign="center" data-align="left">说明</th>
+                                            </tr>
+                                            </thead>
+                                        </table>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- /# card -->
+                    </div>
+                    <!-- /# column -->
+                </div>
+                <!-- /# row -->
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="card" style="height: 350px">
+                            <div class="bootstrap-data-table-panel">
+                                <div class="table-responsive">
+                                    <div id="parameterToolbar">
+                                        <button  class="btn  btn-sm  btn-primary" onclick="queryParameterDefineList();">
+                                            <i class="glyphicon glyphicon-refresh"></i>&nbsp;刷新
+                                        </button>
+                                        <button  class="btn  btn-sm btn-success" onclick="addParameterDefine();">
+                                            <i class="glyphicon glyphicon-plus"></i>&nbsp;新建
+                                        </button>
+                                        <button  class="btn  btn-sm btn-warning" onclick="editParameterDefine();">
+                                            <i class="glyphicon glyphicon-pencil"></i>&nbsp;编辑
+                                        </button>
+
+                                    </div>
+
+                                    <table id="parameterTable"
+                                           data-toggle="table"
+                                           data-toolbar="#parameterToolbar"
+                                           data-icon-size="sm"
+                                           data-pagination="true"
+                                           data-page-size="5"
+                                           data-page-list="[5,10,15,20,25]"
+                                           data-striped="true"
+                                           data-search="true">
+                                        <thead>
+                                        <tr>
+                                            <th data-field="parameterCode" data-halign="center" data-align="left" data-sortable="true">参数编码</th>
+                                            <th data-field="parameterName" data-halign="center" data-align="left" data-sortable="true">参数名称</th>
+                                            <th data-field="elementTypeName" data-halign="center" data-align="left" data-sortable="true">元素类型</th>
+                                            <th data-field="ddtText" data-halign="center" data-align="left" data-sortable="true">数据字典</th>
+                                            <th data-field="dsText" data-halign="center" data-align="left" data-sortable="true">数据结构</th>
+                                            <th data-field="lovText" data-halign="center" data-align="left" data-sortable="true">值列表</th>
+                                            <th data-field="description" data-halign="center" data-align="left">说明</th>
+                                        </tr>
+                                        </thead>
+                                    </table>
+                                </div>
+                            </div>
+                            <!-- /# card -->
+                        </div>
+                        <!-- /# column -->
+                    </div>
+                </div>
+
+
+
+            </section>
+        </div>
+    </div>
+</div>
+
+</body>
+
+</html>
+
+<script type="text/javascript">
+    var currentTypeCode;
+    var currentParameterCode;
+    $(document).ready(function() {
+        $("#typeTable").on('click-row.bs.table', function (e, row, $element) {
+            $('.warning').removeClass('warning');
+            $($element).addClass('warning');
+            currentTypeCode = row.type_code;
+            queryParameterDefineList();
+        });
+
+        $("#typeTable").on('dbl-click-row.bs.table', function (e, row, $element) {
+            $('.warning').removeClass('warning');
+            $($element).addClass('warning');
+            currentTypeCode = row.type_code;
+            editParameterType();
+            queryParameterDefineList();
+        });
+
+        $("#parameterTable").on('click-row.bs.table', function (e, row, $element) {
+            $('.warning').removeClass('warning');
+            $($element).addClass('warning');
+            currentParameterCode = row.parameter_code;
+        });
+
+        $("#parameterTable").on('dbl-click-row.bs.table', function (e, row, $element) {
+            $('.warning').removeClass('warning');
+            $($element).addClass('warning');
+            editParameterDefine();
+            currentParameterCode = row.parameter_code;
+        });
+
+        queryParameterTypeList();
+    });
+
+    // 获取参数类型列表
+    function queryParameterTypeList() {
+        $("#typeTable").bootstrapTable('removeAll');
+        $("#parameterTable").bootstrapTable('removeAll');
+
+        var url = path+"app/system/parameter/getParameterTypeList";
+        url += "?currentTime=" + new Date();
+
+        $.ajax({
+            type: "get",
+            url: url,
+            async:false,
+            headers: {"Authorization":securityContext.Authorization},
+            success: function(data) {
+
+                if (data.code == "S") {
+                    $("#typeTable").bootstrapTable("load", data.data);
+
+                    currentTypeCode = null;
+                    currentParameterCode = null;
+                } else {
+                    $.growl.error({title: "提示信息", message:"数据加载失败！" + "<br><br>" + data.data});
+                }
+            }
+        });
+    }
+
+    // 获取参数列表
+    function queryParameterDefineList() {
+        $("#parameterTable").bootstrapTable('removeAll');
+
+        var url = path+"app/system/parameter/getParameterDefineList";
+        url += "?currentTime=" + new Date();
+        url += "&typeCode=" + currentTypeCode;
+
+        $.ajax({
+            type: "get",
+            url: url,
+            async:false,
+            headers:{"token":securityContext.token},
+            success: function(data) {
+
+                if (data.code == "S") {
+                    $("#parameterTable").bootstrapTable("load", JSON.parse(data.data));
+
+                    currentParameterCode = null;
+                } else {
+                    $.growl.error({title: "提示信息", message:"数据加载失败！" + "<br><br>" + data.data});
+                }
+            }
+        });
+    }
+
+    // 新建参数类型
+    function addParameterType() {
+        var url = "/APPLETPC/html/modules/system/parameter/ParameterTypeAdd.html";
+console.log(window.top)
+        var typeAddFrame = '<iframe id="typeAddFrame" class="my-modal-iframe" width="100%" height="300px" src="' + url + '"></iframe>';
+        window.top.bootbox.dialog({
+            title: "参数类型-新建",
+            message: typeAddFrame,
+            size: "small",
+            buttons: {
+                saveType: {
+                    label: "保存",
+                    className: "btn-success",
+                    callback: function() {
+                        var result = window.top.document.getElementById("typeAddFrame").contentWindow.doAddParameterType();
+                        if (result) {
+                            queryParameterTypeList();
+                        }
+                        return result;
+                    }
+                },
+                cancelType: {
+                    label: "取消",
+                    className: "btn-default",
+                    callback: function() {
+                        return true;
+                    }
+                }
+            }
+        });
+    }
+
+    // 编辑参数类型
+    function editParameterType() {
+        if (!currentTypeCode) {
+            window.top.bootbox.dialog({
+                size: 'small',
+                message: "请先选择参数类型！",
+                buttons: {
+                    saveType: {
+                        label: "确定",
+                        className: "btn-success",
+                        callback: function() {
+                            return true;
+                        }
+                    }
+                }
+            });
+            return;
+        }
+
+        var url = "/APPLETPC/html/modules/system/parameter/ParameterTypeEdit.html";
+        sessionStorage.setItem('typeCode', currentTypeCode);
+
+        var typeEditFrame = '<iframe id="typeEditFrame" class="my-modal-iframe" width="100%" height="200px" src="' + url + '"></iframe>';
+
+        window.top.bootbox.dialog({
+            title: "参数类型-编辑",
+            message: typeEditFrame,
+            size: "small",
+            buttons: {
+                saveType: {
+                    label: "保存",
+                    className: "btn-success",
+                    callback: function() {
+                        var result = window.top.document.getElementById("typeEditFrame").contentWindow.doEditParameterType();
+                        if (result) {
+                            queryParameterTypeList();
+                        }
+                        return result;
+                    }
+                },
+                cancelType: {
+                    label: "取消",
+                    className: "btn-default",
+                    callback: function() {
+                        return true;
+                    }
+                }
+            }
+        });
+    }
+
+    // 参数扩展属性
+    function addParameterDefine() {
+        if (!currentTypeCode) {
+            window.top.bootbox.dialog({
+                size: 'small',
+                message: "请先选择参数类型！",
+                buttons: {
+                    saveType: {
+                        label: "确定",
+                        className: "btn-success",
+                        callback: function() {
+                            return true;
+                        }
+                    }
+                }
+            });
+            return;
+        }
+
+        var url = "/APPLETPC/html/modules/system/parameter/ParameterDefineAdd.html";
+        sessionStorage.setItem('typeCode', currentTypeCode);
+        var parameterAddFrame = '<iframe id="parameterAddFrame" class="my-modal-iframe" width="100%" height="350px" src="' + url + '"></iframe>';
+
+        window.top.bootbox.dialog({
+            title: "参数-新建",
+            message: parameterAddFrame,
+            size: "small",
+            buttons: {
+                saveType: {
+                    label: "保存",
+                    className: "btn-success",
+                    callback: function() {
+                        var result = window.top.document.getElementById("parameterAddFrame").contentWindow.doAddParameterDefine();
+                        if (result) {
+                            queryParameterDefineList();
+                        }
+                        return result;
+                    }
+                },
+                cancelType: {
+                    label: "取消",
+                    className: "btn-default",
+                    callback: function() {
+                        return true;
+                    }
+                }
+            }
+        });
+    }
+
+    // 编辑参数
+    function editParameterDefine() {
+        if (!currentTypeCode) {
+            window.top.bootbox.dialog({
+                size: 'small',
+                message: "请先选择参数类型！",
+                buttons: {
+                    saveType: {
+                        label: "确定",
+                        className: "btn-success",
+                        callback: function() {
+                            return true;
+                        }
+                    }
+                }
+            });
+            return;
+        }
+
+        if (!currentParameterCode) {
+            window.top.bootbox.dialog({
+                size: 'small',
+                message: "请先选择参数！",
+                buttons: {
+                    saveType: {
+                        label: "确定",
+                        className: "btn-success",
+                        callback: function() {
+                            return true;
+                        }
+                    }
+                }
+            });
+            return;
+        }
+
+        var url = "/APPLETPC/html/modules/system/parameter/ParameterDefineEdit.html";
+        sessionStorage.setItem('parameterCode', currentParameterCode);
+
+        var parameterEditFrame = '<iframe id="parameterEditFrame" class="my-modal-iframe" width="100%" height="350px" src="' + url + '"></iframe>';
+
+        window.top.bootbox.dialog({
+            title: "参数-编辑",
+            message: parameterEditFrame,
+            size: "small",
+            buttons: {
+                saveType: {
+                    label: "保存",
+                    className: "btn-success",
+                    callback: function() {
+                        var result = window.top.document.getElementById("parameterEditFrame").contentWindow.doEditParameterDefine();
+                        if (result) {
+                            queryParameterDefineList();
+                        }
+                        return result;
+                    }
+                },
+                cancelType: {
+                    label: "取消",
+                    className: "btn-default",
+                    callback: function() {
+                        return true;
+                    }
+                }
+            }
+        });
+    }
+    // 设置参数值
+    function ParameterDefine() {
+        if (!currentTypeCode) {
+            window.top.bootbox.dialog({
+                size: 'small',
+                message: "请先选择参数类型！",
+                buttons: {
+                    saveType: {
+                        label: "确定",
+                        className: "btn-success",
+                        callback: function() {
+                            return true;
+                        }
+                    }
+                }
+            });
+            return;
+        }
+
+        var url = "/APPLETPC/html/modules/system/parameter/ParameterConfigDetail.html";
+        sessionStorage.setItem('typeCode', currentTypeCode);
+        var parameterDefine = '<iframe id="parameterDefine" class="my-modal-iframe" width="100%" height="350px" src="' + url + '"></iframe>';
+
+        window.top.bootbox.dialog({
+            title: "设置参数值",
+            message: parameterDefine,
+            size: "small",
+            buttons: {
+                saveType: {
+                    label: "保存",
+                    className: "btn-success",
+                    callback: function() {
+                        var result = window.top.document.getElementById("parameterDefine").contentWindow.saveParameterConfig();
+                        if (result) {
+                            queryParameterDefineList();
+                        }
+                        return result;
+                    }
+                },
+                cancelType: {
+                    label: "取消",
+                    className: "btn-default",
+                    callback: function() {
+                        return true;
+                    }
+                }
+            }
+        });
+    }
+</script>

@@ -1,0 +1,612 @@
+<script type="text/javascript">
+       if(sessionStorage.getItem('securityContext')==null){
+         window.location.href="../../../login.html";
+        }
+        var securityContext = JSON.parse(sessionStorage.getItem('securityContext'));
+
+        var path = sessionStorage.getItem('path');
+        var redPath = sessionStorage.getItem('redPath');
+        var use_module = sessionStorage.getItem('use_module');
+</script>
+<!DOCTYPE html>
+<html>
+<head>
+	<title>资讯管理新建</title>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+	<link type="text/css" rel="stylesheet" href="/APPLETPC/css/common/common.css">
+    <link type="text/css" rel="stylesheet" href="/APPLETPC/js/bootstrap/css/bootstrap.css">
+	<script type="text/javascript"src="/APPLETPC/js/jquery/jquery-2.2.3.min.js"></script>
+	<script type="text/javascript" src="/APPLETPC/js/common/common.js"></script>
+	<script type="text/javascript" src="/APPLETPC/js/common/util.js"></script>
+    <script type="text/javascript" src="/APPLETPC/js/json/json2.js"></script>
+    <script type="text/javascript" src="/APPLETPC/js/bootstrap/js/bootstrap.js"></script>
+	<script type="text/javascript" src="/APPLETPC/js/json/model/AppGoods.js"></script>
+	<script type="text/javascript" src="/APPLETPC/js/plugins/jquery-validate/jquery.validate.min.js"></script>
+	<script type="text/javascript" src="/APPLETPC/js/plugins/jquery-validate/jquery.validate.plu.js"></script>
+	<link rel="stylesheet" href="/APPLETPC/js/plugins/jquery-chosen/css/chosen.css" type="text/css"></link>
+	<script type="text/javascript" src="/APPLETPC/js/plugins/jquery-chosen/js/chosen.jquery.js"></script>
+	<script type="text/javascript" src="/APPLETPC/js/plugins/layer/layer.js"></script>
+	<link rel="stylesheet" href="/APPLETPC/js/plugins/app-imgupload/main.css" type="text/css"></link>
+	
+<style type="text/css">
+.article {
+	border: 1px solid #ccc;
+	padding: 20px;
+  min-height: 230px;
+}
+.item {
+  width: 170px;
+  height: 170px;
+	float: left;
+	position: relative;
+	margin: 20px;
+}
+.addImg {
+	width: 170px;
+	height: 170px;
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 2;
+  cursor: pointer;
+}
+.preview,.preBlock{
+	position: absolute;
+  	display: none;
+	width: 170px;
+	height: 170px;
+	left: 0;
+	top: 0;
+}
+.delete {
+  width: 30px;
+	position: absolute;
+	right: 0;
+	top: 0;
+	cursor: pointer;
+	display: none;
+}
+.preBlock img {
+  display: block;
+	width: 170px;
+	height: 170px;
+}
+
+.describe{
+  position: absolute;
+  left: 62px;
+  top: 25px;
+  z-index: 2;
+  font-weight: bold;
+  color: #1dde46;
+}
+.upload_input{
+  display: block;
+  width: 0;
+  height: 0;
+  -webkit-opacity: 0.0;  
+  /* Netscape and Older than Firefox 0.9 */  
+  -moz-opacity: 0.0;  
+  /* Safari 1.x (pre WebKit!) 老式khtml内核的Safari浏览器*/  
+  -khtml-opacity: 0.0;  
+  /* IE9 + etc...modern browsers */  
+  opacity: .0;  
+  /* IE 4-9 */  
+  filter:alpha(opacity=0);  
+  /*This works in IE 8 & 9 too*/  
+  -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";  
+  /*IE4-IE9*/  
+  filter:progid:DXImageTransform.Microsoft.Alpha(Opacity=0); 
+}
+</style>
+</style>	
+</head>
+<body class="my-body-content">
+<form id="GoodsAddForm" name="GoodsAddForm" class="my-form-content">
+				<table class="my-form-table-content">
+					<tr>
+						<td class="my-form-table-td-label" style="width:60px">
+							<label class="control-label" style="margin:5px;padding:0px;" >商品名称</label>
+						</td>	
+						<td class="my-form-table-td-content" style="width:290px">
+							<input  id="goods_name" name="goods_name" type="text"   class="form-control input-sm"  style="width:270px;padding:5px;float:left;"    >
+						</td>
+						<td class="my-form-table-td-label" style="width:60px">
+							<label class="control-label" style="margin:5px;padding:0px;" >英文名称</label>
+						</td>	
+						<td class="my-form-table-td-content" style="width:290px">
+							<input  id="goods_name_en" name="goods_name_en" type="text"   class="form-control input-sm"  style="width:270px;padding:5px;float:left;"    >
+						</td>
+					</tr>
+					<tr>
+						<td class="my-form-table-td-label" style="width:60px">
+							<label class="control-label" style="margin:5px;padding:0px;" >面料名称</label>
+						</td>	
+						<td class="my-form-table-td-content" style="width:290px">
+							<input  id="fabric_name" name="fabric_name" type="text"   class="form-control input-sm"  style="width:270px;padding:5px;float:left;"    >
+						</td>
+						<td class="my-form-table-td-label">
+							<label class="control-label" style="margin:5px;padding:0px;">是否可定制</label>
+						</td>
+						<td class="my-form-table-td-content">
+							<select id="custom_flag" name="custom_flag" class="dept_select dimension_coding"  style="width:270px;padding:5px;float:left;" >
+							 <option value="Y">是</option>
+							 <option value="N">否</option>
+							</select> 
+						</td>
+					</tr>
+					<tr>
+						<td class="my-form-table-td-label" style="width:60px">
+							<label class="control-label" style="margin:5px;padding:0px;" >商品价格</label>
+						</td>	
+						<td class="my-form-table-td-content" style="width:290px">
+							<input  id="goods_sell_price" name="goods_sell_price" type="text"   class="form-control input-sm"  style="width:270px;padding:5px;float:left;"    >
+						</td>
+						<td class="my-form-table-td-label">
+							<label class="control-label" style="margin:5px;padding:0px;">产品风格</label>
+						</td>
+						<td class="my-form-table-td-content">
+							<select id="style_type" name="style_type" class="dept_select dimension_coding"  style="width:270px;padding:5px;float:left;" >
+							</select> 
+						</td>
+						
+					</tr>
+					
+					<tr>
+						<td class="my-form-table-td-label">
+							<label class="control-label" style="margin:5px;padding:0px;">热门商品</label>
+						</td>
+						<td class="my-form-table-td-content">
+							<select id="is_hot" name="is_hot" class="dept_select dimension_coding"  style="width:270px;padding:5px;float:left;" >
+							 <option value="Y">是</option>
+							 <option value="N">否</option>
+							</select> 
+						</td>
+						<td class="my-form-table-td-label">
+							<label class="control-label" style="margin:5px;padding:0px;">是否为新商品</label>
+						</td>
+						<td class="my-form-table-td-content">
+							<select id="is_new_product" name="is_new_product" class="dept_select dimension_coding"  style="width:270px;padding:5px;float:left;" >
+							 <option value="Y">是</option>
+							 <option value="N">否</option>
+							</select> 
+						</td>
+					</tr>
+					<tr>
+						<td class="my-form-table-td-label">
+							<label class="control-label" style="margin:5px;padding:0px;">是否上架</label>
+						</td>
+						<td class="my-form-table-td-content">
+							<select id="up_off_shielf" name="up_off_shielf" class="dept_select dimension_coding"  style="width:270px;padding:5px;float:left;" >
+							 <option value="Y">是</option>
+							 <option value="N">否</option>
+							</select> 
+						</td>
+						<td class="my-form-table-td-label">
+							<label class="control-label" style="margin:5px;padding:0px;">套装单品</label>
+						</td>
+						<td class="my-form-table-td-content">
+							<select id="is_suit" name="is_suit" class="dept_select dimension_coding"  style="width:270px;padding:5px;float:left;" >
+							 <option value="Y">是</option>
+							 <option value="N">否</option>
+							</select> 
+						</td>
+					</tr>
+					<tr>
+						<td class="my-form-table-td-label">
+							<label class="control-label" style="margin:5px;padding:0px;">产品大类</label>
+						</td>
+						<td class="my-form-table-td-content">
+							<select id="main_style" name="main_style" class="dept_select dimension_coding"  style="width:270px;padding:5px;float:left;"  onchange="getSubSelectInfo()">
+							</select> 
+						</td>
+						<td class="my-form-table-td-label">
+							<label class="control-label" style="margin:5px;padding:0px;">详细分类</label>
+						</td>
+						<td class="my-form-table-td-content">
+							<select id="sub_style" name="sub_style" class="dept_select dimension_coding"  style="width:270px;padding:5px;float:left;" >
+							</select> 
+						</td>
+					</tr>
+					
+					<tr>
+						<td class="my-form-table-td-label">
+							<label class="control-label" style="margin:5px;padding:0px;">APP首页显示</label>
+						</td>
+						<td class="my-form-table-td-content">
+							<select id="app_index_show" name="app_index_show" class="dept_select dimension_coding"  style="width:270px;padding:5px;float:left;" >
+							 <option value="Y">是</option>
+							 <option value="N">否</option>
+							</select> 
+						</td>
+						
+						<td class="my-form-table-td-label">
+							<label class="control-label" style="margin:5px;padding:0px;">是否生成详情</label>
+						</td>
+						<td class="my-form-table-td-content">
+							<select id="app_index_show" name="app_index_show" class="dept_select dimension_coding"  style="width:270px;padding:5px;float:left;" >
+							 <option value="Y">是</option>
+							 <option value="N">否</option>
+							</select> 
+						</td>
+					</tr>
+					<tr>
+					<td class="my-form-table-td-label">
+							<label class="control-label" style="margin:5px;padding:0px;" >APP显示顺序</label>
+						</td>	
+						<td class="my-form-table-td-content">
+							<input  id="app_index_order" name="app_index_order" type="text"   class="form-control input-sm"  style="width:270px;padding:5px;float:left;"    >
+						</td>
+						<td class="my-form-table-td-label">
+							<label class="control-label" style="margin:5px;padding:0px;" >详情URL</label>
+						</td>	
+						<td class="my-form-table-td-content">
+							<input  id="details_intro_url" name="details_intro_url" type="text"   class="form-control input-sm"  style="width:270px;padding:5px;float:left;"    >
+						</td>
+					</tr>
+					<tr>
+					
+					<td class="my-form-table-td-label" style="width:60px">
+							<label class="control-label" style="margin:5px;padding:0px;" >商品描述</label>
+						</td>	
+						<td class="my-form-table-td-content" style="width:290px">
+							<input  id="goods_description" name="goods_description" type="text"   class="form-control input-sm"  style="width:270px;padding:5px;float:left;"    >
+						</td>
+					</tr>
+				</table>
+    <div class="item">
+        <img class="addImg" onclick="clickImg(this);" src="/APPLETPC/js/plugins/app-imgupload/img/addImg.png" />
+        <input name="url" type="file" class="upload_input" onchange="change(this)"/>
+        <div class="preBlock">
+            <img class="preview" id="preview" alt="" name="pic" width="170" height="170" />
+        </div>
+        <img class="delete" onclick="deleteImg(this)" src="/APPLETPC/js/plugins/app-imgupload/img/delete.png"/>
+         <p class="describe">商品图(*)</p>
+         <input  id="goods_image1" name="goods_image1" style="display: none" class="imgName">
+    </div>
+    
+    <div class="item">
+        <img class="icon addImg" onclick="clickImg(this);" src="/APPLETPC/js/plugins/app-imgupload/img/addImg.png" />
+        <input name="url" type="file" class="upload_input" onchange="change(this)"/>
+        <div class="preBlock">
+          <img class="preview" alt="" name="pic" width="170" height="170" />
+        </div>      
+        <img class="delete" onclick="deleteImg(this)" src="/APPLETPC/js/plugins/app-imgupload/img/delete.png"/>
+         <p class="describe">模特图(*)</p>
+         <input  id="detail_model_one" name="detail_model_one" style="display: none" class="imgName">
+    </div>
+
+    <div class="item">
+        <img class="icon addImg" onclick="clickImg(this);" src="/APPLETPC/js/plugins/app-imgupload/img/addImg.png" />
+        <input name="url" type="file" class="upload_input" onchange="change(this)"/>
+        <div class="preBlock">
+          <img class="preview" alt="" name="pic" width="170" height="170" />
+        </div>      
+        <img class="delete" onclick="deleteImg(this)" src="/APPLETPC/js/plugins/app-imgupload/img/delete.png"/>
+         <p class="describe">细节图1(*)</p>
+         <input  id="goods_detail_image1" name="goods_detail_image1" style="display: none" class="imgName">
+    </div>
+
+    <div class="item">
+        <img class="icon addImg" onclick="clickImg(this);" src="/APPLETPC/js/plugins/app-imgupload/img/addImg.png" />
+        <input name="url" type="file" class="upload_input" onchange="change(this)"/>
+        <div class="preBlock">
+          <img class="preview" alt="" name="pic" width="170" height="170" />
+        </div>      
+        <img class="delete" onclick="deleteImg(this)" src="/APPLETPC/js/plugins/app-imgupload/img/delete.png"/>
+        <p class="describe">细节图2</p>
+        <input  id="goods_detail_image2" name="goods_detail_image2" style="display: none" class="imgName">
+    </div>
+
+    <div class="item">
+        <img class="icon addImg" onclick="clickImg(this);" src="/APPLETPC/js/plugins/app-imgupload/img/addImg.png" />
+        <input name="url" type="file" class="upload_input" onchange="change(this)"/>
+        <div class="preBlock">
+          <img class="preview" alt="" name="pic" width="170" height="170" />
+        </div>      
+        <img class="delete" onclick="deleteImg(this)" src="/APPLETPC/js/plugins/app-imgupload/img/delete.png"/>
+        <p class="describe">细节图3</p>
+        <input  id="goods_detail_image3" name="goods_detail_image3" style="display: none" class="imgName">
+    </div>
+
+    <div class="item">
+        <img class="icon addImg" onclick="clickImg(this);" src="/APPLETPC/js/plugins/app-imgupload/img/addImg.png" />
+        <input name="url" type="file" class="upload_input" onchange="change(this)"/>
+        <div class="preBlock">
+          <img class="preview" alt="" name="pic" width="170" height="170" />
+        </div>      
+        <img class="delete" onclick="deleteImg(this)" src="/APPLETPC/js/plugins/app-imgupload/img/delete.png"/>
+        <p class="describe">细节图4</p>
+        <input  id="goods_detail_image4" name="goods_detail_image4" style="display: none" class="imgName">
+    </div>
+
+    <div class="item">
+        <img class="icon addImg" onclick="clickImg(this);" src="/APPLETPC/js/plugins/app-imgupload/img/addImg.png" />
+        <input name="url" type="file" class="upload_input" onchange="change(this)"/>
+        <div class="preBlock">
+          <img class="preview" alt="" name="pic" width="170" height="170" />
+        </div>      
+        <img class="delete" onclick="deleteImg(this)" src="/APPLETPC/js/plugins/app-imgupload/img/delete.png"/>
+        <p class="describe">细节图5</p>
+        <input  id="goods_detail_image5" name="goods_detail_image5" style="display: none" class="imgName">
+    </div>
+
+    <div class="item">
+        <img class="icon addImg" onclick="clickImg(this);" src="/APPLETPC/js/plugins/app-imgupload/img/addImg.png" />
+        <input name="url" type="file" class="upload_input" onchange="change(this)"/>
+        <div class="preBlock">
+          <img class="preview" alt="" name="pic" width="170" height="170" />
+        </div>      
+        <img class="delete" onclick="deleteImg(this)" src="/APPLETPC/js/plugins/app-imgupload/img/delete.png"/>
+        <p class="describe">细节图6</p>
+        <input  id="goods_detail_image6" name="goods_detail_image6" style="display: none" class="imgName">
+    </div>
+
+    <div class="item">
+        <img class="icon addImg" onclick="clickImg(this);" src="/APPLETPC/js/plugins/app-imgupload/img/addImg.png" />
+        <input name="url" type="file" class="upload_input" onchange="change(this)"/>
+        <div class="preBlock">
+          <img class="preview" alt="" name="pic" width="170" height="170" />
+        </div>      
+        <img class="delete" onclick="deleteImg(this)" src="/APPLETPC/js/plugins/app-imgupload/img/delete.png"/>
+        <p class="describe">细节图7</p>
+        <input  id="goods_detail_image7" name="goods_detail_image7" style="display: none" class="imgName">
+    </div>
+
+    <div class="item">
+        <img class="icon addImg" onclick="clickImg(this);" src="/APPLETPC/js/plugins/app-imgupload/img/addImg.png" />
+        <input name="url" type="file" class="upload_input" onchange="change(this)"/>
+        <div class="preBlock">
+          <img class="preview" alt="" name="pic" width="170" height="170" />
+        </div>      
+        <img class="delete" onclick="deleteImg(this)" src="/APPLETPC/js/plugins/app-imgupload/img/delete.png"/>
+        <p class="describe">细节图8</p>
+        <input  id="goods_detail_image8" name="goods_detail_image8" style="display: none" class="imgName">
+    </div>
+			</form>
+</body>
+</html>
+<script type="text/javascript">
+var validator;
+$(document).ready(function() {
+$(".dept_select").chosen({disable_search:true,width:"270px"});
+initGoodsStyle();
+getMainSelectInfo();
+
+validator = $("#GoodsAddForm").validate({
+		debug: true,
+		showErrors: showErrors,
+		rules: {
+			goods_name: {
+				required: true,
+				maxlength: 30,
+			},
+			goods_name_en:{
+				required: true,
+				maxlength: 50,
+			},
+			main_style:{
+				required: true,
+			},
+			app_index_order:{
+				required: true,
+				maxlength: 3,
+				number:true
+			},
+			goods_sell_price:{
+				required: true,
+				maxlength: 7,
+				number:true
+			}
+		},
+		messages: {
+			goods_name: {
+				required: "名称不能为空！",
+				maxlength: "标题最大长度为30！",
+			},
+			goods_name_en: {
+				required: "英文不能为空！",
+				maxlength: "最大长度为50！"
+			},
+			main_style:{
+				required: "商品大类不能为空！",
+				maxlength: "最大长度为100！"
+			},
+			app_index_order:{
+				required: "显示顺序不能为空！",
+				maxlength: "最大长度为3！",
+				number: "请输入数字！"
+			},
+			goods_sell_price:{
+				required: "价格不能为空！",
+				maxlength: "最大长度为7！",
+				number: "请输入数字！"
+			}
+		}
+	});
+	
+	
+});
+
+  
+ //商品新建
+function doAddGoods() {
+	var result = false;
+if(validator.form()){
+   if(!$("#goods_image1").val()||!$("#detail_model_one").val()||!$("#goods_detail_image1").val()){
+   	$.growl.warning({    title: "错误标题", message:"请上传图片"});
+     return result;
+   }
+
+		var ag = new AppGoods();
+		dwr.util.getValues(ag);
+		var url = path+"api/appGoods/insertAppGoods";
+		url += "?t=" + new Date();
+		url+="&token="+securityContext.token;
+
+		$.ajax({
+			type: "POST",
+		    url: url,
+		    data: ag,
+		    async: false,
+		    success: function(data){
+				if (data.code == "S") {
+					result = true;
+				} else {
+					result = false;
+					$.growl.warning({    title: "错误标题", message: data.data});
+				}
+		    }
+		});
+}
+	return result;
+
+} 
+ 
+ //点击
+  var clickImg = function(obj){
+    $(obj).parent().find('.upload_input').click();
+  }
+  //删除
+  var deleteImg = function(obj){
+    $(obj).parent().find('input').val('');
+    $(obj).parent().find('img.preview').attr("src","");
+     $(obj).parent().find('img.preview').hide();
+    //IE9以下
+    $(obj).parent().find('img.preview').css("filter","");
+    $(obj).hide();
+    $(obj).parent().find('.addImg').show();
+  }
+  //选择图片
+  function change(file) {
+      //预览
+      var pic = $(file).parent().find(".preview");
+      //添加按钮
+      var addImg = $(file).parent().find(".addImg");
+      //删除按钮
+      var deleteImg = $(file).parent().find(".delete");
+
+      var ext=file.value.substring(file.value.lastIndexOf(".")+1).toLowerCase();
+ 	
+       // gif在IE浏览器暂时无法显示
+       if(ext!='png'&&ext!='jpg'&&ext!='jpeg'){
+          if (ext != '') {
+            alert("图片的格式必须为png或者jpg或者jpeg格式！"); 
+          } 
+           return;
+       }
+        if($(file)[0].files[0].size>300000){
+        $.growl.error({    title: "错误标题", message: "图片不符合规范,为保证访问速度请图片大小在300K以下"});
+        return false;
+        }
+       	var url = redPath+"uploadingRedImages/goods";
+		url += "?t=" + new Date();
+
+        var img = new FormData();
+   		 img.append("pic", $(file)[0].files[0]);
+        	$.ajax({
+            url: url,
+            type: 'POST',
+            cache: false,
+            data: img,
+            processData: false,
+            contentType: false,
+            async: false,
+            success: function (data) {
+				if (data.code == "S") {
+				 $(file).parent().find(".imgName").val(data.data);
+				} else {
+					$.growl.error({    title: "错误标题", message: data.info});
+				}
+            }
+        });
+          html5Reader(file,pic,addImg,deleteImg);
+  }
+ //H5渲染
+  function html5Reader(file,pic,addImg,deleteImg){
+     var file = file.files[0];
+     var reader = new FileReader();
+     reader.readAsDataURL(file);
+     reader.onload = function(e){
+         pic.attr("src",this.result);
+     }
+     addImg.hide();
+     deleteImg.show();
+     pic.show();
+     pic.parent().show();
+    
+  } 
+  
+	//初始主菜单
+function getMainSelectInfo() {
+			var url = path + "api/appGoods/getMainSelectInfo";
+			$.ajax({
+				type : "POST",
+				url : url,
+				headers:{"token":securityContext.token},
+				success : function(data) {
+					if (data.code == "S") {
+						$("#main_style").html("")
+						$.each(JSON.parse(data.data), function(index, d) {
+                       	var option='<option value="' + d.code + '">'+ d.name + '</option>';
+                       	$("#main_style").append(option);  
+					});
+						$("#main_style").trigger("chosen:updated"); 
+						getSubSelectInfo();
+					} else {
+						$.growl.error({    title: "错误标题", message: data.info});
+					}
+				}
+			});
+}; 
+//初始子菜单
+function getSubSelectInfo() {
+			var url = path + "api/appGoods/getSubSelectInfo";
+			$.ajax({
+				type : "POST",
+				url : url,
+				data:{"token":securityContext.token,"node_code":$("#main_style").val()},
+				success : function(data) {
+					if (data.code == "S") {
+						$("#sub_style").html('<option value="">空</option>')
+						$.each(JSON.parse(data.data), function(index, d) {
+                       	var option='<option value="' + d.code + '">'+ d.name + '</option>';
+                       	$("#sub_style").append(option);  
+					});
+						$("#sub_style").trigger("chosen:updated"); 
+					} else {
+						$.growl.error({    title: "错误标题", message: data.info});
+					}
+				}
+			});
+};
+
+// 初始化服装风格
+function initGoodsStyle() {
+		var url = path + "api/common/list/getSingleDataDictItemList";
+		url += "?typeCode=app_goos_style&enabledFlag=Y";
+
+		$.ajax({
+			type : "get",
+			url : url,
+			headers:{"token":securityContext.token},
+			success : function(data) {
+				if (data.code == "S") {
+					$("#style_type").html('<option value="">空</option>');
+					$.each(JSON.parse(data.data), function(index, d) {
+						$("#style_type").append('<option value="' + d.item_code + '">'+ d.item_name + '</option>')
+					});
+						$("#style_type").trigger("chosen:updated"); 
+				} else {
+					$.growl.error({
+	 			       	title: "提示信息",
+	 			       	message:"数据加载失败！" + "<br><br>" + data.data,
+	 		       });
+				}
+			}
+		});
+	}   
+   
+</script>

@@ -1,0 +1,109 @@
+<script type="text/javascript">
+       if(sessionStorage.getItem('securityContext')==null){
+         window.location.href="/APPLETPC/login.html";
+        }
+        var securityContext = JSON.parse(sessionStorage.getItem('securityContext'));
+
+        var path = sessionStorage.getItem('path');
+        var structCode = sessionStorage.getItem('structCode')==null? "":sessionStorage.getItem('structCode');
+        var treeType = sessionStorage.getItem('treeType')==null? "single":sessionStorage.getItem('treeType');
+</script>
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+	<title>树列表</title>
+
+	<link type="text/css" rel="stylesheet" href="/APPLETPC/css/common/common.css">
+	<script type="text/javascript" src="/APPLETPC/js/common/common.js"></script>
+	<script type="text/javascript" src="/APPLETPC/js/common/util.js"></script>
+	<script type="text/javascript"src="/APPLETPC/js/jquery/jquery-2.2.3.min.js"></script>
+    <script type="text/javascript" src="/APPLETPC/js/json/json2.js"></script>
+    <link type="text/css" rel="stylesheet" href="/APPLETPC/js/bootstrap/css/bootstrap.css">
+    <script type="text/javascript" src="/APPLETPC/js/bootstrap/js/bootstrap.js"></script>
+	
+	<script type='text/javascript' src='/APPLETPC/js/json/model/Lot.js'></script>
+	
+	<!-- bootstrap-treeview -->
+	<link type="text/css" rel="stylesheet"
+		href="/APPLETPC/js/plugins/bootstrap-treeview/css/bootstrap-treeview.css">
+	
+	<script type="text/javascript"
+		src="/APPLETPC/js/plugins/bootstrap-treeview/js/bootstrap-treeview.js"></script>
+</head>
+<body>
+	<div class="container-fluid" style="margin:0px;padding:0px;">
+		<div class="row" style="margin:0px;padding:0px;">
+			<div class="col-md-12" style="padding-left:5px;padding-right:5px;">
+			    <div id="lotTree" style="font-size:12px;height:400px">
+					
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>
+
+<script type="text/javascript">
+
+var LotData = null;
+
+$(document).ready(function() {
+	var url = path+"api/common/lot/getTreeList";
+	url += "?currentTime=" + new Date();
+	url += "&structCode=" + structCode;
+    
+    $.ajax({
+		type: "get",
+		url: url,
+		async:false,
+		headers:{"token":securityContext.token},
+		success: function(data) {
+		
+			if (data.code == "S") {
+				$('#lotTree').treeview({
+					data: JSON.parse(data.data).nodes,
+					onNodeSelected: onTreeNodeSelectedHandler,
+					levels: 2,
+				});
+			} else {
+				window.top.bootbox.dialog({
+					title: "错误信息",
+					message: "数据加载失败！" + "<br><br>" + data.data,
+					size: "middle",
+					buttons: {
+						cancelType: {
+				      		label: "确定",
+				      		className: "btn-success",
+				      		callback: function() {
+				      			return true;
+				      		}
+						}
+					}
+				});
+			}
+		}
+	});
+});
+
+// 树节点单击事件
+function onTreeNodeSelectedHandler(event, data) {
+	LotData = data;
+}
+
+// 获取树列表数据
+function getLotData() {
+	if (treeType == "single") {
+		var lot = new Lot();
+		lot.lot_value = LotData.data.node_code;
+		lot.lot_text = LotData.text;
+		return lot;
+	} else if (treeType == "multi") {
+		var lotArr = new Array();
+		return lovArr;
+	}
+}
+</script>

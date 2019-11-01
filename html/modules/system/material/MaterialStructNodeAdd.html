@@ -1,0 +1,208 @@
+<script type="text/javascript">
+         if(sessionStorage.getItem('securityContext')==null){
+         window.location.href="/APPLETPC/login.html";
+        }
+        var securityContext = JSON.parse(sessionStorage.getItem('securityContext'));
+
+        var path = sessionStorage.getItem('path');
+        var store_id = sessionStorage.getItem('store_id');
+        var parent_node_code = sessionStorage.getItem('parent_node_code');
+</script>
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" >
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+	<title>物料结构节点-新建</title>
+
+	<link   type="text/css" rel="stylesheet" href="/APPLETPC/css/common/common.css">
+    <link   type="text/css" rel="stylesheet" href="/APPLETPC/js/bootstrap/css/bootstrap.css">
+	<script type="text/javascript" src="/APPLETPC/js/common/common.js"></script>
+	<script type="text/javascript" src="/APPLETPC/js/common/util.js"></script>
+	<script type="text/javascript"src="/APPLETPC/js/jquery/jquery-2.2.3.min.js"></script>
+    <script type="text/javascript" src="/APPLETPC/js/json/json2.js"></script>
+    <script type="text/javascript" src="/APPLETPC/js/bootstrap/js/bootstrap.js"></script>
+	
+	<script type='text/javascript' src='/APPLETPC/js/json/model/InvMatStructNode.js'></script>
+	
+	<!-- jquery-validator -->
+	<script type="text/javascript"
+		src="/APPLETPC/js/plugins/jquery-validate/jquery.validate.min.js"></script>
+	<script type="text/javascript"
+		src="/APPLETPC/js/plugins/jquery-validate/jquery.validate.plu.js"></script>
+</head>
+<body class="my-body-content">
+	<form id="structNodeAddForm" name="structNodeAddForm" class="my-form-content">
+		<input type="hidden" id="store_id" name="store_id" >
+		<input type="hidden" id="parent_node_code" name="parent_node_code" >
+		
+		<table class="my-form-table-content">
+			
+			<tr>
+				<td class="my-form-table-td-label" style="width:60px;">
+					<label class="control-label" style="margin:5px;padding:0px;">节点编码</label>
+				</td>
+				<td class="my-form-table-td-content" style="width:200px;">
+					<input id="node_code" name="node_code" type="text" class="form-control input-sm" style="width:180px;padding:5px;float:left;">
+				</td>
+			</tr>
+			
+			<tr>
+				<td class="my-form-table-td-label" style="width:60px;">
+					<label class="control-label" style="margin:5px;padding:0px;">节点名称</label>
+				</td>
+				<td class="my-form-table-td-content" style="width:200px;">
+					<input id="node_name" name="node_name" type="text" class="form-control input-sm" style="width:180px;padding:5px;float:left;">
+				</td>
+			</tr>
+			
+			<tr>
+				<td class="my-form-table-td-label">
+					<label class="control-label" style="margin:5px;padding:0px;">显示顺序</label>
+				</td>
+				<td class="my-form-table-td-content">
+					<input id="display_order" name="display_order" type="text" class="form-control input-sm" style="width:180px;padding:5px;float:left;">
+				</td>
+			</tr>
+			
+			
+			
+			<tr>
+				<td class="my-form-table-td-label">
+					<label class="control-label" style="margin:5px;padding:0px;">说明</label>
+				</td>
+				<td class="my-form-table-td-content">
+					<input id="description" name="description" type="text" class="form-control input-sm" style="width:180px;padding:5px;float:left;">
+				</td>
+			</tr>
+		</table>
+	</form>
+</body>
+</html>
+
+<script type="text/javascript">
+var validator;
+/* $("#store_id").val(store_id); 
+ $("#parent_node_code").val(parent_node_code); */
+
+
+   /* var tr='<input type="hidden" id="node_code" name="node_code" value="'+parent_node_code+'">';
+   $("#addNode").before(tr); */
+
+
+$(document).ready(function() {
+	validator = $("#structNodeAddForm").validate({
+		debug: true,
+		showErrors: showErrors,
+		rules: {
+			node_code: {
+				required: true,
+				maxlength: 50,
+				remote: {
+					url:path+"api/sys/materialstruct/checkMaterialStructNodeCode",
+					type: "post",
+					data: {
+						token:function(){return securityContext.token},
+						nodeCode: function(){return $('#node_code').val()},
+					}
+				}
+			},
+			node_name: {
+				required: true,
+				maxlength: 100
+			},
+			'display_order':{
+				maxlength: 5,
+				number: true
+			},
+			'description':{
+				maxlength: 200
+			}
+		},
+		messages: {
+			node_code: {
+				required: "[节点编码]不能为空！",
+				maxlength: "[节点编码]最大长度为50！",
+				remote: "当前节点编码已经存在！"
+			},
+			node_name: {
+				required: "[节点名称]不能为空！",
+				maxlength: "[节点名称]最大长度为100！"
+			},
+			'display_order':{
+				maxlength: "[显示顺序]最大值为99999！",
+				number: "[显示顺序]必须是数字！"
+			},
+			'description':{
+				maxlength: "[说明]最大长度为200！"
+			}
+		}
+	});
+});
+
+function doAddMaterialStructNode() {
+
+/* alert(parent_node_code); */
+	var result = false;
+	if (validator.form()) {
+		var dsn = new InvMatStructNode();
+		dwr.util.getValues(dsn);
+		dsn.store_id = store_id;
+		//当前的节点编码
+		dsn.parent_node_code = parent_node_code;
+		
+		var url = path+"api/sys/materialstruct/addDataStructNode";
+		url += "?t=" + new Date();
+		url+="&token="+securityContext.token;
+
+		$.ajax({
+			type: "post",
+		    url: url,
+		    data: dsn,
+		    async: false,
+		    success: function(data){
+				
+				if (data.code == "S") {
+				recordLog("O","APPLETPC","数据结构节点添加成功",securityContext.user_id);
+					result = true;
+					window.top.bootbox.dialog({
+						title: "提示信息",
+						message: "保存成功！",
+						size: "small",
+						buttons: {
+							cancelType: {
+					      		label: "确定",
+					      		className: "btn-"+bootstrapSkin,
+					      		callback: function() {
+					      			return true;
+					      		}
+							}
+						}
+					});
+				} else {
+				recordLog("OF","APPLETPC","数据结构节点添加失败",securityContext.user_id);
+					result = false;
+					
+					window.top.bootbox.dialog({
+						title: "错误信息",
+						message: "保存失败！" + "<br><br>" + data.data,
+						size: "middle",
+						buttons: {
+							cancelType: {
+					      		label: "确定",
+					      		className: "btn-"+bootstrapSkin,
+					      		callback: function() {
+					      			return true;
+					      		}
+							}
+						}
+					});
+				}
+		    }
+		});
+	}
+	return result;
+}
+</script>

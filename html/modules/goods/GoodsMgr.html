@@ -1,0 +1,312 @@
+<script type="text/javascript">
+       if(sessionStorage.getItem('securityContext')==null){
+         window.location.href="../../../login.html";
+        }
+        var securityContext = JSON.parse(sessionStorage.getItem('securityContext'));
+
+        var path = sessionStorage.getItem('path');
+</script>
+<!DOCTYPE html>
+<html style="overflow: hidden;">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+<title>小程序商品列表</title>
+
+	<link type="text/css" rel="stylesheet" href="/APPLETPC/css/common/common.css">
+	<script type="text/javascript" src="/APPLETPC/js/common/common.js"></script>
+	<script type="text/javascript" src="/APPLETPC/js/common/util.js"></script>
+	<script type="text/javascript"src="/APPLETPC/js/jquery/jquery-2.2.3.min.js"></script>
+    <script type="text/javascript" src="/APPLETPC/js/json/json2.js"></script>
+    <link type="text/css" rel="stylesheet" href="/APPLETPC/js/bootstrap/css/bootstrap.css">
+    <script type="text/javascript" src="/APPLETPC/js/bootstrap/js/bootstrap.js"></script>
+     <script type="text/javascript" src="/APPLETPC/js/plugins/bootstrap-box/js/bootbox.min.js"></script>
+    <link type="text/css" rel="stylesheet"
+		href="/APPLETPC/js/plugins/bootstrap-datetime/css/bootstrap-datetimepicker.min.css">
+		
+	<script type="text/javascript"
+		src="/APPLETPC/js/plugins/bootstrap-datetime/js/bootstrap-datetimepicker.min.js"></script>
+		
+	<script type="text/javascript"
+		src="/APPLETPC/js/plugins/bootstrap-datetime/js/locales/bootstrap-datetimepicker.zh-CN.js"></script>
+	
+<!-- bootstrap-table -->
+<link type="text/css" rel="stylesheet" href="/APPLETPC/js/plugins/bootstrap-table/css/bootstrap-table.css">
+
+<script type="text/javascript" src="/APPLETPC/js/plugins/bootstrap-table/js/bootstrap-table-500.js"></script>
+
+<script type="text/javascript" src="/APPLETPC/js/plugins/bootstrap-table/local/bootstrap-table-zh-CN.js"></script>
+<body style="font-size:12px;" >
+<div id="view">
+	<div id="goods">
+					<button id="refreshTypeBtn" class="btn  btn-sm btn-success" onclick="addGoods();">
+			            <i class="glyphicon glyphicon-add"></i>&nbsp;新建商品
+			        </button>
+            		<button id="refreshTypeBtn" class="btn  btn-sm btn-info" onclick="redresh();">
+			            <i class="glyphicon glyphicon-refresh"></i>&nbsp;刷新商品
+			        </button>
+            		<button id="refreshTypeBtn" class="btn  btn-sm btn-danger" onclick="deleteRedCollarCache();">
+			            <i class="glyphicon glyphicon-refresh"></i>&nbsp;全部上新
+			        </button>
+			        <button id="advanceSearchBtn" class="btn  btn-sm btn-primary" onclick="searchDataList();">
+			            <i class="glyphicon glyphicon-search"></i>&nbsp;高级搜索
+			        </button>
+			    </div>
+	
+	
+	
+	<table id="goodsTable"  
+		class="table table-condensed "
+			data-toggle="table" 
+			data-toolbar="#goods"
+		    data-icon-size="sm"
+		    data-url="http://localhost:8080/SPMTM/api/appGoods/selectAppGoodsList"
+            data-data-type="json"
+         	data-query-params="queryParams"
+            data-pagination="true"
+            data-side-pagination="server"
+			data-pagination="true" 
+			data-page-size="15" 
+		    data-page-list="[15,20,25,30,35,ALL]"
+		    data-undefined-text=""
+		    data-show-columns="true"
+		    >
+			<thead >
+				<tr >
+					<th data-field="goods_name" 	data-halign="center" data-align="center" >商品名称</th>
+					<th data-field="goods_description" 	data-halign="center" data-align="center" >商品描述</th>
+					<th data-field="fabric_name" 	data-halign="center" data-align="center" >面料名称</th>
+					<th data-field="is_hot" 		data-halign="center" data-align="center" data-formatter="yes_or_no">是否热门</th>
+					<th data-field="is_new_product" data-halign="center" data-align="center" data-formatter="yes_or_no" >是否新品</th>
+					<th data-field="up_off_shielf"  data-halign="center" data-align="center" data-formatter="yes_or_no">是否上架</th>
+					<th data-field="goods_name_en" 	data-halign="center" data-align="center" >英文名称</th>
+					<th data-field="style_type"   	data-halign="center" data-align="center" >风格类型</th>
+					<th data-field="main_style"    	data-halign="center" data-align="center" >主品类</th>
+					<th data-field="sub_style"		data-halign="center" data-align="center">子品类</th>
+					<th data-field="goods_sell_price"data-halign="center" data-align="center" >零售价格</th>
+					<th data-field="custom_flag"	data-halign="center" data-align="center" data-visible="false" data-formatter="yes_or_no">是否可定制</th>
+					<th data-field="app_index_show"	data-halign="center" data-align="center" data-visible="false" data-formatter="yes_or_no">是否前台展示</th>
+					<th data-field="app_index_order"data-halign="center" data-align="center" data-visible="false">展示顺序</th>
+					<th data-field="delete_flag"	data-halign="center" data-align="center" data-visible="false" data-formatter="yes_or_no">删除标识</th>
+					<th data-field="delete_date"	data-halign="center" data-align="center" data-visible="false">删除时间</th>
+					<th data-halign="center" 		data-align="center" data-events="operateEvents" data-formatter="operateFormatter">操作</th>
+				</tr>
+			</thead>
+		</table>
+	
+	</div>
+</body>
+</html>
+
+<script type="text/javascript">
+var searchCondition;
+$(document).ready(function() {
+});
+function queryParams(params) {
+return {offset:params.offset, limit:params.limit,token:securityContext.token,search:searchCondition
+};
+}
+function  redresh(){
+$('#goodsTable').bootstrapTable('refresh');
+}
+function searchDataList() {
+	var url ="/APPLETPC/html/modules/system/search/AdvanceSearch.html";
+	sessionStorage.setItem("searchCode", 'app_goods');
+	var app_goodsSearchFrame = '<iframe id="app_goodsSearchFrame" class="my-modal-iframe" width="100%" height="350px" src="' + url + '"></iframe>';
+	
+	window.top.bootbox.dialog({
+		title: "高级搜索",
+		message: app_goodsSearchFrame,
+		size: "small",
+		buttons: {
+			saveType: {
+	      		label: "确定",
+	      		className: "btn-success",
+	      		callback: function() {
+	      			var sscVO = window.top.document.getElementById("app_goodsSearchFrame").contentWindow.getAdvanceSearchConditions();
+	      			searchCondition = JSON.stringify(sscVO);
+	      			sessionStorage.setItem("app_goodsSearchCondition", searchCondition);
+	      			if (sscVO) {
+	      				$("#goodsTable").bootstrapTable('refresh');
+	      			}
+	      			return true;
+	      		}
+			},
+			cancelType: {
+	      		label: "取消",
+	      		className: "btn-default",
+	      		callback: function() {
+	      			return true;
+	      		}
+			}
+		}
+	});
+}
+function operateFormatter(value, row, index) {
+var array=new Array();
+ 			if(row.delete_flag!='Y'){
+ 			    
+              		array.push( '<a type="button" class="editBtn" style="margin-right:15px;"><i class="glyphicon glyphicon-eye-open"></i>编辑</a>',
+                 '<a type="button" class="deleteBtn delBtn" style="margin-right:15px;"><i class="glyphicon glyphicon-eye-open"></i>删除</a>');
+          	
+          		if(row.up_off_shielf!='Y'){
+	              array.push('<a type="button" class="up greenBtn" style="margin-right:15px;"><i class="glyphicon glyphicon-arrow-up"></i>发布</a>');
+	          	}else{
+	          	  array.push('<a type="button" class="down delBtn" style="margin-right:15px;"><i class="glyphicon glyphicon-arrow-down"></i>取消</a>');
+	          	} 
+          	}
+          	       
+             return array.join('');
+         }
+         
+window.operateEvents = {
+             'click .editBtn': function (e, value, row, index) {
+                	editGoods(row.goods_id) ;
+                 },
+              'click .deleteBtn': function (e, value, row, index) {
+                	deleteGoods(row.goods_id) ;
+                 },
+              'click .up': function (e, value, row, index) {
+                	uodateGoodsShielf(row.goods_id,'Y') ;
+                 },
+              'click .down': function (e, value, row, index) {
+                	uodateGoodsShielf(row.goods_id,'N') ;
+                 },
+         }; 
+
+
+// 新建商品
+function addGoods() {
+	var url = "/APPLETPC/html/modules/redcollar/goods/GoodsAdd.html";
+	var goodsAddFrame = '<iframe id="goodsAddFrame" class="my-modal-iframe" width="100%" height="600px" src="' + url + '"></iframe>';
+	window.top.bootbox.dialog({
+		title: "商品-新建",
+		message: goodsAddFrame,
+		size: "large",
+		buttons: {
+			saveType: {
+	      		label: "保存",
+	      		className: "btn-success",
+	      		callback: function() {
+	      			var result = window.top.document.getElementById("goodsAddFrame").contentWindow.doAddGoods();
+	      			if (result) {
+	      			$.growl.notice({title: "提醒标题", message: "保存成功" });
+	      			redresh();
+	      			}
+	      			return result;
+	      		}
+			},
+			cancelType: {
+	      		label: "取消",
+	      		className: "btn-default",
+	      		callback: function() {
+	      			return true;
+	      		}
+			}
+		}
+	});
+}
+
+// 编辑商品
+function editGoods(goods_id) {
+	
+	var url = "/APPLETPC/html/modules/redcollar/goods/GoodsEdit.html";
+	sessionStorage.setItem('goods_id', goods_id);
+	var goodsEditFrame = '<iframe id="goodsEditFrame" class="my-modal-iframe" width="100%" height="600px" src="' + url + '"></iframe>';
+	
+	window.top.bootbox.dialog({
+		title: "商品-编辑",
+		message: goodsEditFrame,
+		size: "large",
+		buttons: {
+			saveType: {
+	      		label: "保存",
+	      		className: "btn-success",
+	      		callback: function() {
+	      			var result = window.top.document.getElementById("goodsEditFrame").contentWindow.doEditGoods();
+	      			if (result) {
+	      				$.growl.notice({title: "提醒标题", message: "保存成功" });
+	      				redresh();
+	      			}
+	      			return result;
+	      		}
+			},
+			cancelType: {
+	      		label: "取消",
+	      		className: "btn-default",
+	      		callback: function() { 
+	      			return true;
+	      		}
+			}
+		}
+	});
+}
+
+//删除商品
+ function deleteGoods(goods_id){
+	 window.top.bootbox.dialog({
+				title: "提示信息",
+				message: "请确认是否删除商品",
+				size: "middle",
+				buttons: {
+					OkType: {
+			      		label: "确定",
+			      		className: "btn-info",
+			      		callback: function() {
+						    var url = path+"api/appGoods/deleteGoosById";
+						   	    url += "?t=" + new Date();
+								$.ajax({
+									type: "POST",
+								    url: url,
+								    data:{"token":securityContext.token,"goods_id":goods_id},
+								    success: function(data){
+										if (data.code == "S") {
+											result = true;
+											$.growl.notice({    title: "错误标题", message:"商品成功"});
+											redresh();
+											      		
+										} else {
+											result = false;
+											$.growl.error({    title: "错误标题", message: data.data});
+											}
+									    }
+									});
+			      		}
+					},
+					cancelType: {
+			      		label: "取消",
+			      		className: "btn-warning",
+			      		callback: function() {
+			      			return true;
+			      		}
+					}
+				}
+			});
+
+}    
+//资讯商品修改状态
+ function uodateGoodsShielf(goods_id,up_off_shielf){
+	    var url = path+"api/appGoods/updateGoosStatus";
+	   	    url += "?t=" + new Date();
+			$.ajax({
+				type: "POST",
+			    url: url,
+			    data:{"token":securityContext.token,"goods_id":goods_id,"up_off_shielf":up_off_shielf},
+			    success: function(data){
+					if (data.code == "S") {
+						result = true;
+						$.growl.notice({    title: "错误标题", message:"修改成功"});
+						redresh();
+					} else {
+						result = false;
+						$.growl.error({    title: "错误标题", message: data.data});
+						}
+				    }
+				});
+
+} 
+
+ 
+</script>

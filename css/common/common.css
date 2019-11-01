@@ -1,0 +1,112 @@
+.my-modal-iframe {
+    border: 0px;
+    margin: 0px;
+    padding: 0px;
+}
+
+.my-body-content {
+	margin: 0px;
+}
+
+.my-form-content {
+	margin: 0px;
+}
+
+.my-form-table-content {
+	margin: 5px;
+	padding: 0px;
+	border: 0px;
+	font-size: 12px;
+	line-height: 25px;
+}
+
+.my-form-table-content-1 {
+	margin: 5px;
+	padding: 0px;
+	border: 0px;
+	font-size: 12px;
+	line-height: 25px;
+	text-align: center;
+}
+
+.my-form-table-td-label {
+	text-align: right;
+	margin: 1px;
+	padding: 0px;
+}
+
+.my-form-table-td-content {
+	text-align: left;
+	margin: 1px;
+	padding: 0px;
+}
+
+frame {
+	border: 0px;
+}
+.editBtn{
+    border: 0px;
+    color: #00aaee;
+    font-size:12px;
+}
+.editBtn:hover{
+color:#b01b1d;
+text-decoration:blink;
+}
+
+.greenBtn{
+    border: 0px;
+    color: #28e04f;
+    font-size:12px;
+}
+.greenBtn:hover{
+color:#0af33c;
+text-decoration:blink;
+cursor:pointer;
+}
+
+.delBtn{
+    border: 0px;
+    color: red;
+    font-size:12px;
+}
+.delBtn:hover{
+color:#b01b1d;
+text-decoration:blink;
+cursor:pointer;
+}
+.explain{
+	
+	color:red;
+}
+.fl{
+	float: left;
+}
+.fr{
+	float: right;
+}
+.editBtn{
+    border: 0px;
+    color: #00aaee;
+    font-size:12px;
+}
+.editBtn:hover{
+color:#b01b1d;
+text-decoration:blink;
+cursor:pointer;
+}
+.collectdiv{
+	margin-top:10px;
+	margin-bottom: 0px;
+	text-align: center;
+}
+
+.export_text{
+	mso-number-format:"\@"
+}
+.star{
+    color: #dd2a2a;
+    display: inline-block;
+    width: 10px;
+    margin:0px;
+}

@@ -1,0 +1,234 @@
+<script type="text/javascript">
+        if(sessionStorage.getItem('securityContext')==null){
+         window.location.href="/APPLETPC/login.html";
+        }
+        var securityContext = JSON.parse(sessionStorage.getItem('securityContext'));
+
+        var path = sessionStorage.getItem('path');
+        var store_id = sessionStorage.getItem('store_id');
+        var nodeCode = sessionStorage.getItem('nodeCode');
+</script>
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+	<title>数据结构节点-编辑</title>
+
+	<link   type="text/css" rel="stylesheet" href="/APPLETPC/css/common/common.css">
+    <link   type="text/css" rel="stylesheet" href="/APPLETPC/js/bootstrap/css/bootstrap.css">
+	<script type="text/javascript" src="/APPLETPC/js/common/common.js"></script>
+	<script type="text/javascript" src="/APPLETPC/js/common/util.js"></script>
+	<script type="text/javascript" src="/APPLETPC/js/jquery/jquery-2.2.3.min.js"></script>
+    <script type="text/javascript" src="/APPLETPC/js/json/json2.js"></script>
+    <script type="text/javascript" src="/APPLETPC/js/bootstrap/js/bootstrap.js"></script>
+	
+	<script type='text/javascript' src='/APPLETPC/js/json/model/InvMatStructNode.js'></script>
+	
+	<!-- jquery-validator -->
+	<script type="text/javascript"
+		src="/APPLETPC/js/plugins/jquery-validate/jquery.validate.min.js"></script>
+	<script type="text/javascript"
+		src="/APPLETPC/js/plugins/jquery-validate/jquery.validate.plu.js"></script>
+</head>
+<body class="my-body-content">
+	<form id="structNodeEditForm" name="structNodeEditForm" class="my-form-content">
+		<input type="hidden" id="struct_code" name="struct_code">
+		<input type="hidden" id="parent_node_code" name="parent_node_code">
+		
+		<table class="my-form-table-content">
+			<tr>
+				<td class="my-form-table-td-label">
+					<label class="control-label" style="margin:5px;padding:0px;">节点编码</label>
+				</td>
+				<td class="my-form-table-td-content">
+					<input id="node_code" name="node_code" type="text" class="form-control input-sm" style="width:180px;padding:5px;float:left;" readOnly>
+				</td>
+			</tr>
+			
+			<tr>
+				<td class="my-form-table-td-label" style="width:60px;">
+					<label class="control-label" style="margin:5px;padding:0px;">节点名称</label>
+				</td>
+				<td class="my-form-table-td-content" style="width:200px;">
+					<input id="node_name" name="node_name" type="text" class="form-control input-sm" style="width:180px;padding:5px;float:left;">
+				</td>
+			</tr>
+			
+			<tr>
+				<td class="my-form-table-td-label">
+					<label class="control-label" style="margin:5px;padding:0px;">显示顺序</label>
+				</td>
+				<td class="my-form-table-td-content">
+					<input id="display_order" name="display_order" type="text" class="form-control input-sm" style="width:180px;padding:5px;float:left;">
+				</td>
+			</tr>
+			
+			
+			
+			<tr>
+				<td class="my-form-table-td-label">
+					<label class="control-label" style="margin:5px;padding:0px;">说明</label>
+				</td>
+				<td class="my-form-table-td-content">
+					<input id="description" name="description" type="text" class="form-control input-sm" style="width:180px;padding:5px;float:left;">
+				</td>
+			</tr>
+		</table>
+	</form>
+</body>
+</html>
+
+<script type="text/javascript">
+var validator;
+
+$(document).ready(function() {
+	validator = $("#structNodeEditForm").validate({
+		debug: true,
+		showErrors: showErrors,
+		rules: {
+			node_name: {
+				required: true,
+				maxlength: 100
+			},
+			'display_order':{
+				maxlength: 5,
+				number: true
+			},
+			'description':{
+				maxlength: 200
+			}
+		},
+		messages: {
+			node_name: {
+				required: "[节点名称]不能为空！",
+				maxlength: "[节点名称]最大长度为100！"
+			},
+			'display_order':{
+				maxlength: "[显示顺序]最大值为99999！",
+				number: "[显示顺序]必须是数字！"
+			},
+			'description':{
+				maxlength: "[说明]最大长度为200！"
+			}
+		}
+	});
+	
+	var url = path+"api/sys/materialstruct/getMaterialStructNodeInfo";
+	url += "?t=" + new Date();
+	/* url += "&store_id=" + store_id;
+	url += "&nodeCode=" + nodeCode; */
+	
+	$.ajax({
+			type: "post",
+		    url: url,
+		    async:false,
+		    data:{
+		    	"store_id":store_id,
+		    	"nodeCode":nodeCode,
+		    	"token":securityContext.token
+		    },
+		    success: function(data){
+		
+		if (data.result_code == "Y") {
+			recordLog("O","APPLETPC","获取数据结构节点信息成功",securityContext.user_id);
+			var dsn = JSON.parse(data.result_info);
+			
+			dwr.util.setValues(dsn);
+			
+			/* if (dsn.enabled_flag == "Y") {
+				$("#enabled_flag").prop("checked", true)
+			} else if (dsn.enabled_flag == "N") {
+				$("#enabled_flag").prop("checked", false)
+			} */
+		} else if (data.result_code == "N") {
+		recordLog("OF","APPLETPC","获取数据结构节点信息失败",securityContext.user_id);
+			window.top.bootbox.dialog({
+				title: "错误信息",
+				message: "数据加载失败！" + "<br><br>" + data.result_info,
+				size: "middle",
+				buttons: {
+					cancelType: {
+			      		label: "确定",
+			      		className: "btn-success",
+			      		callback: function() {
+			      			return true;
+			      		}
+					}
+				}
+			});
+		}
+		}
+	});
+});
+
+function doEditMaterialStructNode() {
+	var result = false;
+	if (validator.form()) {
+		var dsn = new InvMatStructNode();
+		/* dsn.store_id = store_id; */
+		dsn.nodeCode = nodeCode;
+		dwr.util.getValues(dsn);
+		
+		/* if ($("#enabled_flag").prop("checked")) {
+			dsn.enabled_flag = "Y";
+		} else {
+			dsn.enabled_flag = "N";
+		} */
+		
+		
+		var url = path+"api/sys/materialstruct/editMaterialStructNode";
+		url += "?t=" + new Date();
+		url+="&token="+securityContext.token;
+
+		$.ajax({
+			type: "post",
+		    url: url,
+		    data: dsn,
+		    async: false,
+		    success: function(data){
+				
+				if (data.result_code == "Y") {
+				recordLog("O","APPLETPC","编辑数据结构节点成功",securityContext.user_id);
+					result = true;
+					window.top.bootbox.dialog({
+						title: "提示信息",
+						message: "保存成功！",
+						size: "small",
+						buttons: {
+							cancelType: {
+					      		label: "确定",
+					      		className: "btn-success",
+					      		callback: function() {
+					      			return true;
+					      		}
+							}
+						}
+					});
+				} else if (data.result_code == "N") {
+				recordLog("OF","APPLETPC","编辑数据结构节点失败",securityContext.user_id);
+					result = false;
+					
+					window.top.bootbox.dialog({
+						title: "错误信息",
+						message: "保存失败！" + "<br><br>" + data.result_info,
+						size: "middle",
+						buttons: {
+							cancelType: {
+					      		label: "确定",
+					      		className: "btn-success",
+					      		callback: function() {
+					      			return true;
+					      		}
+							}
+						}
+					});
+				}
+		    }
+		});
+	}
+	return result;
+}
+</script>

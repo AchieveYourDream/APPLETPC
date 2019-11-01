@@ -1,0 +1,296 @@
+<script type="text/javascript">
+        var securityContext = JSON.parse(sessionStorage.getItem('securityContext'));
+
+        var roleId = sessionStorage.getItem('roleId');
+</script>
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+	<title>菜单管理</title>
+
+	<link type="text/css" rel="stylesheet" href="/APPLETPC/css/common/common.css">
+	<script type="text/javascript" src="/APPLETPC/js/common/common.js"></script>
+	<script type="text/javascript" src="/APPLETPC/js/common/util.js"></script>
+	<script type="text/javascript"src="/APPLETPC/js/jquery/jquery-2.2.3.min.js"></script>
+    <script type="text/javascript" src="/APPLETPC/js/json/json2.js"></script>
+    <link type="text/css" rel="stylesheet" href="/APPLETPC/js/bootstrap/css/bootstrap.css">
+    <script type="text/javascript" src="/APPLETPC/js/bootstrap/js/bootstrap.js"></script>
+	
+	
+	<script type='text/javascript' src='/APPLETPC/js/json/model/SysLog.js'></script>
+	
+	<!-- bootstrap-treeview -->
+	<link type="text/css" rel="stylesheet"
+		href="/APPLETPC/js/plugins/bootstrap-treeview/css/bootstrap-treeview.css">
+	
+	<script type="text/javascript"
+		src="/APPLETPC/js/plugins/bootstrap-treeview/js/bootstrap-treeview.js"></script>
+
+
+<style type="text/css"></style>
+</head>
+<body style="font-size:12px;">
+
+	   <div  style="text-align:left;">
+	  
+	          
+	     <table id="typeTable" style="text-align:left">
+	      <div style="height:5px"></div>
+	       <button id="addMenuBtn" class="btn btn-primary btn-sm" >
+	            <i class="glyphicon"></i>&nbsp;保存
+	        </button>
+	       <td style="width:50%;" valign="top" >
+	       	 <div>
+	       	 <div id="typeToolbar"  class="">
+			
+	        <div style="height:5px"></div>
+	       </div >
+	         <div id="nodeTree" class="">
+	         </div>
+	         
+	         </div>
+	       </td>
+	       <td style="width:15px"></td>
+	       <td style="width:70%;"  valign="top" >
+	         
+	       </td>
+	      
+	      </tr>
+	     
+	     </table>
+         
+	     </div>
+    
+</body>
+</html>
+
+<script type="text/javascript">
+var node_code;
+var parent_node_code;
+var roleId="<%=roleId%>";
+
+$(document).ready(function() {
+	$("#nodeTree").on('click-row.bs.table', function (e, row, $element) {
+        $('.warning').removeClass('warning');
+        $($element).addClass('warning');
+        
+        node_code = row.node_code;
+        
+     
+    });
+    
+    $("#addMenuBtn").on("click", function () {
+		addMenu();
+	});
+	
+	
+	   nodetreeList(); 
+
+		$('#main-sidebar').css('height', ($(document).height() - 50) + 'px');
+		
+	
+});
+
+function nodetreeList(){
+//		init tree begin
+		var url = "/APPLETPC/app/system/role/getFileList";
+    	url += "?currentTime=" + new Date();
+    	url += "&structureCode=report_menu&roleId="+roleId;
+    
+	    $.ajax({
+			type: "get",
+			url: url,
+			headers:{"Authorization":securityContext.Authorization},
+			success: function(data) {
+				var json = JSON.parse(data);
+				if (data.code == "S") {
+				
+					$('#nodeTree').treeview({
+						data : JSON.parse(data.result_info),
+						showCheckbox: true,
+						uncheckedIcon: ' glyphicon glyphicon-unchecked',
+						emptyIcon: 'glyphicon glyphicon-minus',
+						multiSelect:true,
+						onNodeChecked: function(event, node) {
+							var childrens =node.nodes;
+							if(childrens){//父节点被选中子节点默认全选
+							 addChildrens(childrens);
+							if(node.state.checked){//选中父节点展开
+							$('#nodeTree').treeview('expandNode', [ node.nodeId, { levels: 4, silent: true } ]);
+							}
+							}
+							  var obj=  $('#nodeTree').treeview('getParent', node );
+							 if(obj.state){//选中一个节点其父节点默认被选中
+                                addParent(obj)
+							 }	 	
+						},
+						onNodeUnchecked: function (event, node) { 
+							var childrens =node.nodes;
+							if(childrens){//父节点被取消选中子节点默认取消
+							   delChildrens(childrens);
+							}
+                               delParent(node);
+			                } 
+					});
+				
+					
+				} else {
+					window.top.bootbox.dialog({
+						title: "错误信息",
+						message: "数据加载失败！" + "<br><br>" + data.result_info,
+						size: "middle",
+						buttons: {
+							cancelType: {
+					      		label: "确定",
+					      		className: "btn-"+bootstrapSkin,
+					      		callback: function() {
+					      			return true;
+					      		}
+							}
+						}
+					});
+				}
+			}
+		});
+
+}
+	//保存信息
+	function addMenu() {
+		                     
+		                     
+		                      var obj = $("#nodeTree").treeview('getChecked');
+		                      var uc = $("#nodeTree").treeview('getUnchecked');
+
+									var checked = new Array;
+									for ( var i = 0; i < obj.length; i++) {
+										checked[i]= obj[i].userData.menuCode;
+									}
+								    var unchecked = new Array;
+								    for ( var s= 0; s < uc.length; s++ ) {
+								        unchecked[s] =uc[s].userData.menuCode;
+								    }
+								      
+		                   
+									var url = "/APPLETPC/app/system/role/addRoleFileRelation";
+							              url += "?role_id=" + roleId;
+							              url += "&menu_code=" + checked;
+							              url += "&code=" + unchecked;
+										$.ajax({
+										type: "get",
+									    url: url,
+									  headers:{"Authorization":securityContext.Authorization},
+									    async: false,
+									    success: function(text, status){
+											var json = JSON.parse(text);
+											
+											if (data.code == "S") {
+											var source= "系统管理>角色权限管理>角色:"+roleId+">权限配置>文件";
+											var content="节点编码"+checked+"保存成功";
+											var id = <%=securityContext.getUser_id()%>;		
+											var con ="/APPLETPC";
+											createOperationLog(source,content,id,con);
+												result = true;
+												window.top.bootbox.dialog({
+													title: "提示信息",
+													message: "保存成功！",
+													size: "middle",
+													buttons: {
+														cancelType: {
+												      		label: "确定",
+												      		className: "btn-"+bootstrapSkin,
+												      		callback: function() {
+												      			return true;
+												      		}
+														}
+													}
+												});
+												queryUserList();
+											} else {
+											var source= "系统管理>角色权限管理>角色:"+roleId+">权限配置>文件";
+											var content="节点编码"+checked+"保存失败"+ data.result_info;
+											var id = <%=securityContext.getUser_id()%>;		
+											var con ="/APPLETPC";
+											createOperationLog(source,content,id,con);
+												result = false;
+												
+												window.top.bootbox.dialog({
+													title: "错误信息",
+													message: "保存失败！" + "<br><br>" + data.result_info,
+													size: "middle",
+													buttons: {
+														cancelType: {
+												      		label: "确定",
+												      		className: "btn-"+bootstrapSkin,
+												      		callback: function() {
+												      			return true;
+												      		}
+														}
+													}
+												});
+											}
+									    }
+									});
+								nodetreeList();
+									
+
+}
+	
+	 function addChildrens(childrens){
+		 for(var s=0;s<childrens.length;s++){
+			 $('#nodeTree').treeview('checkNode', [childrens[s].nodeId, { silent: true } ]);
+			 if(childrens[s].nodes){
+				 ss=childrens[s].nodes;
+				 this.addChildrens(ss);
+			 }
+		 }
+	 }
+	 function delChildrens(childrens){
+		 for(var s=0;s<childrens.length;s++){
+			 $('#nodeTree').treeview('uncheckNode', [childrens[s].nodeId, { silent: true } ]);
+			 if(childrens[s].nodes){
+				 ss=childrens[s].nodes;
+				 this.delChildrens(ss);
+			 }
+		 }
+	 }
+	 function addParent(obj){
+		  if(obj.state){//选中一个节点其父节点默认被选中
+				if(!obj.state.checked){
+			  $('#nodeTree').treeview('toggleNodeInchecked', [obj.nodeId, { silent: true } ])
+			  }
+			var par=  $('#nodeTree').treeview('getParent', obj );
+			if(par){
+				this.addParent(par);
+			}
+	    }
+	}
+	 function delParent(node){
+			var siblings= $('#nodeTree').treeview('getSiblings', node);
+			 var obj=  $('#nodeTree').treeview('getParent', node );
+			if(siblings.length==0){
+			  $('#nodeTree').treeview('toggleNodeChecked', [obj.nodeId, { silent: true } ])
+			}else{
+				var s;
+				var states=true;
+				for(var i=0;i<siblings.length;i++){
+					s=siblings[i].state.checked;
+					if(s){states=false}
+				}
+				if(states){
+					  $('#nodeTree').treeview('toggleNodeChecked', [obj.nodeId, { silent: true } ])
+				}
+			}
+			if(!obj.state.checked){
+				var parent=  $('#nodeTree').treeview('getParent', obj );
+				if(parent){
+					this.delParent(obj);
+				}
+			}
+
+	 }
+	
+</script>

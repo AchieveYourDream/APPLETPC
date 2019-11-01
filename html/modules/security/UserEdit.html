@@ -1,0 +1,297 @@
+<script type="text/javascript">
+       if(sessionStorage.getItem('securityContext')==null){
+         window.location.href="/APPLETPC/login.html";
+        }
+        var securityContext = JSON.parse(sessionStorage.getItem('securityContext'));
+
+        var path = sessionStorage.getItem('path');
+        var userid=securityContext.user_id;
+</script>
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+	<title>个人信息</title>
+
+	<link type="text/css" rel="stylesheet" href="/APPLETPC/css/common/common.css">
+    <link type="text/css" rel="stylesheet" href="/APPLETPC/js/bootstrap/css/bootstrap.css">
+	<script type="text/javascript" src="/APPLETPC/js/common/common.js"></script>
+	<script type="text/javascript" src="/APPLETPC/js/common/util.js"></script>
+	<script type="text/javascript"src="/APPLETPC/js/jquery/jquery-2.2.3.min.js"></script>
+    <script type="text/javascript" src="/APPLETPC/js/json/json2.js"></script>
+    <script type="text/javascript" src="/APPLETPC/js/bootstrap/js/bootstrap.js"></script>
+	
+	<script type='text/javascript' src='/APPLETPC/js/json/model/AdminUser.js'></script>
+	<script type='text/javascript' src='/APPLETPC/js/json/model/SysLog.js'></script>
+	
+	<!-- jquery-validator -->
+	<script type="text/javascript"
+		src="/APPLETPC/js/plugins/jquery-validate/jquery.validate.min.js"></script>
+	<script type="text/javascript"
+		src="/APPLETPC/js/plugins/jquery-validate/jquery.validate.plu.js"></script>
+    
+			
+</head>
+<body class="my-body-content"style="background-color: #fff">
+	<form id="userEditForm" name="userEditForm" class="my-form-content">
+	<input id=""user_id"" name="user_id"  style="display: none; ">
+	<table class="my-form-table-content" style="width:98%;">
+			<tr>
+		    	<td class="my-form-table-td-label" style="width:9%;">
+					<label class="control-label" style="margin:5px;padding:0px;">账号</label>
+				</td>
+				<td class="my-form-table-td-content" style="width:35%"> 
+					<input id="username" name="username" type="text" class="form-control input-sm"  style="width:90%;padding:5px;float:left;" readOnly>
+				</td>
+				
+				<td class="my-form-table-td-label" style="width:9%;">
+					<label class="control-label" style="margin:5px;padding:0px;">名称</label>
+				</td>
+				<td class="my-form-table-td-content" style="width:35%;">
+					<input id="display_name" name="display_name" type="text" class="form-control input-sm" style="width:90%;padding:5px;float:left;" readonly>
+				</td>
+				
+		    </tr>
+		    
+		    <tr>
+				<td class="my-form-table-td-label" style="width:9%;">
+					<label class="control-label" style="margin:5px;padding:0px;">手机</label>
+				</td>
+				<td class="my-form-table-td-content"style="width:35%;">
+					<input id="mobilephone" name="mobilephone" type="text" class="form-control input-sm" style="width:90%;padding:5px;float:left;">
+				</td>
+					
+				<td class="my-form-table-td-label" style="width:9%;">
+					<label class="control-label" style="margin:5px;padding:0px;">QQ</label>
+				</td>
+				<td class="my-form-table-td-content"style="width:35%;">
+					<input id="qq" name="qq" type="text" class="form-control input-sm" style="width:90%;padding:5px;float:left;">
+				</td>
+				
+			</tr>
+			  <tr>
+		    
+				<td class="my-form-table-td-label" style="width:9%;">
+					<label class="control-label" style="margin:5px;padding:0px;">微信</label>
+				</td>
+				<td class="my-form-table-td-content"style="width:35%;">
+					<input id="weixin" name="weixin" type="text" class="form-control input-sm" style="width:90%;padding:5px;float:left;">
+				</td>
+					
+				<td class="my-form-table-td-label" style="width:9%;">
+					<label class="control-label" style="margin:5px;padding:0px;">职位</label>
+				</td>
+				<td class="my-form-table-td-content"style="width:35%;">
+					<input id="posization_id" name="posization_id" type="text" class="form-control input-sm" style="width:90%;padding:5px;float:left;">
+				</td>
+			<tr> 
+			
+			</tr>
+			  <tr>
+		    	
+			
+				
+				<td class="my-form-table-td-label" style="width:9%;">
+					<label class="control-label" style="margin:5px;padding:0px;">邮箱</label>
+				</td>
+				<td class="my-form-table-td-content"style="width:35%;">
+					<input id="email" name="email" type="text" class="form-control input-sm" style="width:90%;padding:5px;float:left;">
+				</td>
+				<td class="my-form-table-td-label" style="width:9%;">
+					<label class="control-label" style="margin:5px;padding:0px;">说明</label>
+				</td>
+				<td class="my-form-table-td-content"style="width:35%;" >
+					<input id="description" name="description" type="text" class="form-control input-sm" style="width:90%;padding:5px;float:left;">
+				</td>
+				
+			
+		</table>
+	</form>
+	
+</body>
+</html>
+
+<script type="text/javascript">
+var validator;
+
+
+$(document).ready(function() {
+$("#user_id").val(userid);
+getUserInfo();
+	validator = $("#userEditForm").validate({
+		debug: true,
+		showErrors: showErrors,
+		rules: {
+		    
+			mobilephone: {
+			    minlength:11,
+				maxlength: 11,
+				number:true
+			},
+			email:{
+			email:true,
+			maxlength: 100
+			}
+			,employee_number: {
+				maxlength: 10
+			},
+			description: {
+				maxlength: 100
+			}
+			,posization_id: {
+				maxlength: 100
+			},
+			qq: {
+				maxlength: 12
+			},
+			weixin: {
+				maxlength: 100
+			}
+		},
+		messages: {
+		    
+			mobilephone: {
+			    minlength: "[手机号]最小长度为11！",
+				maxlength: "[手机号]最大长度为11！",
+				number:"请输入正确的手机号"
+			},
+		    email: {
+		    	maxlength: "[账号]最大长度为100！",
+				required: "请输入正确的邮箱地址",
+			},
+			employee_number: {
+				maxlength: "[工号]最大长度为10！"
+			},
+			description: {
+				maxlength: "[说明]最大长度为100！"
+			},
+			organization_id: {
+				maxlength: "[组织]最大长度为100！"
+			},
+			posization_id: {
+				maxlength: "[职位]最大长度为100！"
+			},
+			qq: {
+				maxlength: "[qq]最大长度为12！"
+			},
+			weixin: {
+				maxlength: "[微信]最大长度为100！"
+			}
+		}
+	});
+	
+	
+	
+});
+
+
+
+// 获取当前用户信息
+function getUserInfo() {
+	var url = path+"api/sys/user/getUserInfo";
+	url += "?t=" + new Date();
+	url += "&userId=" + userid;
+	
+	$.ajax({
+		type: "get",
+		url: url,
+		async:false,
+		headers:{"token":securityContext.token},
+		success: function(data) {
+			if (data.result_code == "Y") {
+				var su = JSON.parse(data.result_info);
+				dwr.util.setValues(su);
+			} else if (data.result_code == "N") {
+				window.top.bootbox.dialog({
+					title: "错误信息",
+					message: "数据加载失败！" + "<br><br>" + data.result_info,
+					size: "middle",
+					buttons: {
+						cancelType: {
+				      		label: "确定",
+				      		className: "btn-"+bootstrapSkin,
+				      		callback: function() {
+				      			return true;
+				      		}
+						}
+					}
+				});
+			}
+		}
+	});
+}
+
+
+
+// 编辑
+function doEditUser() {
+	var result = false;
+	
+	if (validator.form()) {
+		var su = new AdminUser();
+		dwr.util.getValues(su);
+		
+		var url = path+"api/updateAdminUserOneself";
+		url += "?t=" + new Date();
+
+		$.ajax({
+			type: "GET",
+		    url: url,
+		    data: su,
+		    async: false,
+		    headers:{"token":securityContext.token},
+		    success: function(data){
+				
+				if (data.result_code == "Y") {
+				result = true;
+			//	var source= "系统管理>用户管理>编辑用户";
+				//var content="账号:"+su.username+".保存成功";
+            //   recordLog('operate',source,content);
+                
+					window.top.bootbox.dialog({
+						title: "提示信息",
+						message: "保存成功！",
+						size: "middle",
+						buttons: {
+							cancelType: {
+					      		label: "确定",
+					      		className: "btn-"+bootstrapSkin,
+					      		callback: function() {
+					      			return true;
+					      		}
+							}
+						}
+					});
+				} else if (data.result_code == "N") {
+ 			//	var source= "系统管理>用户管理>编辑用户";
+ 			//	var content="账号:"+su.username+".保存失败"+ json.result_info;
+			//	recordLog('operate',source,content);
+					result = false;
+					
+					window.top.bootbox.dialog({
+						title: "错误信息",
+						message: "保存失败！" + "<br><br>" + data.result_info,
+						size: "middle",
+						buttons: {
+							cancelType: {
+					      		label: "确定",
+					      		className: "btn-"+bootstrapSkin,
+					      		callback: function() {
+					      			return true;
+					      		}
+							}
+						}
+					});
+				}
+		    }
+		});
+	}
+	
+	return result;
+}
+
+
+</script>

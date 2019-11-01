@@ -1,0 +1,220 @@
+<script type="text/javascript">
+         if(sessionStorage.getItem('securityContext')==null){
+         window.location.href="/APPLETPC/login.html";
+        }
+        var securityContext = JSON.parse(sessionStorage.getItem('securityContext'));
+
+        var path = sessionStorage.getItem('path');
+</script>
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+	<title>推广人-新建</title>
+
+		<link type="text/css" rel="stylesheet" href="/APPLETPC/css/common/common.css">
+	<script type="text/javascript" src="/APPLETPC/js/common/common.js"></script>
+	<script type="text/javascript" src="/APPLETPC/js/common/util.js"></script>
+	<script type="text/javascript"src="/APPLETPC/js/jquery/jquery-2.2.3.min.js"></script>
+    <script type="text/javascript" src="/APPLETPC/js/json/json2.js"></script>
+    <link type="text/css" rel="stylesheet" href="/APPLETPC/js/bootstrap/css/bootstrap.css">
+    <script type="text/javascript" src="/APPLETPC/js/bootstrap/js/bootstrap.js"></script>
+	
+	<script type='text/javascript' src='/APPLETPC/js/json/model/StoPromoter.js'></script>
+	
+	<!-- jquery-validator -->
+	<script type="text/javascript"
+		src="/APPLETPC/js/plugins/jquery-validate/jquery.validate.min.js"></script>
+	<script type="text/javascript"
+		src="/APPLETPC/js/plugins/jquery-validate/jquery.validate.plu.js"></script>
+</head>
+<body class="my-body-content">
+	<form id="promoterAddForm" name="promoterAddForm" class="my-form-content">
+		<table class="my-form-table-content">
+		<input id="promoter_status" name="promoter_status" style="display: none;" value="Y">
+		<td class="my-form-table-td-label">
+					<label class="control-label" style="margin:5px;padding:0px;">所属门店</label>
+				</td>
+				<td class="my-form-table-td-content">
+					<div class="input-group">
+						<input type="hidden" id="store_code" name="store_code">
+						<input type="text" id="store_name"   class="form-control input-sm"  name="store_name" class="form-control input-sm" style="width:145px;padding:5px;float:left;background-color:#fff; border-radius: 3px;" readOnly>
+						<span class="input-group-btn" style="float: left">
+        					<button id="lov_btn" class="btn btn-default" type="button" style="padding:7px 10px;" onclick="openLovLov();">
+        						<i class="glyphicon glyphicon-search"></i>
+        					</button>
+      					</span>
+				
+				</td>
+			<tr>
+				<td class="my-form-table-td-label" style="width:60px;">
+					<label class="control-label" style="margin:5px;padding:0px;">工号</label>
+				</td>
+				<td class="my-form-table-td-content" style="width:200px;">
+					<input id="promoter_id" name="promoter_id" type="text" class="form-control input-sm" style="width:180px;padding:5px;float:left;">
+				</td>
+			</tr>
+			<tr>
+				<td class="my-form-table-td-label">
+					<label class="control-label" style="margin:5px;padding:0px;">名称</label>
+				</td>
+				<td class="my-form-table-td-content">
+					<input id="promoter_name" name="promoter_name" type="text" class="form-control input-sm" style="width:180px;padding:5px;float:left;">
+				</td>
+			</tr>
+			<tr>
+				<td class="my-form-table-td-label">
+					<label class="control-label" style="margin:5px;padding:0px;">电话</label>
+				</td>
+				<td class="my-form-table-td-content">
+					<input id="promoter_tel" name="promoter_tel" type="text" class="form-control input-sm" style="width:180px;padding:5px;float:left;">
+				</td>
+			</tr>
+			<tr>
+				<td class="my-form-table-td-label">
+					<label class="control-label" style="margin:5px;padding:0px;">说明</label>
+				</td>
+				<td class="my-form-table-td-content">
+					<input id="instruction" name="instruction" type="text" class="form-control input-sm" style="width:180px;padding:5px;float:left;">
+				</td>
+			</tr>
+		</table>
+	</form>
+</body>
+</html>
+
+<script type="text/javascript">
+var validator;
+
+$(document).ready(function() {
+	validator = $("#promoterAddForm").validate({
+		debug: true,
+		showErrors: showErrors,
+		rules: {
+			store_name: {
+				required: true,
+			},
+			promoter_id: {
+				required: true,
+				maxlength: 7,
+				digits:true,
+				isCode: true,
+				remote: {
+					url:path+"api/sys/store/checkPromoterCode?t=" + new Date(),
+					type: "get",
+					data: {
+						promoter_id: function(){return $('#promoter_id').val()},
+						token:function(){return securityContext.token},
+						store_code:function(){return $('#store_code').val()}
+					}
+				}
+			},
+			promoter_name: {
+				required: true,
+				maxlength: 50
+			},
+			promoter_tel: {
+				required: true,
+				maxlength: 11
+			},
+			instruction: {
+				maxlength: 200
+			}
+		},
+		messages: {
+			promoter_id: {
+				required: "[工号]不能为空！",
+				maxlength: "[工号]最大长度为7！",
+				remote: "当前推广人已经存在！",
+				digits:"请输入数字工号"
+			},
+			
+			promoter_name: {
+				required: "[所属门店]不能为空！",
+				
+			},
+			promoter_name: {
+				required: "[名称]不能为空！",
+				maxlength: "[名称]最大长度为50！"
+			},
+			promoter_tel: {
+				required: "[电话]不能为空！",
+				maxlength: "[电话]最大长度为11！"
+			},
+			instruction: {
+				maxlength: "[说明]最大长度为200！"
+			}
+		}
+	});
+});
+
+function doAddPromoter() {
+	var result = false;
+	if (validator.form()) {
+		var sp = new StoPromoter();
+		dwr.util.getValues(sp);
+		sp.created_by=securityContext.user_id;
+		
+		var url = path+"api/sys/store/insertStoPromoter";
+		url += "?t=" + new Date();
+		url+="&token="+securityContext.token;
+		
+
+		$.ajax({
+			type: "POST",
+		    url: url,
+		    data: sp,
+		    async: false,
+		    success: function(data){
+				
+				if (data.code == "S") {
+					result = true;
+					$.growl.notice({title: "提示信息",message:"保存成功"});
+				} else {
+					result = false;
+					$.growl.error({title: "提示信息",message:data.result_info});
+				}
+		    }
+		});
+	}
+	return result;
+}
+
+function openLovLov() {
+	var url = "/APPLETPC/html/common/lov/lov.html";
+	sessionStorage.setItem('lovCode', 'lov_store');//值列表的编码
+	sessionStorage.setItem('lovType', 'single');//值列表选值数量(单个)
+	sessionStorage.setItem('message', '门店');
+	var lovLovFrame = '<iframe id="lovLovFrame" class="my-modal-iframe" width="100%" height="350px" src="' + url + '"></iframe>';
+	window.top.bootbox.dialog({
+		title: "门店列表",
+		message: lovLovFrame,
+		size: "middle",
+		buttons: {
+			saveType: {
+	      		label: "确定",
+	      		className: "btn-"+bootstrapSkin,
+	      		callback: function() {
+	      			var result = window.top.document.getElementById("lovLovFrame").contentWindow.getLovData();
+	      			if(result){
+	      			$("#store_code").val(result.lov_value);//将获取到的门店ID写入隐藏框
+	      			$("#store_name").val(result.lov_text);//将获取到的门店名称写入文本框
+	      			};
+	      			return result;
+	      		}
+			},
+			cancelType: {
+	      		label: "取消",
+	      		className: "btn-default",
+	      		callback: function() {
+	 
+     			return true;
+	      		}
+			}
+		}
+	});
+}
+</script>

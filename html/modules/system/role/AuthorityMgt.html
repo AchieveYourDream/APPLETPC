@@ -1,0 +1,112 @@
+<script type="text/javascript">
+         if(sessionStorage.getItem('securityContext')==null){
+         window.location.href="/APPLETPC/login.html";
+        }
+        var securityContext = JSON.parse(sessionStorage.getItem('securityContext'));
+
+        var path = sessionStorage.getItem('path');
+        sessionStorage.setItem('roleId', sessionStorage.getItem('roleId'));
+</script>
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+	<title>权限配置</title>
+	<link type="text/css" rel="stylesheet" href="/APPLETPC/css/common/common.css">
+	<script type="text/javascript" src="/APPLETPC/js/common/common.js"></script>
+	<script type="text/javascript" src="/APPLETPC/js/common/util.js"></script>
+	<script type="text/javascript"src="/APPLETPC/js/jquery/jquery-2.2.3.min.js"></script>
+    <script type="text/javascript" src="/APPLETPC/js/json/json2.js"></script>
+    <link type="text/css" rel="stylesheet" href="/APPLETPC/js/bootstrap/css/bootstrap.css">
+    <script type="text/javascript" src="/APPLETPC/js/bootstrap/js/bootstrap.js"></script>
+	<link type="text/css" rel="stylesheet"href="/APPLETPC/css/font-awesome/css/font-awesome.min.css">
+	<link type="text/css" rel="stylesheet"href="/APPLETPC/css/font-ionicons/css/ionicons.min.css">
+	<link type="text/css" rel="stylesheet"href="/APPLETPC/css/font-google/css/font-google.css">
+	
+	<link type="text/css" rel="stylesheet"href="/APPLETPC/js/adminlte/css/AdminLTE.css">
+	<link type="text/css" rel="stylesheet"href="/APPLETPC/js/adminlte/css/skins/skin-blue.css">
+	<script type="text/javascript"src="/APPLETPC/js/adminlte/js/AdminLTE.js"></script>
+	
+	<!-- jquery-slimscroll -->
+	<script type="text/javascript"
+		src="/APPLETPC/js/plugins/jquery-slimscroll/jquery.slimscroll.min.js"></script>
+		
+	<!-- bootstrap-accordion -->
+	<link type="text/css" rel="stylesheet"
+		href="/APPLETPC/js/plugins/bootstrap-accordion/css/bootstrap-accordion.css">
+	
+	<!-- bootstrap-treeview -->
+	<link type="text/css" rel="stylesheet"
+		href="/APPLETPC/js/plugins/bootstrap-treeview/css/bootstrap-treeview.css">
+	
+	<script type="text/javascript"
+		src="/APPLETPC/js/plugins/bootstrap-treeview/js/bootstrap-treeview.js"></script>
+		
+	<!-- bootstrap-addtabs -->
+	<link type="text/css" rel="stylesheet"
+		href="/APPLETPC/js/plugins/bootstrap-addtabs/css/bootstrap-addtabs.css">
+	
+	<script type="text/javascript"
+		src="/APPLETPC/js/plugins/bootstrap-addtabs/js/bootstrap-addtabs.js"></script>
+		
+	<!-- bootstrap-box -->
+	<script type="text/javascript"
+		src="/APPLETPC/js/plugins/bootstrap-box/js/bootbox.js"></script>
+</head>
+<body >
+			<!-- Main content -->
+			<div class="content" style="margin:0px;padding:0px;">
+				<!-- Your Page Content Here -->
+				<div id="tabs">
+					<!-- Nav tabs -->
+					<ul class="nav nav-tabs" role="tablist" style="padding-left:1px;padding-right:1px;">
+						
+						<li role="presentation" id="tab_tab_M0101" class="active">
+						<a href="#tab_M0101"  aria-controls="tab_M0101" role="tab" data-toggle="tab" style="border-radius:0px;font-size:13px;font-weight:600;" aria-expanded="true">后台用户</a>
+						</li>
+						<li role="presentation" id="tab_tab_M0104" class="">
+						<a href="#tab_M0104" aria-controls="tab_M0104" role="tab" data-toggle="tab" style="border-radius:0px;font-size:13px;font-weight:600;" aria-expanded="false">前台用户</a>
+						</li>
+						<li role="presentation" id="tab_tab_M0102" class="">
+						<a href="#tab_M0102" aria-controls="tab_M0102" role="tab" data-toggle="tab" style="border-radius:0px;font-size:13px;font-weight:600;" aria-expanded="true">菜单</a>
+						</li>
+<!-- 						<li role="presentation" id="tab_tab_M0103" class=""> -->
+<!-- 						<a href="#tab_M0103" aria-controls="tab_M0103" role="tab" data-toggle="tab" style="border-radius:0px;font-size:13px;font-weight:600;" aria-expanded="false">手机APP</a> -->
+<!-- 						</li> -->
+<!-- 						<li role="presentation" id="tab_tab_M0105" class=""> -->
+<!-- 						<a href="#tab_M0105" aria-controls="tab_M0105" role="tab" data-toggle="tab" style="border-radius:0px;font-size:13px;font-weight:600;" aria-expanded="true">报表</a> -->
+<!-- 						</li> -->
+						
+					</ul>
+				
+					
+
+				 <!-- Tab panes -->
+					<div class="tab-content">
+						<div role="tabpanel" class="tab-pane active"  id="tab_M0101" style="margin-bottom:0px;padding-bottom:0px;">
+							<iframe class="iframeClass" src="/APPLETPC/html/modules/system/role/AuthUser.html" style="margin-bottom:-5px;height:300px"></iframe>
+						</div>
+						<div role="tabpanel" class="tab-pane " id="tab_M0104" style="margin-bottom:0px;padding-bottom:0px;">
+							<iframe  class="iframeClass" src="/APPLETPC/html/modules/system/role/AuthMember.html" style="margin-bottom:-5px;height:300px"></iframe>
+						</div>
+						<div role="tabpanel" class="tab-pane" id="tab_M0102" style="margin-bottom:0px;padding-bottom:0px;">
+							<iframe  class="iframeClass" src="/APPLETPC/html/modules/system/role/AuthMenu.html" style="margin-bottom:-5px;height:350px"></iframe>
+						</div>
+<!-- 						<div role="tabpanel" class="tab-pane " id="tab_M0103" style="margin-bottom:0px;padding-bottom:0px;"> -->
+<!-- 							<iframe  class="iframeClass" src="/APPLETPC/html/modules/system/role/AuthAPP.html" style="margin-bottom:-5px;height:300px"></iframe> -->
+<!-- 						</div> -->
+						
+<!-- 						<div role="tabpanel" class="tab-pane " id="tab_M0105" style="margin-bottom:0px;padding-bottom:0px;"> -->
+<!-- 							<iframe  class="iframeClass" src="/APPLETPC/app/system/role/report?roleId=<%=roleId%>" style="margin-bottom:-5px;height:300px"></iframe> -->
+<!-- 						</div> -->
+						
+					</div>
+					
+				</div>
+			</div>
+		
+	
+</body>
+</html>

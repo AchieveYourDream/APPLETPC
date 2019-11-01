@@ -1,0 +1,210 @@
+<script type="text/javascript">
+         if(sessionStorage.getItem('securityContext')==null){
+         window.location.href="/APPLETPC/login.html";
+        }
+        var securityContext = JSON.parse(sessionStorage.getItem('securityContext'));
+
+        var path = sessionStorage.getItem('path');
+        var warehouseCode=sessionStorage.getItem('warehouseCode');
+        var stores=sessionStorage.getItem('stores');
+        var stores_name=sessionStorage.getItem('stores_name');
+        var warehouse_name=sessionStorage.getItem('warehouse_name');
+</script>
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+	<title>仓库库位</title>
+
+	<link   type="text/css" rel="stylesheet" href="/APPLETPC/css/common/common.css">
+    <link   type="text/css" rel="stylesheet" href="/APPLETPC/js/bootstrap/css/bootstrap.css">
+	<script type="text/javascript" src="/APPLETPC/js/common/common.js"></script>
+	<script type="text/javascript" src="/APPLETPC/js/common/util.js"></script>
+	<script type="text/javascript" src="/APPLETPC/js/jquery/jquery-2.2.3.min.js"></script>
+    <script type="text/javascript" src="/APPLETPC/js/json/json2.js"></script>
+    <script type="text/javascript" src="/APPLETPC/js/bootstrap/js/bootstrap.js"></script>
+	
+	<script type='text/javascript' src='/APPLETPC/js/json/model/InvStorageLocation.js'></script>
+	
+	<!-- jquery-validator -->
+	<script type="text/javascript"
+		src="/APPLETPC/js/plugins/jquery-validate/jquery.validate.min.js"></script>
+	<script type="text/javascript"
+		src="/APPLETPC/js/plugins/jquery-validate/jquery.validate.plu.js"></script>
+</head>
+<body class="my-body-content">
+	<form id="structDefineAddForm" name="structDefineAddForm" class="my-form-content">
+		<table class="my-form-table-content">
+		
+		<tr>
+				<td class="my-form-table-td-label">
+					<label class="control-label" style="margin:5px;padding:0px;">所属门店</label>
+				</td>
+				<td class="my-form-table-td-content">
+					
+					<input id="stores" name="stores" type="text" class="form-control input-sm" style="width:155px;padding:5px;float:left;" readonly/>
+				</td>
+			</tr>
+		
+			<tr>
+				<td class="my-form-table-td-label">
+					<label class="control-label" style="margin:5px;padding:0px;">所属仓库</label>
+				</td>
+				<td class="my-form-table-td-content">
+					<input id="warehouse" name="warehouse" type="text" class="form-control input-sm" style="width:155px;padding:5px;float:left;"readonly/>
+				</td>
+			</tr>
+		
+		<tr>
+				<td class="my-form-table-td-label">
+					<label class="control-label" style="margin:5px;padding:0px;">库位编码</label>
+				</td>
+				<td class="my-form-table-td-content">
+					<input id="code" name="code" type="text" class="form-control input-sm" style="width:155px;padding:5px;float:left;"/>
+				</td>
+			</tr>
+			<tr>
+				<td class="my-form-table-td-label" style="width:85px;">
+					<label class="control-label" style="margin:5px;padding:0px;">库位名称</label>
+				</td>
+				<td class="my-form-table-td-content" style="width:175px;">
+					<input id="name" name="name" type="text" class="form-control input-sm" style="width:155px;padding:5px;float:left;"/>
+				</td>
+			</tr>
+			<tr>
+				<td class="my-form-table-td-label" style="width:85px;">
+					<label class="control-label" style="margin:5px;padding:0px;">备注</label>
+				</td>
+				<td class="my-form-table-td-content" style="width:175px;">
+					<input id="remarks" name="remarks" type="text" class="form-control input-sm" style="width:155px;padding:5px;float:left;"/>
+				</td>
+			</tr>
+			
+		</table>
+	</form>
+</body>
+</html>
+
+<script type="text/javascript">
+var validator;
+$("#stores").val(stores_name);
+$("#warehouse").val(warehouse_name);
+$(document).ready(function() {
+
+	validator = $("#structDefineAddForm").validate({
+		debug: true,
+		showErrors: showErrors,
+		rules: {
+			code:{
+				required: true,
+				maxlength: 50,
+				isCode: true,
+				remote: {
+					
+					url:path+"api/sys/StorageLocation/checkStorage" ,
+					
+					type: "POST",
+					data: {
+						warehouseCode: function(){return warehouseCode},
+						code: function(){return $('#code').val()},
+						stores: function(){return stores},
+						token:function(){return securityContext.token}
+					}
+				}
+				
+			},
+			name: {
+				required: true,
+				maxlength: 50
+			},
+			remarks:{
+				
+				maxlength: 100
+			},
+			
+		},
+		messages: {
+			code: {
+				required: "不能为空！",
+				maxlength: "最大长度为50！",
+				remote:"库位编号已存在"
+			},
+			name: {
+				required: "不能为空！",
+				maxlength: "最大长度为50！"
+			},
+			remarks:{
+				
+				maxlength: "[说明]最大值为100！"
+			},
+		}
+	});
+	
+});
+
+function doAddStorage() {
+	var result = false;
+	if (validator.form()) {
+		var dsd = new InvStorageLocation();
+		dwr.util.getValues(dsd);
+		
+		dsd.warehouse=warehouseCode;
+		dsd.stores=stores;				
+		dsd.code=$("#code").val();
+		dsd.creater=securityContext.user_id;
+		var url = path+"api/sys/StorageLocation/addStorage";
+		url += "?t=" + new Date();
+		url +="&token="+securityContext.token;
+
+		$.ajax({
+			type: "POST",
+		    url: url,
+		    data: dsd,
+		    async: false,
+		    success: function(data){
+				
+				if (data.result_code == "Y") {
+					recordLog("O","APPLETPC","新建库位成功",securityContext.user_id);
+					result = true;
+					window.top.bootbox.dialog({
+						title: "提示信息",
+						message: "保存成功！",
+						size: "small",
+						buttons: {
+							cancelType: {
+					      		label: "确定",
+					      		className: "btn-"+bootstrapSkin,
+					      		callback: function() {
+					      			return true;
+					      		}
+							}
+						}
+					});
+				} else if (data.result_code == "N") {
+					result = false;
+					recordLog("O","APPLETPC","新建库位失败"+dsd,securityContext.user_id);
+					window.top.bootbox.dialog({
+						title: "错误信息",
+						message: "保存失败！" + "<br><br>" + data.result_info,
+						size: "middle",
+						buttons: {
+							cancelType: {
+					      		label: "确定",
+					      		className: "btn-"+bootstrapSkin,
+					      		callback: function() {
+					      			return true;
+					      		}
+							}
+						}
+					});
+				}
+		    }
+		});
+	}
+	return result;
+}
+
+</script>

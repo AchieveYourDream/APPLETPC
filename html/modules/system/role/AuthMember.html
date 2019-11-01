@@ -1,0 +1,384 @@
+
+<script type="text/javascript">
+         if(sessionStorage.getItem('securityContext')==null){
+         window.location.href="/APPLETPC/login.html";
+        }
+        var securityContext = JSON.parse(sessionStorage.getItem('securityContext'));
+
+        var path = sessionStorage.getItem('path');
+        var roleId = sessionStorage.getItem('roleId');
+</script>
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+	<title>前台会员管理</title>
+
+	<link type="text/css" rel="stylesheet" href="/APPLETPC/css/common/common.css">
+    <link type="text/css" rel="stylesheet" href="/APPLETPC/js/bootstrap/css/bootstrap.css">
+	<script type="text/javascript" src="/APPLETPC/js/common/common.js"></script>
+	<script type="text/javascript" src="/APPLETPC/js/common/util.js"></script>
+	<script type="text/javascript" src="/APPLETPC/js/jquery/jquery-2.2.3.min.js"></script>
+    <script type="text/javascript" src="/APPLETPC/js/json/json2.js"></script>
+    <script type="text/javascript" src="/APPLETPC/js/bootstrap/js/bootstrap.js"></script>
+	<script type="text/javascript" src="/APPLETPC/js/plugins/bootstrap-box/js/bootbox.min.js"></script>
+	
+	
+	<!-- bootstrap-table -->
+	<link type="text/css" rel="stylesheet"
+		href="/APPLETPC/js/plugins/bootstrap-table/css/bootstrap-table.css">
+		
+	<script type="text/javascript"
+		src="/APPLETPC/js/plugins/bootstrap-table/js/bootstrap-table.js"></script>
+	
+	<script type="text/javascript"
+		src="/APPLETPC/js/plugins/bootstrap-table/local/bootstrap-table-zh-CN.js"></script>
+	
+	
+</head>
+<body style="font-size:12px;">
+		
+	<div class="container-fluid" style="margin:0px;padding-top:1px;padding-right:5px;padding-bottom:1px;padding-left:5px;">
+	
+	   	<div id="typeToolbar">
+	   	
+			<button id="addMemberBtn" class="btn  btn-sm">
+	            <i class="glyphicon glyphicon-plus"></i>&nbsp;新建
+	        </button>
+
+	        <button id="delMemberBtn" class="btn  btn-sm">
+	            <i class="glyphicon glyphicon-remove"></i>&nbsp;删除
+	        </button>
+	       
+	    </div>
+	   
+	    <table id="typeTable"
+	    	   class="table table-condensed"
+	           data-toggle="table"
+	           data-toolbar="#typeToolbar"
+	           data-pagination="true"
+	           data-page-size="10"
+	           data-page-list="[10,15,20,25]"
+	           data-striped="true"
+	           data-search="true">
+	           <thead>
+	           	<tr>
+	           	    <th data-field="state" data-checkbox="true" data-halign="center" data-align="left"></th>
+	           	    
+	                <th data-field="username" data-halign="center" data-align="left">账号</th>
+	                <th data-field="name" data-halign="center" data-align="left">名称</th>
+	                <th data-field="contact" data-halign="center" data-align="left">联系方式</th>
+	                <th data-field="companyname" data-halign="center" data-align="left">公司名称</th>
+	            </tr>
+	           </thead>
+		</table>
+	    
+	    
+	    
+	</div>
+</body>
+</html>
+<script type="text/javascript">
+var currentRoleId;
+$(".btn").addClass("btn-"+bootstrapSkin)
+$(document).ready(function() {
+	$("#addMemberBtn").on("click", function () {
+		addMember();
+	});
+	
+	
+	
+	$("#delMemberBtn").on("click", function () {
+		deleteMember();
+	});
+	
+	
+	$("#typeTable").on('click-row.bs.table', function (e, row, $element) {
+        $('.warning').removeClass('warning');
+        $($element).addClass('warning');
+        
+        currentRoleId = row.role_id;
+         LovRow = row;
+      
+ 
+    });
+
+	
+	$("#entryTable").on('click-row.bs.table', function (e, row, $element) {
+        $('.warning').removeClass('warning');
+        $($element).addClass('warning');
+          
+    });
+	
+	queryMemberList();
+});
+
+// 获取会员列表
+function queryMemberList() {
+	$("#typeTable").bootstrapTable('removeAll');
+	
+	var url = path+"api/sys/role/getMemberList";
+    url += "?currentTime=" + new Date();
+    url += "&role_id="+roleId;
+  
+    $.ajax({
+		type: "get",
+		url: url,
+		async:false,
+		headers:{"token":securityContext.token},
+		success: function(data) {
+	
+			if (data.code == "S") {
+					$("#typeTable").bootstrapTable("load", JSON.parse(data.result_info));
+					$("#typeTable").bootstrapTable('resetView');
+				currentRoleId = null;
+			} else {
+				window.top.bootbox.dialog({
+					title: "错误信息",
+					message: "数据加载失败！" + "<br><br>" + data.result_info,
+					size: "middle",
+					buttons: {
+						cancelType: {
+				      		label: "确定",
+				      		className: "btn-"+bootstrapSkin,
+				      		callback: function() {
+				      			return true;
+				      		}
+						}
+					}
+				});
+			}
+		}
+	});
+}
+
+
+
+// 添加会员
+function addMember() {
+	var url = "/APPLETPC/jsp/common/lov/lov.html";
+	sessionStorage.setItem('lovCode', 'lov_member');
+	sessionStorage.setItem('lovType', 'multi');
+	sessionStorage.setItem('message', '会员');
+	var typeAddFrame = '<iframe id="typeAddFrame" class="my-modal-iframe" width="100%" height="450px" src="' + url + '"></iframe>';
+	
+	window.top.bootbox.dialog({
+		title: "添加会员",
+		message: typeAddFrame,
+		size: "",
+		buttons: {
+			saveType: {
+	      		label: "确定",
+	      		className: "btn-"+bootstrapSkin,
+	      		callback: function() {
+	      			var result = window.top.document.getElementById("typeAddFrame").contentWindow.getLovData();
+	      			if(result){
+	      			var res=$("#typeTable").bootstrapTable("getData");
+	      			
+	      			var arr = new Array();
+	      			var arr1= new Array();
+	      			
+	      			var name=null;
+	      			for(var i=0;i<result.length;i++){
+	      		     arr[i]=result[i].lov_value;
+	      		     for(var j=0;j<res.length;j++){
+	      		        arr1[j]= res[j].id;
+	      		        name=res[j].name
+	      		        if(arr[i]==arr1[j]){
+	      		          
+	      		          window.top.bootbox.alert({ 
+										    size: 'small',
+										    message: "会员【"+name+"】已拥有权限!请重选"
+										});
+										return false;
+	      		        }
+	      		      
+	      		     }
+	      		   }
+           
+	      		 var url = path+"api/sys/role/addRoleMemberRelation";
+									url += "?role_id=" + roleId;
+									url += "&member_id=" + arr;
+									$.ajax({
+												type : "get",
+												url : url,
+												datatype : "jsonp",
+
+												async : false,
+												headers:{"token":securityContext.token},
+												success : function(text, status) {
+
+													if (text.result_code == "Y") {
+														result = true;
+// 														var source= "系统管理>角色权限管理>角色:"+roleId+">权限配置>用户>新建角色";
+// 														var content="编码:"+arr+";保存成功";
+// 														var id = <%=securityContext.getUser_id()%>;		
+// 														var con ="/APPLETPC";
+// 												         createOperationLog(source,content,id,con);
+														window.top.bootbox
+																.dialog({
+																	title : "提示信息",
+																	message : "新建成功！",
+																	size : "middle",
+																	buttons : {
+																		cancelType : {
+																			label : "确定",
+																			className : "btn-"+bootstrapSkin,
+																			callback : function() {
+																				return true;
+																			}
+																		}
+																	}
+																});
+													} else if (text.result_code == "N") {
+														result = false;
+// 														var source= "系统管理>角色权限管理>角色:"+roleId+">权限配置>用户>新建角色";
+// 														var content="编码:"+arr+";保存失败"+ json.result_info;
+// 														var id = <%=securityContext.getUser_id()%>;		
+// 														var con ="/APPLETPC";
+// 												         createOperationLog(source,content,id,con);
+
+														window.top.bootbox
+																.dialog({
+																	title : "错误信息",
+																	message : "新建失败！"
+																			+ "<br><br>"
+																			+ text.result_info,
+																	size : "middle",
+																	buttons : {
+																		cancelType : {
+																			label : "确定",
+																			className : "btn-"+bootstrapSkin,
+																			callback : function() {
+																				return true;
+																			}
+																		}
+																	}
+																});
+													}
+												}
+											});
+
+									queryMemberList();
+								}
+								
+								return result;
+							}
+						},
+						cancelType : {
+							label : "取消",
+							className : "btn-default",
+							callback : function() {
+
+								return true;
+							}
+						}
+					}
+				});
+	}
+
+	//删除角色信息
+	function deleteMember() {
+		window.top.bootbox
+				.dialog({
+					title : "提示信息",
+					message : "确定要删除吗？",
+					size : "middle",
+					buttons : {
+						okType : {
+							label : "确定",
+							className : "btn-"+bootstrapSkin,
+							callback : function() {
+
+								var obj = $("#typeTable").bootstrapTable(
+										"getSelections");
+								if (obj.length == 0) {
+									window.top.bootbox.alert({
+										size : 'small',
+										message : "请选择要删除的会员！"
+									});
+									return true;
+								} else {
+									var src;
+									var arr = new Array();
+									for ( var i = 0; i < obj.length; i++) {
+										 arr[i]= obj[i].id.trim();
+									}
+								
+									var url = path+"api/sys/role/deleteSysRoleMember";
+							              url += "?role_id=" + roleId;
+							              url += "&member_id=" + arr;
+								
+										$.ajax({
+										type: "get",
+									    url: url,
+									    async: false,
+									    headers:{"token":securityContext.token},
+									    success: function(data){
+											
+											if (data.code == "S") {
+												result = true;
+// 											var source= "系统管理>角色权限管理>角色:"+roleId+">权限配置>用户>删除角色";
+// 											var content="编码:"+arr+";删除成功";
+// 											var id = <%=securityContext.getUser_id()%>;		
+// 											var con ="/APPLETPC";
+// 									         createOperationLog(source,content,id,con);
+												window.top.bootbox.dialog({
+													title: "提示信息",
+													message: "删除成功！",
+													size: "middle",
+													buttons: {
+														cancelType: {
+												      		label: "确定",
+												      		className: "btn-"+bootstrapSkin,
+												      		callback: function() {
+												      			return true;
+												      		}
+														}
+													}
+												});
+												queryMemberList();
+											} else if (data.result_code == "N") {
+												result = false;
+// 											var source= "系统管理>角色权限管理>角色:"+roleId+">权限配置>用户>删除角色";
+// 											var content="编码:"+arr+";删除失败"+ json.result_info;
+// 											var id = <%=securityContext.getUser_id()%>;		
+// 											var con ="/APPLETPC";
+// 											createOperationLog(source,content,id,con);
+												window.top.bootbox.dialog({
+													title: "错误信息",
+													message: "删除失败！" + "<br><br>" + data.result_info,
+													size: "middle",
+													buttons: {
+														cancelType: {
+												      		label: "确定",
+												      		className: "btn-"+bootstrapSkin,
+												      		callback: function() {
+												      			return true;
+												      		}
+														}
+													}
+												});
+											}
+									    }
+									});
+									}
+
+							},
+							cancelType: {
+					      		label: "取消",
+					      		className: "btn-default",
+					      		callback: function() {
+					      			return true;
+					      		}
+							}
+						}
+						
+					}
+                     });
+}
+
+</script>

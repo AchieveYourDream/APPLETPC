@@ -1,0 +1,372 @@
+<script type="text/javascript">
+       if(sessionStorage.getItem('securityContext')==null){
+         window.location.href="/APPLETPC/login.html";
+        }
+        var securityContext = JSON.parse(sessionStorage.getItem('securityContext'));
+
+        var path = sessionStorage.getItem('path');
+</script>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+<title>订单管理</title>
+
+	<link type="text/css" rel="stylesheet" href="/APPLETPC/css/common/common.css">
+	<script type="text/javascript" src="/APPLETPC/js/common/common.js"></script>
+	<script type="text/javascript" src="/APPLETPC/js/common/util.js"></script>
+	<script type="text/javascript"src="/APPLETPC/js/jquery/jquery-2.2.3.min.js"></script>
+    <script type="text/javascript" src="/APPLETPC/js/json/json2.js"></script>
+    <link type="text/css" rel="stylesheet" href="/APPLETPC/js/bootstrap/css/bootstrap.css">
+    <script type="text/javascript" src="/APPLETPC/js/bootstrap/js/bootstrap.js"></script>
+     <script type="text/javascript" src="/APPLETPC/js/plugins/bootstrap-box/js/bootbox.min.js"></script>
+    <!-- bootstrap-table -->
+	<link type="text/css" rel="stylesheet"
+		href="/APPLETPC/js/plugins/bootstrap-table/css/bootstrap-table.css">
+		
+	<script type="text/javascript"
+		src="/APPLETPC/js/plugins/bootstrap-table/js/bootstrap-table.js"></script>
+	
+	<script type="text/javascript"
+		src="/APPLETPC/js/plugins/bootstrap-table/local/bootstrap-table-zh-CN.js"></script>
+		
+	<script type="text/javascript"
+		src="/APPLETPC/js/plugins/bootstrap-table/extensions/editable/bootstrap-table-editable.js"></script>
+	
+	<link type="text/css" rel="stylesheet"
+		href="/APPLETPC/js/plugins/bootstrap-table/extensions/editable/bootstrap-editable.css">
+		
+	<script type="text/javascript"
+		src="/APPLETPC/js/plugins/bootstrap-table/extensions/editable/bootstrap-editable.js"></script>
+	
+<!-- bootstrap-treeview -->
+	<link type="text/css" rel="stylesheet"
+		href="/APPLETPC/js/plugins/bootstrap-treeview/css/bootstrap-treeview.css">
+	
+	<script type="text/javascript"
+		src="/APPLETPC/js/plugins/bootstrap-treeview/js/bootstrap-treeview.js"></script>
+<script type='text/javascript' src='/APPLETPC/js/json/model/SysLog.js'></script>
+
+</head>
+<body style="font-size:12px;">
+	<div class="container-fluid" style="margin:0px;padding-top:1px;padding-right:5px;padding-bottom:1px;padding-left:5px;">
+		<!-- <div id="userToolbar">
+			<button id="addStoreBtn" class="btn  btn-sm" onclick="queryDictList();">
+            <i class="glyphicon glyphicon-plus"></i>&nbsp;服装大类
+        </button>
+        <button id="editStoreBtn" class="btn  btn-sm" onclick="queryDictList();">
+            <i class="glyphicon glyphicon-plus"></i>&nbsp;单品
+        </button>
+        <button id="delStoreBtn" class="btn  btn-sm" style="margin-right:585px" onclick="queryGoodsList();">
+            <i class="glyphicon glyphicon-plus"></i>&nbsp;物料
+        </button>
+		</div> -->
+
+	<table id="storeTable"  
+		class="table table-condensed "
+			data-toggle="table" 
+			data-toolbar="#userToolbar"
+			data-pagination="true" 
+			data-page-size="10" 
+		    data-page-list="[10,15,20,25,30]" 
+		    data-height="550"
+		    data-search="true"
+		    >
+			<thead >
+				<tr >
+					<th data-field="id" data-halign="center" data-align="left">ID</th>
+					<th data-field="name" data-halign="center" data-align="left">服装大类名称(中)</th>
+					<th data-field="en" data-halign="center" data-align="left">服装大类名称(英)</th>
+					<th data-field="ecode" data-halign="center" data-align="left">ECODE</th>
+				</tr>
+			</thead>
+		</table>
+	</div>
+</body>
+</html>
+
+<script type="text/javascript">
+var currentStoreId;
+var store_id;
+$(".btn").addClass("btn-"+bootstrapSkin);
+$(document).ready(function() {
+
+queryCategoryList();
+/* selectStoreInformationByPk(); */
+	//单击获取当前行
+	$("#storeTable").on('click-row.bs.table', function (e, row, $element) {
+        $('.warning').removeClass('warning');
+        $($element).addClass('warning');
+        
+        currentCode = row.code;
+        id = row.id;
+        
+    });
+	//双击获取当前行
+    $("#storeTable").on('dbl-click-row.bs.table', function (e, row, $element) {
+ 	  	editCategory();
+ 	 	
+        $('.warning').removeClass('warning');
+        $($element).addClass('warning');
+        currentCode = row.code;
+        id = row.id;
+        
+    });
+	
+	
+ $(window).resize(function(){
+    $("#storeTable").bootstrapTable("resetView");
+});
+});
+
+
+
+	// 获取物料列表
+	function queryCategoryList() {
+		
+		$("#storeTable").bootstrapTable('removeAll');
+
+		var url = path + "api/sys/orden/getCategoryList";
+
+		/* url += "?currentTime=" + new Date();  */
+
+		$.ajax({
+			type : "get",
+			url : url,
+			data : {
+				"token" : securityContext.token
+			},
+			success : function(data) {
+
+				if (data.result_code == "Y") {
+					recordLog("O","APPLETPC","服装大类获取成功",securityContext.user_id);
+					$("#storeTable").bootstrapTable("load",
+							JSON.parse(data.result_info));
+
+					currentStoreId = null;
+				} else if (data.result_code == "N") {
+					recordLog("OF","APPLETPC","服装大类获取失败",securityContext.user_id);
+					window.top.bootbox.dialog({
+						title : "错误信息",
+						message : "数据加载失败！" + "<br><br>" + data.result_info,
+						size : "middle",
+						buttons : {
+							cancelType : {
+								label : "确定",
+								className : "btn-" + bootstrapSkin,
+								callback : function() {
+									return true;
+								}
+							}
+						}
+					});
+				}
+			}
+		});
+	}
+	
+	
+	
+ 	function editCategory() {
+
+ 		var url = "/APPLETPC/jsp/modules/system/orden/CategoryEdit.html";
+ 		sessionStorage.setItem('currentCode', currentCode);
+ 		sessionStorage.setItem('id', id);
+ 		var storeEditFrame = '<iframe id="storeEditFrame" class="my-modal-iframe" width="100%" height="400px" src="' + url + '"></iframe>';
+ 		
+ 		window.top.bootbox.dialog({
+ 			title: "服装物料-折扣设置",
+ 			size: "small",
+ 			message: storeEditFrame,
+ 			buttons: {
+ 				saveType: {
+ 		      		label: "保存",
+ 		      		className: "btn-"+bootstrapSkin,
+ 		      		callback: function() {
+ 		      			var result = window.top.document.getElementById("storeEditFrame").contentWindow.doCategory();
+ 		      			if (result) {
+ 		      				queryCategoryList();
+ 		      			}
+ 		      			return result;
+ 		      		}
+ 				},
+ 				cancelType: {
+ 		      		label: "取消",
+ 		      		className: "btn-default",
+ 		      		callback: function() {
+ 		      			return true;
+ 		      		}
+ 				}
+ 			}
+ 		});
+
+		
+			
+		
+	}
+
+	
+/* 	$('#storeTable').bootstrapTable({
+		columns : [
+		
+		{
+			field : 'code',
+			title : '款式代码'
+		}, 
+		{
+			field : 'name',
+			title : '服装单品名称(中)'
+		}, 
+		{
+			field : 'en',
+			title : '服装单品名称(英)'
+		},  
+		{
+			field : 'seriesid',
+			title : '所属系列'
+		}, 
+		{
+			field : 'fabricno',
+			title : '款式面料'
+		}, 
+		{
+			field : 'liningtype',
+			title : '工艺类型'
+		}, {
+			field : 'rmbprice',
+			title : '人民币价格'
+		}, 
+		{
+			field : 'dollarprice',
+			title : '美元价格'
+		}, 
+		 {
+			field : 'discount',
+			title : '折扣'
+		}, 
+		 {
+			field : 'lowerdiscount',
+			title : '最低零售折扣',
+			editable : {
+				type : "text", //编辑框的类型。支持text|textarea|select|date|checklist等
+				title : "最低零售折扣", //编辑框的标题
+				mode : "popup",
+				emptytext : "请填写最低折扣", //编辑框的模式：支持popup和inline两种模式，默认是popup
+				validate : function(value) { //字段验证
+					if (isNaN(value)) {
+						//isNaN函数检测是否是非数字,如果是返回true
+						window.top.bootbox.dialog({
+							size : 'small',
+							message : "请正确填写折扣",
+							buttons : {
+								saveType : {
+									label : "确定",
+									className : "btn-" + bootstrapSkin,
+									callback : function() {
+										return true;
+									}
+								}
+						
+							}
+						});
+						return false;
+					}
+					if (value > 8 ) {
+						//isNaN函数检测是否是非数字,如果是返回true
+						window.top.bootbox.dialog({
+							size : 'small',
+							message : "最低折扣不能低于8折",
+							buttons : {
+								saveType : {
+									label : "确定",
+									className : "btn-" + bootstrapSkin,
+									callback : function() {
+										return true;
+										
+									}
+								}
+							}
+						});
+						return false;
+					}
+				}
+			}
+		}, {
+			field : 'highdiscount',
+			title : '最高零售折扣',
+			editable : {
+				type : "text", //编辑框的类型。支持text|textarea|select|date|checklist等
+				title : "最高零售折扣", //编辑框的标题
+				mode : "popup",
+				emptytext : "请填写最高折扣", //编辑框的模式：支持popup和inline两种模式，默认是popup
+				validate : function(value) { //字段验证
+					if (isNaN(value)) {
+						//isNaN函数检测是否是非数字,如果是返回true
+						window.top.bootbox.dialog({
+							size : 'small',
+							message : "请正确填写折扣",
+							buttons : {
+								saveType : {
+									label : "确定",
+									className : "btn-" + bootstrapSkin,
+									callback : function() {
+										return true;
+									}
+								}
+							}
+						});
+						return false;
+					}
+					if (value < 1.2) {
+						//isNaN函数检测是否是非数字,如果是返回true
+						window.top.bootbox.dialog({
+							size : 'small',
+							message : "最高折扣不能超过1.2折",
+							buttons : {
+								saveType : {
+									label : "确定",
+									className : "btn-" + bootstrapSkin,
+									callback : function() {
+										return true;
+									}
+								}
+							}
+						});
+						return false;
+					}
+					}
+				}
+			
+		},
+		 {
+			field : '',
+			title : '操作',
+			events:"operateEvents",
+			formatter:"operateFormatter",
+			halign:"center",
+			align:"center"
+		}
+		]
+	}); */
+	
+	/* 定义表格中嵌套多个按钮  此处标签用的超链接因为用button点击会有一个框 */
+	function operateFormatter(value, row, index) {
+	    return [
+	       /*  '<a type="button" class="delBtn" style="margin-right:15px;"><i class="glyphicon glyphicon-pencil"></i>修改</a>', */
+	        '<a type="button" class="editBtn" style="margin-right:15px;">保存</a>'
+	    ].join('');
+	}
+	/* 给每个按钮绑定事件 */
+	window.operateEvents = {
+	                 /* 'click .delBtn': function (e, value, row, index) {
+	                	 delAllotApplication(row.serial_number);
+	                  }, */
+	                  'click .editBtn': function (e, value, row, index) {
+	             		 saveDiscount(row.lowerdiscount,row.highdiscount) ;
+	                  },
+	                  
+	         }; 
+</script>

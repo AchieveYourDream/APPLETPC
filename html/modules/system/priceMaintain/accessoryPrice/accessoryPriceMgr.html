@@ -1,0 +1,385 @@
+<script type="text/javascript">
+       if(sessionStorage.getItem('securityContext')==null){
+         window.location.href="/APPLETPC/login.html";
+        }
+        var securityContext = JSON.parse(sessionStorage.getItem('securityContext'));
+
+        var path = sessionStorage.getItem('path');
+</script>
+<!DOCTYPE html>
+<html>
+<head>
+	<title>物料配饰零售价格管理</title>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+	<link type="text/css" rel="stylesheet" href="/APPLETPC/css/common/common.css">
+    <link type="text/css" rel="stylesheet" href="/APPLETPC/js/bootstrap/css/bootstrap.css">
+	<link type="text/css" rel="stylesheet" href="/APPLETPC/js/plugins/bootstrap-treeview/css/bootstrap-treeview.css">
+	<link type="text/css" rel="stylesheet" href="/APPLETPC/js/plugins/bootstrap-table/css/bootstrap-table.css">
+	<script type="text/javascript" src="/APPLETPC/js/common/common.js"></script>
+	<script type="text/javascript" src="/APPLETPC/js/common/util.js"></script>
+	<script type="text/javascript"src="/APPLETPC/js/jquery/jquery-2.2.3.min.js"></script>
+    <script type="text/javascript" src="/APPLETPC/js/json/json2.js"></script>
+    <script type="text/javascript" src="/APPLETPC/js/bootstrap/js/bootstrap.js"></script>
+    <script type="text/javascript" src="/APPLETPC/js/plugins/bootstrap-box/js/bootbox.min.js"></script>
+	<script type="text/javascript" src="/APPLETPC/js/plugins/bootstrap-treeview/js/bootstrap-treeview.js"></script>
+	<script type='text/javascript' src='/APPLETPC/js/json/model/SysLog.js'></script>
+	<script type="text/javascript" src="/APPLETPC/js/plugins/bootstrap-table/js/bootstrap-table-400.js"></script>
+	<script type="text/javascript" src="/APPLETPC/js/plugins/bootstrap-table/local/bootstrap-table-zh-CN.js"></script>
+</head>
+<body style="font-size:12px;">
+	<div class="container-fluid" style="margin:0px;padding:0px;">
+		<div class="row" style="margin:0px;padding:0px;">
+			<!-- 左侧物料分类div -->
+			<div class="col-md-4" style="padding-left:5px;padding-right:5px;">
+  				<div class="bootstrap-table">
+					<div class="fixed-table-toolbar">
+						<div class="bars pull-left">
+							<div id="dsdToolbar">
+							    <div style="margin:5px;padding:0px;">
+			      				</div>	
+							</div>
+						</div>
+					</div>
+					<div class="fixed-table-container" style="padding-top:5px;padding-bottom:0px;border:0px;">
+						<div class="fixed-table-body">
+							<div id="dsnTree" style="font-size:12px;height:450px">
+								
+							</div>
+						</div>
+					</div>
+				</div>
+  			</div>
+  			
+  			<!-- 右上 物料详情 -->
+  			<div class="col-md-8" style="padding-left:5px;padding-right:5px;">
+			 	<div class="container-fluid" style="margin:0px;padding-top:1px;padding-right:5px;padding-bottom:1px;padding-left:5px;">
+					<table id="storeTable"  class="table table-condensed "
+					 data-url="http://localhost:8080/SPMTM//api/sys/material/getInvMaterialsList"
+		             data-data-type="json"
+		             data-query-params="queryParams"
+		             data-side-pagination="server"
+					 data-toggle="table" 
+					 data-pagination="true" 
+					 data-page-size="10" 
+					 data-page-list="[10,15,20,25,30]"   
+					 data-search="true" 
+					 data-undefined-text=''
+		                          
+					 >
+						<thead >
+							<tr >
+								<th data-field="material_code" data-halign="center" data-align="center">物料编码</th>
+								<th data-field="material_name" data-halign="center" data-align="left">物料名称</th>
+								<th data-field="material_specifications" data-halign="center" data-align="left">规格型号</th>
+								<th data-field="unit" data-halign="center" data-align="left">单位</th>
+								<th data-field="price" data-halign="center" data-align="left">单价</th>
+								<th data-field="material_type" data-halign="center" data-align="left">物料类型</th>
+								<th data-field="material_instruction" data-halign="center" data-align="left">物料说明</th>
+							</tr>
+						</thead>
+					</table>
+				</div>
+			 </div>
+			 
+			 <!-- 右下 物料详情 -->
+  			<div class="col-md-8" style="padding-left:5px;padding-right:5px;">
+			 	<div class="container-fluid" style="margin:0px;padding-top:1px;padding-right:5px;padding-bottom:1px;padding-left:5px;">
+					<div id="userToolbar" style="display: none;">
+				        <button id="editMaterialBtn" class="btn  btn-sm" onclick="editMaterial();">
+				            <i class="glyphicon glyphicon-plus"></i>&nbsp;编辑价格
+				        </button>
+				       <!--  <button id="delStoreBtn" class="btn  btn-sm"  onclick="checkMaterialByPk();">
+				            <i class="glyphicon glyphicon-remove"></i>&nbsp;删除价格
+				        </button> -->
+				       
+					</div>
+			
+					<table id="storeTable2"  class="table table-condensed " data-toggle="table" data-toolbar="#userToolbar" data-pagination="true" data-page-size="10" data-page-list="[10,15,20,25,30]"   data-search="true">
+						<thead >
+							<tr >
+								<th data-field="accessory_code" data-halign="center" data-align="center">物料编码</th>
+								<th data-field="attribute1" data-halign="center" data-align="left">物料名称</th>
+								<th data-field="price_specification" data-halign="center" data-align="left">定价规范</th>
+								<th data-field="retail_price" data-halign="center" data-align="left">单价</th>
+							</tr>
+						</thead>
+					</table>
+				</div>
+			 </div>
+		</div>
+	</div>
+	
+	
+</body>
+</html>
+
+<script type="text/javascript">
+	var currentNodeId;			//树节点id
+	var materialTypeCode;		//当前的物料编码
+	var material_name;			//当前物料的名称
+	var accessory_code;			//物料编码的id
+	var price_specification		//定价规范
+	$(".btn").addClass("btn-"+bootstrapSkin);
+	$(document).ready(function() {
+		initDSNTree();
+		//单击物料编码获取当前行
+		$("#storeTable").on('click-row.bs.table', function (e, row, $element) {
+	        $('.warning').removeClass('warning');
+	        $($element).addClass('warning');
+	        materialTypeCode = row.material_code;		//物料编码
+	        material_name= row.material_name;
+	        selectPriceByCode();
+	        accessory_code=null;						//物料编码id清空
+	        
+	    });
+		//双击物料编码获取当前行
+	    $("#storeTable").on('dbl-click-row.bs.table', function (e, row, $element) {
+	        $('.warning').removeClass('warning');
+	        $($element).addClass('warning');
+	        materialTypeCode = row.material_code;
+	        accessory_code=null;						//物料编码id清空
+	       
+	    });
+		
+	  //单击物料价格获取当前行
+	    $("#storeTable2").on('click-row.bs.table', function (e, row, $element) {
+	        $('.warning').removeClass('warning');
+	        $($element).addClass('warning');
+	        accessory_code = row.accessory_code;		//物料编码id
+	        price_specification = row.attribute2;		//定价规范
+	        
+	       
+	    });
+		//双击物料价格获取当前行
+	    $("#storeTable2").on('dbl-click-row.bs.table', function (e, row, $element) {
+	    	$('.warning').removeClass('warning');
+	        $($element).addClass('warning');
+	        accessory_code = row.accessory_code;		//物料编码id
+	        price_specification = row.attribute2;		//定价规范
+	        editMaterial();
+	    });
+	});
+	function queryParams(params) {
+	return {offset:params.offset, limit:params.limit,search:params.search,token:securityContext.token,"material_category":materialTypeCode};
+	}	
+	// 依据节点编码 获取物料列表
+	function selectStoreInformationByPk() {
+	$("#storeTable2").bootstrapTable('removeAll')
+	$('#storeTable').bootstrapTable('refresh');
+// 	materialTypeCode = null;
+// 		$("#storeTable").bootstrapTable('removeAll'); 
+// 		$("#storeTable2").bootstrapTable('removeAll'); 
+// 		var url =path+"api/sys/material/getInvMaterialsList";
+// 		url += "?t=" + new Date();
+// 	    $.ajax({
+// 			type: "post",
+// 			url: url,
+// 			async:false,
+// 			data:{"token":securityContext.token,"material_category":materialTypeCode},
+// 			success: function(data) {
+// 				if(data.result_info=="[]"){
+// 					$("#userToolbar")[0].style.display="none";
+// 				}else{
+// 					$("#userToolbar")[0].style.display="";
+// 				}
+// 				if (data.result_code == "Y") {
+// 					recordLog("O","APPLETPC","物料获取成功",securityContext.user_id);
+// 					$("#storeTable").bootstrapTable("load", JSON.parse(data.result_info));
+// 					materialTypeCode = null;
+// 				} else if (data.result_code == "N") {
+// 					recordLog("OF","APPLETPC","物料获取失败",securityContext.user_id);
+// 					window.top.bootbox.dialog({
+// 						title: "错误信息",
+// 						message: "数据加载失败！" + "<br><br>" + data.result_info,
+// 						size: "middle",
+// 						buttons: {
+// 							cancelType: {
+// 					      		label: "确定",
+// 					      		className: "btn-"+bootstrapSkin,
+// 					      		callback: function() {
+// 					      			return true;
+// 					      		}
+// 							}
+// 						}
+// 					});
+// 				}
+// 			}
+// 		});
+	}
+	
+	
+	
+	
+	// 编辑物料编码
+	function editMaterial() {
+		if (!accessory_code) {
+			window.top.bootbox.dialog({ 
+			    size: 'small',
+			    message: "请选择对应的节点！",
+			     buttons: {
+				saveType: {
+		      		label: "确定",
+		      		className: "btn-"+bootstrapSkin,
+		      		callback: function() {
+		      		return true;
+		      		}
+		      		  }
+		      		}
+			});
+			return;
+		}
+		if (!accessory_code) {
+			window.top.bootbox.dialog({ 
+			    size: 'small',
+			    message: "请选择需要编辑的物料！",
+			     buttons: {
+				saveType: {
+		      		label: "确定",
+		      		className: "btn-"+bootstrapSkin,
+		      		callback: function() {
+		      		return true;
+		      		}
+		      		  }
+		      		}
+			});
+			return;
+		}
+		
+		var url = "/APPLETPC/jsp/modules/system/priceMaintain/accessoryPrice/accessoryPriceEdit.html";
+		sessionStorage.setItem('accessory_code', accessory_code);
+		sessionStorage.setItem('price_specification', price_specification);
+		var materialEditFrame = '<iframe id="materialEditFrame" class="my-modal-iframe" width="100%" height="400px" src="' + url + '"></iframe>';
+		window.top.bootbox.dialog({
+			title: "物料-编辑",
+			size: "middle",
+			message: materialEditFrame,
+			buttons: {
+				saveType: {
+		      		label: "保存",
+		      		className: "btn-"+bootstrapSkin,
+		      		callback: function() {
+		      			
+		      			var result = window.top.document.getElementById("materialEditFrame").contentWindow.doEditCraftworkPrice();
+		      			if (result) {
+		      				selectPriceByCode();
+		      				accessory_code=null;//清空物料编码id
+		      			}
+		      			return result;
+		      		}
+				},
+				cancelType: {
+		      		label: "取消",
+		      		className: "btn-default",
+		      		callback: function() {
+		      			return true;
+		      		}
+				}
+			}
+		});
+	}
+
+	
+	//获取数据结构节点树
+	function initDSNTree(){
+		var url = path+"api/sys/materialstruct/getMaterialStructNodeTree";
+		url += "?currentTime=" + new Date();//当前系统时间
+		url+="&token="+securityContext.token;
+	    $.ajax({
+			type: "post",
+			url: url,
+			async:false,
+			success: function(data) {
+				
+				if (data.result_code == "Y") {
+					recordLog("O","APPLETPC","获取数据结构节点树成功",securityContext.user_id);
+					$('#dsnTree').treeview({
+						data: JSON.parse(data.result_info).nodes,
+						//选择节点,用jquery.on方法绑定nodeSelected事件
+						onNodeSelected: onTreeNodeSelectedHandler,
+						levels: 2,
+					});
+					
+					if (currentNodeId) {
+						$('#dsnTree').treeview('selectNode', [currentNodeId, {silent: true}]);
+					}
+
+					materialTypeCode=null;
+				} else if (data.result_code == "N") {
+					recordLog("OF","APPLETPC","获取数据结构节点树失败",securityContext.user_id);
+					window.top.bootbox.dialog({
+						title: "错误信息",
+						message: "数据加载失败！" + "<br><br>" + data.result_info,
+						size: "middle",
+						buttons: {
+							cancelType: {
+					      		label: "确定",
+					      		className: "btn-"+bootstrapSkin,
+					      		callback: function() {
+					      			return true;
+					      		}
+							}
+						}
+					});
+				}
+			}
+		});
+	}
+	
+	// 树节点单击事件
+	function onTreeNodeSelectedHandler(event, data) {
+		//节点选择事件,获取到当前所选节点
+		materialTypeCode = data.data.node_code;//M为根节点不允许编辑，删除操作
+		currentNodeId = data.nodeId;
+		selectStoreInformationByPk();
+	}
+	
+	function expandAllParentNode(nodeId) {
+		if (nodeId) {
+			$('#dsnTree').treeview('expandNode', [nodeId, {silent: true}]);
+			
+			var parentNode = $('#dsnTree').treeview('getParent', nodeId);
+			if (parentNode) {
+				expandAllParentNode(parentNode.nodeId);
+			}
+		}
+	}
+	
+	// 依据物料编码 获取价格
+	function selectPriceByCode() {
+		var url =path+"api/sys/accessoryPrice/getByCode";
+		url += "?t=" + new Date();
+	    $.ajax({
+			type: "GET",
+			url: url,
+			async:false,
+			data:{"token":securityContext.token,"accessory_code":materialTypeCode},
+			success: function(data) {
+				//因数据库原因，将物料名称在页面上赋值
+				data.result_info=data.result_info.replace(/\"attribute1\":\"\"/g,'\"attribute1\":\"'+material_name+'\"');
+				if (data.result_code == "Y") {
+					recordLog("O","APPLETPC","物料价格获取成功",securityContext.user_id);
+					$("#storeTable2").bootstrapTable("load", JSON.parse(data.result_info));
+				} else if (data.result_code == "N") {
+					recordLog("OF","APPLETPC","物料价格获取失败",securityContext.user_id);
+					window.top.bootbox.dialog({
+						title: "错误信息",
+						message: "数据加载失败！" + "<br><br>" + data.result_info,
+						size: "middle",
+						buttons: {
+							cancelType: {
+					      		label: "确定",
+					      		className: "btn-"+bootstrapSkin,
+					      		callback: function() {
+					      			return true;
+					      		}
+							}
+						}
+					});
+				}
+			}
+		});
+	}
+
+</script>

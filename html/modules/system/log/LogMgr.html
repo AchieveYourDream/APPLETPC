@@ -1,0 +1,172 @@
+<script type="text/javascript">
+        if(sessionStorage.getItem('securityContext')==null){
+         window.location.href="/APPLETPC/login.html";
+        }
+        var securityContext = JSON.parse(sessionStorage.getItem('securityContext'));
+
+        var path = sessionStorage.getItem('path');
+</script>
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+	<title>日志</title>
+
+	<link   type="text/css" rel="stylesheet" href="/APPLETPC/css/common/common.css">
+    <link   type="text/css" rel="stylesheet" href="/APPLETPC/js/bootstrap/css/bootstrap.css">
+	<script type="text/javascript" src="/APPLETPC/js/common/common.js"></script>
+	<script type="text/javascript" src="/APPLETPC/js/common/util.js"></script>
+	<script type="text/javascript"src="/APPLETPC/js/jquery/jquery-2.2.3.min.js"></script>
+    <script type="text/javascript" src="/APPLETPC/js/json/json2.js"></script>
+    <script type="text/javascript" src="/APPLETPC/js/bootstrap/js/bootstrap.js"></script>
+    <script type="text/javascript" src="/APPLETPC/js/plugins/bootstrap-box/js/bootbox.min.js"></script>
+	<!-- bootstrap-table -->
+	<link type="text/css" rel="stylesheet"
+		href="/APPLETPC/js/plugins/bootstrap-table/css/bootstrap-table.css">
+		
+	<script type="text/javascript"
+		src="/APPLETPC/js/plugins/bootstrap-table/js/bootstrap-table.js"></script>
+	
+	<script type="text/javascript"
+		src="/APPLETPC/js/plugins/bootstrap-table/local/bootstrap-table-zh-CN.js"></script>
+		
+	<!-- bootstrap-treeview -->
+	<link type="text/css" rel="stylesheet"
+		href="/APPLETPC/js/plugins/bootstrap-treeview/css/bootstrap-treeview.css">
+	
+	<script type="text/javascript"
+		src="/APPLETPC/js/plugins/bootstrap-treeview/js/bootstrap-treeview.js"></script>
+</head>
+<body>
+	<div class="container-fluid" style="margin:0px;padding:0px;">
+		<div class="row" style="margin:0px;padding:0px;">
+            	<div id="dsdToolbar">
+            		<button id="refreshDSDBtn" class="btn btn-sm" onclick="redresh();">
+			            <i class="glyphicon glyphicon-refresh"></i>&nbsp;刷新
+			        </button>
+					<button id="advanceSearchBtn" class="btn  btn-sm" onclick="searchDataList();">
+			            <i class="glyphicon glyphicon-search"></i>&nbsp;高级搜索
+			        </button>
+			        <button id="editDSDBtn" class="btn btn-sm" onclick="deleteLog();">
+			            <i class="glyphicon glyphicon-pencil"></i>&nbsp;时间段删除
+			        </button>
+			       
+			        
+			    </div>
+			    
+			    <table id="dsdTable"
+			    	   class="table table-condensed"
+			           data-toggle="table"
+			           data-toolbar="#dsdToolbar"
+			           data-height="550"
+			           data-icon-size="sm"
+			           data-url="http://localhost:8080/SPMTM/sys/log/selectLogList"
+			           data-pagination="true"
+			           data-page-size="10"
+			           data-data-type="json"
+		         	   data-query-params="queryParams"
+		               data-pagination="true"
+		               data-side-pagination="server"
+			           data-page-list="[10,15,20,25,30]"
+			           data-striped="true"
+			           data-search="true"
+			           data-undefined-text=""
+			           data-unique-id="log_id">
+			        <thead>
+			           	<tr>
+			                <th data-field="log_source" data-halign="center" data-align="left" data-sortable="true">日志来源</th>
+			                <th data-field="attribute1" data-halign="center" data-align="left" data-sortable="true">用户名</th>
+			                <th data-field="log_date" data-halign="center" data-align="center" data-sortable="true">日志时间</th>
+			                <th data-field="log_content" data-halign="center" data-align="left" data-sortable="true">日志内容</th>
+			                <th data-field="attribute2" data-halign="center" data-align="left">日志类型</th>
+			                
+			                
+			            </tr>
+			        </thead>
+				</table>
+  			</div>
+	</div>
+</body>
+</html>
+
+<script type="text/javascript">
+var searchCondition;	
+$(".btn").addClass("btn-"+bootstrapSkin);
+$(document).ready(function() {
+
+});
+function queryParams(params) {
+	return {offset:params.offset, limit:params.limit, search:searchCondition,"Authorization":securityContext.Authorization};
+}
+function  redresh(){
+$('#dsdTable').bootstrapTable('refresh');
+}
+function searchDataList() {
+	var url ="/APPLETPC/html/modules/system/search/AdvanceSearch.html";
+	sessionStorage.setItem("searchCode", 'log_date');
+	var logSearchFrame = '<iframe id="logSearchFrame" class="my-modal-iframe" width="100%" height="350px" src="' + url + '"></iframe>';
+	
+	window.top.bootbox.dialog({
+		title: "高级搜索",
+		message: logSearchFrame,
+		size: "small",
+		buttons: {
+			saveType: {
+	      		label: "确定",
+	      		className: "btn-"+bootstrapSkin,
+	      		callback: function() {
+	      			var sscVO = window.top.document.getElementById("logSearchFrame").contentWindow.getAdvanceSearchConditions();
+	      			searchCondition = JSON.stringify(sscVO);
+	      			sessionStorage.setItem("log_dateSearchCondition", searchCondition);
+	      			if (sscVO) {
+	      				$("#dsdTable").bootstrapTable('refresh');
+	      			}
+	      			return true;
+	      		}
+			},
+			cancelType: {
+	      		label: "取消",
+	      		className: "btn-default",
+	      		callback: function() {
+	      			return true;
+	      		}
+			}
+		}
+	});
+}
+//时间段删除日志
+function deleteLog() {
+	
+	var url = "/APPLETPC/html/modules/system/log/LogDeleteBytime.html";
+	var DeleteBytimeForm = '<iframe id="DeleteBytimeForm" class="my-modal-iframe" width="100%" height="300px" src="' + url + '"></iframe>';
+	
+	window.top.bootbox.dialog({
+		title: "时间段删除",
+		message: DeleteBytimeForm,
+		size: "small",
+		buttons: {
+			saveType: {
+	      		label: "确定",
+	      		className: "btn-"+bootstrapSkin,
+	      		callback: function() {
+	      			var result = window.top.document.getElementById("DeleteBytimeForm").contentWindow.deleteLogBytime();
+	      			if (result) {
+	      				$('#dsdTable').bootstrapTable('refresh');
+	      			}
+	      			return result;
+	      		}
+			},
+			cancelType: {
+	      		label: "取消",
+	      		className: "btn-default",
+	      		callback: function() {
+	      			return true;
+	      		}
+			}
+		}
+	});
+}
+</script>

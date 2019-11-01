@@ -1,0 +1,179 @@
+<script type="text/javascript">
+        if(sessionStorage.getItem('securityContext')==null){
+         window.location.href="/APPLETPC/login.html";
+        }
+        var securityContext = JSON.parse(sessionStorage.getItem('securityContext'));
+
+        var path = sessionStorage.getItem('path');
+        var searchCode = sessionStorage.getItem('searchCode');
+</script>
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+	<title>搜索定义-编辑</title>
+
+	<link type="text/css" rel="stylesheet" href="/APPLETPC/css/common/common.css">
+	<script type="text/javascript" src="/APPLETPC/js/common/common.js"></script>
+	<script type="text/javascript" src="/APPLETPC/js/common/util.js"></script>
+	<script type="text/javascript"src="/APPLETPC/js/jquery/jquery-2.2.3.min.js"></script>
+    <script type="text/javascript" src="/APPLETPC/js/json/json2.js"></script>
+    <link type="text/css" rel="stylesheet" href="/APPLETPC/js/bootstrap/css/bootstrap.css">
+    <script type="text/javascript" src="/APPLETPC/js/bootstrap/js/bootstrap.js"></script>
+    <script type="text/javascript" src="/APPLETPC/js/plugins/bootstrap-box/js/bootbox.min.js"></script>
+	
+	<script type='text/javascript' src='/APPLETPC/js/json/model/SysSearchDefine.js'></script>
+	
+	<!-- jquery-validator -->
+	<script type="text/javascript"
+		src="/APPLETPC/js/plugins/jquery-validate/jquery.validate.min.js"></script>
+	<script type="text/javascript"
+		src="/APPLETPC/js/plugins/jquery-validate/jquery.validate.plu.js"></script>
+</head>
+<body class="my-body-content">
+	<form id="searchDefineEditForm" name="searchDefineEditForm" class="my-form-content">
+		<table class="my-form-table-content">
+			<tr>
+				<td class="my-form-table-td-label" style="width:60px;">
+					<label class="control-label" style="margin:5px;padding:0px;">搜索编码</label>
+				</td>
+				<td class="my-form-table-td-content" style="width:200px;">
+					<input id="search_code" name="search_code" type="text" class="form-control input-sm" style="width:180px;padding:5px;float:left;" readOnly>
+				</td>
+			</tr>
+			
+			<tr>
+				<td class="my-form-table-td-label">
+					<label class="control-label" style="margin:5px;padding:0px;">搜索名称</label>
+				</td>
+				<td class="my-form-table-td-content">
+					<input id="search_name" name="search_name" type="text" class="form-control input-sm" style="width:180px;padding:5px;float:left;">
+				</td>
+			</tr>
+			
+			<tr>
+				<td class="my-form-table-td-label">
+					<label class="control-label" style="margin:5px;padding:0px;">说明</label>
+				</td>
+				<td class="my-form-table-td-content">
+					<input id="description" name="description" type="text" class="form-control input-sm" style="width:180px;padding:5px;float:left;">
+				</td>
+			</tr>
+		</table>
+	</form>
+</body>
+</html>
+
+<script type="text/javascript">
+
+var validator;
+
+$(document).ready(function() {
+	validator = $("#searchDefineEditForm").validate({
+		debug: true,
+		showErrors: showErrors,
+		rules: {
+			search_name: {
+				required: true,
+				maxlength: 100
+			},
+			description: {
+				maxlength: 200
+			}
+		},
+		messages: {
+			search_name: {
+				required: "[搜索名称]不能为空！",
+				maxlength: "[搜索名称]最大长度为100！"
+			},
+			description: {
+				maxlength: "[说明]最大长度为200！"
+			}
+		}
+	});
+	
+	var url = path+"/app/sys/search/getSearchDefineInfo";
+	url += "?t=" + new Date();
+	url += "&searchCode=" + searchCode;
+	url+="&Authorization="+securityContext.Authorization;
+	$.post(url, function(data) {
+		if (data.result_code == "Y") {
+			var ssd = JSON.parse(data.result_info);
+			dwr.util.setValues(ssd);
+		} else if (data.result_code == "N") {
+			window.top.bootbox.dialog({
+				title: "错误信息",
+				message: "数据加载失败！" + "<br><br>" + data.result_info,
+				size: "middle",
+				buttons: {
+					cancelType: {
+			      		label: "确定",
+			      		className: "btn-"+bootstrapSkin,
+			      		callback: function() {
+			      			return true;
+			      		}
+					}
+				}
+			});
+		}
+	});
+});
+
+function doEditSearchDefine() {
+	var result = false;
+	if (validator.form()) {
+		var ssd = new SysSearchDefine();
+		dwr.util.getValues(ssd);
+		var url = path+"/app/sys/search/editSearchDefine";
+		url += "?t=" + new Date();
+		url+="&Authorization="+securityContext.Authorization;
+		$.ajax({
+			type: "POST",
+		    url: url,
+		    data: ssd,
+		    async: false,
+		    success: function(text, status){
+				
+				if (text.result_code == "Y") {
+					result = true;
+					window.top.bootbox.dialog({
+						title: "提示信息",
+						message: "保存成功！",
+						size: "middle",
+						buttons: {
+							cancelType: {
+					      		label: "确定",
+					      		className: "btn-"+bootstrapSkin,
+					      		callback: function() {
+					      			return true;
+					      		}
+							}
+						}
+					});
+				} else if (text.result_code == "N") {
+					result = false;
+					
+					window.top.bootbox.dialog({
+						title: "错误信息",
+						message: "保存失败！" + "<br><br>" + text.result_info,
+						size: "middle",
+						buttons: {
+							cancelType: {
+					      		label: "确定",
+					      		className: "btn-"+bootstrapSkin,
+					      		callback: function() {
+					      			return true;
+					      		}
+							}
+						}
+					});
+				}
+		    }
+		});
+	}
+	return result;
+}
+</script>

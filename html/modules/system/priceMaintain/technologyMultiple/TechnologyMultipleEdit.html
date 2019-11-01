@@ -1,0 +1,294 @@
+<script type="text/javascript">
+	if (sessionStorage.getItem('securityContext') == null) {
+		window.location.href = "/APPLETPC/login.html";
+	}
+	var securityContext = JSON.parse(sessionStorage.getItem('securityContext'));
+	var bootstrapSkin = securityContext.bootstrapSkin;
+	var path = sessionStorage.getItem('path');
+	var currentCraftworkPriceId = sessionStorage.getItem('currentCraftworkPriceId');
+</script>
+<!DOCTYPE html>
+<html>
+<head>
+	<title>维护工艺价格倍率</title>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+	<link type="text/css" rel="stylesheet" href="/APPLETPC/css/common/common.css">
+	<script type="text/javascript" src="/APPLETPC/js/common/common.js"></script>
+	<script type="text/javascript" src="/APPLETPC/js/common/util.js"></script>
+	<script type="text/javascript" src="/APPLETPC/js/jquery/jquery-2.2.3.min.js"></script>
+	<script type="text/javascript" src="/APPLETPC/js/json/json2.js"></script>
+	<link type="text/css" rel="stylesheet" href="/APPLETPC/js/bootstrap/css/bootstrap.css">
+	<script type="text/javascript" src="/APPLETPC/js/bootstrap/js/bootstrap.js"></script>
+	<script type="text/javascript" src="../../../../../js/json/model/SysTechnologyMultiple.js"></script>
+	<script type='text/javascript' src='/APPLETPC/js/json/model/SysLog.js'></script>
+	<!-- jquery-validator -->
+	<script type="text/javascript" src="/APPLETPC/js/plugins/jquery-validate/jquery.validate.min.js"></script>
+	<script type="text/javascript" src="/APPLETPC/js/plugins/jquery-validate/jquery.validate.plu.js"></script>
+	<link type="text/css" rel="stylesheet" href="/APPLETPC/js/plugins/bootstrap-datetime/css/bootstrap-datetimepicker.min.css">
+	<script type="text/javascript" src="/APPLETPC/js/plugins/bootstrap-datetime/js/bootstrap-datetimepicker.min.js"></script>
+	<script type="text/javascript" src="/APPLETPC/js/plugins/bootstrap-datetime/js/locales/bootstrap-datetimepicker.zh-CN.js"></script>
+	<link rel="stylesheet" href="../../../../../js/plugins/jquery-chosen/css/chosen.css" type="text/css"></link>
+	<script type="text/javascript" src="../../../../../js/plugins/jquery-chosen/js/chosen.jquery.js"></script>
+	<script type="text/javascript" src="../../../../../js/plugins/layer/layer.js"></script>
+	
+</head>
+<body class="my-body-content">
+	<form id="typeAddForm" name="typeAddForm" class="my-form-content">
+		<input readonly id="id" name=""id"" type="hidden" >
+	
+		<table class="my-form-table-content">
+					<tr>
+						<td class="my-form-table-td-label">
+							<label class="control-label" style="margin:5px;padding:0px;" >工艺代码</label>
+						</td>	
+						<td class="my-form-table-td-content">
+							<input  id="ecode" name="ecode" type="text"   readonly="readonly"   class="form-control input-sm" style="width:180px;padding:5px;float:left;"></select> 
+						</td>
+					</tr>
+					<tr>
+						<td class="my-form-table-td-label">
+							<label class="control-label" style="margin:5px;padding:0px;" >工艺名称</label>
+						</td>	
+						<td class="my-form-table-td-content">
+							<input  id="attribute1" name="attribute1" type="text"  readonly="readonly"   class="form-control input-sm"  style="width:180px;padding:5px;float:left;"></select> 
+						</td>
+					</tr>
+					<tr>
+						<td class="my-form-table-td-label">
+							<label class="control-label" style="margin:5px;padding:0px;" >人民币价格</label>
+						</td>	
+						<td class="my-form-table-td-content">
+							<input  id="rmbprice" name="rmbprice" type="text"  readonly="readonly"   class="form-control input-sm"  style="width:180px;padding:5px;float:left;"></select> 
+						</td>
+					</tr>
+					<tr>
+						<td class="my-form-table-td-label">
+							<label class="control-label" style="margin:5px;padding:0px;" >经营单位</label>
+						</td>	
+						<td class="my-form-table-td-content">
+							<input  id="ismanual" name="ismanual" type="text" readonly="readonly" class="form-control input-sm"  style="width:180px;padding:5px;float:left;"></select> 
+						</td>
+					</tr>
+					<tr>
+						<td class="my-form-table-td-label">
+							<label class="control-label" style="margin:5px;padding:0px;" >定价方式</label>
+						</td>	
+						<td class="my-form-table-td-content">
+							<input  id="pricingmethod" name="pricingmethod" type="text" readonly="readonly"  class="form-control input-sm"  style="width:180px;padding:5px;float:left;"></select> 
+						</td>
+					</tr>
+					<tr>
+						<td class="my-form-table-td-label">
+							<label class="control-label" style="margin:5px;padding:0px;" >是否手工</label>
+						</td>	
+						<td class="my-form-table-td-content">
+							<input  id="businessunit" name="businessunit" type="text"  readonly="readonly"  class="form-control input-sm"  style="width:180px;padding:5px;float:left;"></select> 
+						</td>
+					</tr>
+					<tr>
+						<td class="my-form-table-td-label">
+							<label class="control-label" style="margin:5px;padding:0px;" >倍率</label>
+						</td>	
+						<td class="my-form-table-td-content">
+							<input  id="multiple" name="multiple" type="text"  onkeyup="totalPracticalPrice(this)"  min="0" required="required"  class="form-control input-sm"  style="width:180px;padding:5px;float:left;"></select> 
+						</td>
+					</tr>
+					
+		</table>
+	</form>
+</body>
+</html>
+
+<script type="text/javascript">
+	var currentNodeId;
+	var validator;
+	var falg = false;//判断此倍率是否已经维护，为true已维护，执行更新，false则新增
+	$(document).ready(function() {
+		selectStoInformationByPk();			//根据id初始化表单
+	});
+
+	function getIsExist(){
+		var url = path + "api/sys/technologyMultipl/getIsExist";
+		url += "?currentTime=" + new Date();
+		$.ajax({
+			type : "get",
+			url : url,
+			async:false,
+			data:{"token":securityContext.token,"id":currentCraftworkPriceId},
+			success : function(data) {
+				if( data.result_info!="null"){
+					falg = true; //falg为true，则执行编辑
+				}
+			}
+		});
+	}
+	
+	// 依据id获取倍率是否存在
+	function selectStoInformationByPk() {
+		var url = path + "api/sys/technologyMultipl/getById";
+		url += "?currentTime=" + new Date();
+		$.ajax({
+			type : "get",
+			url : url,
+			async:false,
+			data:{"token":securityContext.token,"id":currentCraftworkPriceId},
+			success : function(data) {
+				if (data.result_code == "Y") {
+					getIsExist()
+					recordLog("O","APPLETPC","获取工艺价格列表成功",securityContext.user_id);
+					dwr.util.setValues(JSON.parse(data.result_info));
+				} else if (data.result_code == "N") {
+					recordLog("OF","APPLETPC","获取工艺价格列表失败",securityContext.user_id);
+						window.top.bootbox.dialog({
+							title : "错误信息",
+							message : "数据加载失败！" + "<br><br>" + data.result_info,
+							size : "middle",
+							buttons : {
+								cancelType : {
+									label : "确定",
+									className : "btn-" + bootstrapSkin,
+									callback : function() {
+										return true;
+									}
+								}
+							}
+						});
+				}
+			}
+		});
+	}
+
+//编辑
+function doEditCraftworkPrice() {
+		if(!$("#multiple")[0].validity.valid){
+			layer.msg("【倍率】不能为空")
+			$("#multiple").focus();
+			return false;
+		}
+		var result = false ;
+		var cc = new SysTechnologyMultiple();
+		dwr.util.getValues(cc);
+		cc.last_updated_by=securityContext.user_id;
+		cc.created_by=securityContext.user_id;
+		cc.id=currentCraftworkPriceId;
+		if(falg){
+			//执行跟新
+			var url = path + "api/sys/technologyMultipl/updata";
+			url += "?t=" + new Date();
+			url+="&token="+securityContext.token;
+			$.ajax({
+				type:"POST",
+				url:url,
+				contentType: 'application/json',
+			 	data:JSON.stringify(cc),
+				async:false,
+				success: function(data) {
+						if (data.result_code == "Y") {
+						recordLog("O","APPLETPC","零售定价编辑成功",securityContext.user_id);
+						 result = true;
+							window.top.bootbox.dialog({
+								title: "提示信息",
+								message: "更新成功！",
+								size: "middle",
+								buttons: {
+									cancelType: {
+							      		label: "确定",
+							      		className: "btn-"+bootstrapSkin,
+							      		callback: function() {
+							      			return true;
+							      		}
+									}
+								}
+							});
+		        
+						} else if (data.result_code == "N") {
+						recordLog("OF","APPLETPC","零售定价编辑失败",securityContext.user_id);
+							result = false;
+		
+							
+							window.top.bootbox.dialog({
+								title: "错误信息",
+								message: "保存失败！" + "<br><br>" + json.result_info,
+								size: "middle",
+								buttons: {
+									cancelType: {
+							      		label: "确定",
+							      		className: "btn-"+bootstrapSkin,
+							      		callback: function() {
+							      			return true;
+							      		}
+						
+									}
+								}
+							});
+						}
+				    }
+				});
+		}else{
+			//新增
+			var url = path + "api/sys/technologyMultipl/add";
+			url += "?t=" + new Date();
+			url+="&token="+securityContext.token;
+			$.ajax({
+				type:"POST",
+				url:url,
+				contentType: 'application/json',
+			 	data:JSON.stringify(cc),
+				async:false,
+				success: function(data) {
+						if (data.result_code == "Y") {
+						recordLog("O","APPLETPC","新增工艺价格成功",securityContext.user_id);
+						 result = true;
+							window.top.bootbox.dialog({
+								title: "提示信息",
+								message: "保存成功！",
+								size: "middle",
+								buttons: {
+									cancelType: {
+							      		label: "确定",
+							      		className: "btn-"+bootstrapSkin,
+							      		callback: function() {
+							      			return true;
+							      		}
+									}
+								}
+							});
+		        
+						} else if (data.result_code == "N") {
+						recordLog("OF","APPLETPC","新增工艺价格失败",securityContext.user_id);
+							result = false;
+							window.top.bootbox.dialog({
+								title: "错误信息",
+								message: "保存失败！" + "<br><br>" + json.result_info,
+								size: "middle",
+								buttons: {
+									cancelType: {
+							      		label: "确定",
+							      		className: "btn-"+bootstrapSkin,
+							      		callback: function() {
+							      			return true;
+							      		}
+									}
+								}
+							});
+						}
+				    }
+				});
+		}
+		
+		return result;
+}
+
+	
+function totalPracticalPrice(obj){
+	if(obj){
+	obj.value = obj.value.replace(/[^\d.]/g,""); // 清除"数字"和"."以外的字符
+	obj.value = obj.value.replace(/^\./g,""); // 验证第一个字符是数字
+	obj.value = obj.value.replace(/\.{2,}/g,"."); // 只保留第一个, 清除多余的
+	obj.value = obj.value.replace(".","$#$").replace(/\./g,"").replace("$#$",".");
+	//obj.value = obj.value.replace(/^(\-)*(\d+)\.(\d\d).*$/,'$1$2.$3'); // 只能输入两个小数
+	}
+}
+</script>

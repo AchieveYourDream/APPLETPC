@@ -1,0 +1,178 @@
+<script>
+sessionStorage.setItem('path', 'http://localhost:9527/');
+// sessionStorage.setItem('redPath', 'https://spmtm.magicmanufactory.com/');
+var path = sessionStorage.getItem('path');
+
+</script>
+
+<!DOCTYPE html>
+<html style="overflow: hidden;">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+	<title>酷特智能APPLET管理后台</title>
+	
+	<link type="text/css" rel="stylesheet" href="/APPLETPC/css/common/common.css">
+    <link type="text/css" rel="stylesheet" href="/APPLETPC/js/bootstrap/css/bootstrap.css">
+	<script type="text/javascript" src="/APPLETPC/js/common/common.js"></script>
+	<script type="text/javascript" src="/APPLETPC/js/common/util.js"></script>
+	<script src="/APPLETPC/js/jquery/jquery-3.4.1.min.js"></script>
+    <script type="text/javascript" src="/APPLETPC/js/json/json2.js"></script>
+    <script type="text/javascript" src="/APPLETPC/js/bootstrap/js/bootstrap.js"></script>
+	<link type="text/css" rel="stylesheet"href="/APPLETPC/css/font-awesome/css/font-awesome.min.css">
+	<link rel="shortcut icon" href="/APPLETPC/img/icon.png" type="image/x-icon">
+	<link rel="stylesheet" href="/APPLETPC/js/plugins/login/css/style.css">
+    <script src="/APPLETPC/js/plugins/login/js/modernizr.js"></script>
+	<script type="text/javascript" src="/APPLETPC/js/common/jsencrypt.min.js"></script>
+<script type="text/javascript" src="/APPLETPC/js/plugins/bootstrap-box/js/bootbox.min.js"></script>
+
+
+</head>
+<body class="hold-transition login-page">
+	<main class="main-wrapper">
+	<div class="canvas-wrap">
+		<div class="canvas-content">
+		<img src="img/bj.jpg" id="imgId" />
+			<header id="canvas" class="color-bg">
+				<div class="center"  >
+				
+					<div class="login-box" style="width:620px;height:450px;margin:0 auto">
+						<!-- 	<div class="login-box" style="width:300px;margin:100px 100px 80px auto"> -->
+						<div  style="/*background-color:rgba(255, 255, 255, 0.35);*/border-radius:5px;color:#fff">
+							<form id="loginForm" name="loginForm" method="post" autocomplete="off" 
+								action="#">
+								<div style="text-align:center;margin:20px auto;">
+									<img style="width:80%"  src="/APPLETPC/img/title.png" />
+								</div>
+
+								<div style="height:10px"></div>
+
+								<div class="form-group has-feedback" style="margin-bottom:30px;">
+									<input type="text" id="login_username" name="login_username"
+										class="form-control" placeholder="Account" style="background-color:transparent;
+    /* border-radius: 10px; */font-size: 30px;color:#fff;text-align: center; height: 50px;width: 270px;border: none;border-bottom: 2px solid #507394;margin: auto;"> 
+    								<!-- <span class="glyphicon glyphicon-user form-control-feedback"></span> -->
+								</div>
+
+								<div class="form-group has-feedback"style="margin-bottom:30px;">
+									<input type="password" id="login_password"
+										name="login_password" class="form-control" placeholder="Password" style="background-color: transparent;
+    /* border-radius: 10px; */font-size: 30px;color:#fff;text-align: center; height: 50px;width: 270px;border: none;border-bottom: 2px solid #507394;margin: auto;">
+									<!-- <span class="glyphicon glyphicon-lock form-control-feedback"></span> -->
+								</div>
+
+								<div class="row">
+									<div class="col-xs-12">
+										<button class="btn btn-primary btn-block btn-flat"
+											type="button" onclick="doLogin();" style="outline-style:none ;   border-width: 1px; border-radius: 30px;width: 240px; height: 55px; margin: auto;">登&nbsp;&nbsp;录</button>
+									</div>
+								</div>
+
+								<div id="loginMessageDiv"
+									style="text-align:center;margin:20px auto;color:#FF0000;font-size:16px;font-weight:bold;">
+								</div>
+							</form>
+
+						</div>
+					</div>
+				</div>
+			</header>
+		</div>
+	</div>
+	</main>
+	<script src="/APPLETPC/js/plugins/login/js/three.min.js"></script>
+	<script src="/APPLETPC/js/plugins/login/js/projector.js"></script>
+	<script src="/APPLETPC/js/plugins/login/js/canvas-renderer.js"></script>
+	<script src="/APPLETPC/js/plugins/login/js/3d-lines-animation.js"></script>
+</body>
+</html>
+<script type="text/javascript">
+
+document.onkeydown = function(event) {
+	var e = event || window.event || arguments.callee.caller.arguments[0];
+	if(e && e.keyCode == 13) { // Enter
+		doLogin();
+	}
+};
+
+$(document).ready(function() {
+});
+
+function doLogin() {
+	var result = "Y";
+	
+	if (result == "Y") {
+		if(!$("#login_username").val()) {
+  			result = "U";
+		$("#loginMessageDiv").html("用户名不能为空");
+		}
+	}
+	
+	if (result == "Y") {
+		if(!$("#login_password").val()){
+			result = "P";
+			
+			$("#loginMessageDiv").html("密码不能为空");
+		}
+	}
+	
+
+	if (result == "Y") {
+		var encrypt = new JSEncrypt();
+        encrypt.setPublicKey('MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDZC+pRMifr6We5jAzS6zfs4LFG7EAtQvTkxm+ePe20HCTs4a85B4V7kAuZgTH4vGyXhQ8aESbTJQNeqOuV8cSrUsr2qzVJweoo+GPIGkuoV9lSNF4J8MaNGJEcSwxxIfxgenaFNuXZn0JtpxbD3fVPBkPIEQPnWOf7A1uQmIux4QIDAQAB');
+        var encryptedPassword = encrypt.encrypt($("#login_password").val());
+		$("#login_password").val(encryptedPassword);
+		
+		loginValidate();
+	} else if (result == "U") {
+		$("#login_username").focus();
+	} else if (result == "P") {
+		$("#login_password").focus();
+	}
+}
+
+
+
+function loginValidate() {
+	var url = path+"login";
+   	 url += "?currentTime=" + new Date();
+   	 
+    $.ajax({
+		type: "POST",
+		url:url,
+		data: {"login_username":$("#login_username").val(),"login_password":$("#login_password").val()},
+		async:false,
+		success: function(data) {
+			if (data.code == "S") {
+			sessionStorage.setItem('securityContext', JSON.stringify(data.data));
+			window.location.href="html/modules/security/main.html";
+			}else if (data.code == "W") {
+				
+				$("#login_password").val("");
+				$("#login_password").focus();
+				$("#loginMessageDiv").html("&nbsp;" + data.info + "&nbsp;");
+			} else if (data.code == "E") {
+				window.top.bootbox.dialog({
+						title: "错误信息",
+						message: "登陆失败！" + "<br><br>" + data.loginMessage,
+						size: "middle",
+						buttons: {
+							cancelType: {
+					      		label: "确定",
+					      		className: "btn-primary",
+					      		callback: function() {
+					      			return true;
+					      		}
+							}
+						}
+					});
+			}
+		}
+	});
+}
+
+
+
+</script>

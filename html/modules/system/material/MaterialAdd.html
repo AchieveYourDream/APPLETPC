@@ -1,0 +1,750 @@
+<script type="text/javascript">
+       if(sessionStorage.getItem('securityContext')==null){
+         window.location.href="/APPLETPC/login.html";
+        }
+        var securityContext = JSON.parse(sessionStorage.getItem('securityContext'));
+
+        var path = sessionStorage.getItem('path');
+        var currentMaterialId = sessionStorage.getItem('currentMaterialId');
+        var material_category = sessionStorage.getItem('material_category');
+        
+</script>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+<title>新建物料</title>
+
+<link type="text/css" rel="stylesheet" href="/APPLETPC/css/common/common.css">
+<script type="text/javascript" src="/APPLETPC/js/common/common.js"></script>
+<script type="text/javascript" src="/APPLETPC/js/common/util.js"></script>
+<script type="text/javascript" src="/APPLETPC/js/jquery/jquery-2.2.3.min.js"></script>
+<script type="text/javascript" src="/APPLETPC/js/json/json2.js"></script>
+<link type="text/css" rel="stylesheet" href="/APPLETPC/js/bootstrap/css/bootstrap.css">
+<script type="text/javascript" src="/APPLETPC/js/bootstrap/js/bootstrap.js"></script>
+<script type='text/javascript' src='/APPLETPC/js/json/model/InvMaterial.js'></script>
+
+<script type='text/javascript' src='/APPLETPC/js/json/model/SysLog.js'></script>
+<!-- <script type="text/javascript" src="../../../../js/plugins/uploadImg/js/imgPlugin.js"></script> -->
+<!-- <script type="text/javascript" src="../../../../js/plugins/uploadImg/js/imgUp.js"></script> -->
+
+
+
+
+<!-- jquery-validator -->
+<script type="text/javascript" src="/APPLETPC/js/plugins/jquery-validate/jquery.validate.min.js"></script>
+<script type="text/javascript" src="/APPLETPC/js/plugins/jquery-validate/jquery.validate.plu.js"></script>
+<script type="text/javascript" src="/APPLETPC/js/plugins/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js"></script>
+<link type="text/css" rel="stylesheet" href="/APPLETPC/js/plugins/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css">
+
+
+
+<style>
+.spanclass {
+	margin-left: -1px;
+	padding: 1px 1px;
+	font-size: 15px;
+	background-color: #eeeeee;
+	border: 1px solid #ccc;
+	border-radius: 1px;
+}
+</style>
+<link rel="stylesheet" href="../../../../js/plugins/uploadImg/css/common.css" type="text/css"></link>
+<link rel="stylesheet" href="../../../../js/plugins/uploadImg/css/index.css" type="text/css"></link>
+<!-- <script type="text/javascript" src="../../../../js/plugins/uploadImg/js/imgUp.js"></script> -->
+</head>
+<body class="my-body-content">
+	<form id="typeAddForm" name="typeAddForm" class="my-form-content" enctype="multipart/form-data" method="post" >
+		<table class="my-form-table-content">
+			
+		
+			<tr>
+				<td class="my-form-table-td-label" style="margin:5px;width:60px;">
+					<label class="control-label" style="margin:5px;">物料编码</label>
+				</td>
+				<td class="my-form-table-td-content" style="margin:5px;width:200px;">
+					<input id="material_code" name="material_code" type="text" class="form-control input-sm" style="width:180px;float:left;">
+				</td>
+			
+				<td class="my-form-table-td-label" style="margin:5px;width:60px;">
+					<label class="control-label" style="margin:5px;">物料名称</label>
+				</td>
+				<td class="my-form-table-td-content" style="margin:5px;width:200px;">
+					<input id="material_name" name="material_name" type="text" class="form-control input-sm" style="width:180px;float:left;">
+				</td>
+				<td class="my-form-table-td-label">
+					<label class="control-label" style="margin:5px;padding:0px;">物料类型</label>
+				</td>
+				<td class="my-form-table-td-content">
+					<select id="material_type" name="material_type" class="input-sm" style="width:180px;padding:5px;float:left;"></select>
+				</td>
+			</tr>
+			<tr>
+				
+				<!-- <td class="my-form-table-td-label">
+					<label class="control-label" style="margin:5px;">物料类别</label>
+				</td>
+				<td class="my-form-table-td-content">
+					<input id="material_category" name="material_category" type="text" class="form-control input-sm" style="width:180px;float:left;">
+				</td> -->
+			
+				<td class="my-form-table-td-label">
+					<label class="control-label" style="margin:5px;" >规格型号</label>
+				</td>
+				<td class="my-form-table-td-content">
+					<input id="material_specifications" name="material_specifications" type="text" class="form-control input-sm" style="width:180px;float:left;">
+				</td>
+				<td class="my-form-table-td-label">
+					<label class="control-label" style="margin:5px;padding:0px;">单位</label>
+				</td>
+				<td class="my-form-table-td-content">
+					<!-- <input id="unit" name="unit" type="text" class="form-control input-sm" style="width:180px;float:left;"> -->
+					<select id="unit" name="unit" class="input-sm" style="width:180px;padding:5px;float:left;"></select>
+				</td>
+			
+<!-- 				<td class="my-form-table-td-label"> -->
+<!-- 					<label class="control-label" style="margin:5px;padding:0px;" >单价</label> -->
+<!-- 				</td> -->
+<!-- 				<td class="my-form-table-td-content"> -->
+<!-- 					<input id="price" name="price" type="text" class="form-control input-sm" style="width:180px;float:left;"> -->
+					
+<!-- 				</td> -->
+			</tr>
+			<tr>
+				
+			
+				<td class="my-form-table-td-label">
+					<label class="control-label" style="margin:5px;padding:0px;">物料说明</label>
+				</td>
+				<td class="my-form-table-td-content" colspan="5">
+					<input id="material_instruction" name="material_instruction" type="text" class="form-control input-sm" style="width:700px;float:left;">
+				</td>
+			</tr>
+			<!-- <tr>
+				<td class="my-form-table-td-label">
+					<label class="control-label" style="margin:5px;padding:0px;">物料状态</label>
+				</td>
+				<td class="my-form-table-td-content">
+					<input id="material_status" name="material_status" type="text" class="form-control input-sm" style="width:180px;float:left;">
+				</td>
+			
+				<td class="my-form-table-td-label">
+					<label class="control-label" style="margin:5px;padding:0px;">所属门店</label>
+				</td>
+				<td class="my-form-table-td-content">
+				
+      				<input id="material_store" name="material_store" type="text" class="form-control input-sm" style="width:180px;float:left;">
+				</td>
+			</tr> -->
+			
+			<!-- <tr>
+				<td class="my-form-table-td-label">
+					<label class="control-label" style="margin:5px;padding:4px;line-height:30px;">创建日期</label>
+				</td>
+				</td>
+				<td class="my-form-table-td-content">
+					<div id="datetimepicker2" class="input-append date" style="float: left">
+					<input data-format="yyyy-MM-dd" type="text" id="create_date" name="create_date" readonly style="width:180px;border-radius: 3px; border: 1px solid #ccc;"></input> <span class="add-on spanclass"> <i data-time-icon="icon-time" data-date-icon="icon-calendar" class="icon-calendar glyphicon glyphicon-calendar "></i> </span>
+				</div>
+				</td>
+
+			
+				<td class="my-form-table-td-label">
+					<label class="control-label" style="margin:5px;padding:0px;">创建人</label>
+				</td>
+				<td class="my-form-table-td-content">
+					<input id="created_by" name="created_by" type="text" class="form-control input-sm" style="width:180px;float:left;">
+				</td>
+			</tr> -->
+			
+			
+			
+		</table>
+		<div class="img-box full">
+			<section class=" img-section">
+				<p class="up-p" style="margin-left:20px;">物料图片：<span class="up-span">最多可以上传5张图片，马上上传</span></p>
+				<div class="z_photo upimg-div clear" id="idsection">
+		               
+		               	  <section class="z_file fl">
+		               	 	<img src="/APPLETPC/js/plugins/uploadImg/img/a11.png" class="add-img">
+		               	 	<!-- accept 属性规定了可通过文件上传提交的服务器接受的文件类型。  注意：accept 属性仅适用于 <input type="file">。 -->
+		               	 	<!-- 此处文件上传只接受的文件类型是img/...可不写死改为img/* -->
+		               	 	<input type="file" name="file" id="file" class="file" value="" accept="image/jpg,image/jpeg,image/png,image/bmp" multiple />
+		               	 </section>
+		         </div>
+			 </section>
+		</div>
+        <aside class="mask works-mask">
+			<div class="mask-content">
+				<p class="del-p">您确定要删除物料图片吗？</p>
+				<p class="check-p"><span class="del-com wsdel-ok">确定</span><span class="wsdel-no">取消</span></p>
+			</div>
+		</aside>
+
+	</form>
+</body>
+</html>
+
+<script type="text/javascript">
+	var currentNodeId;
+	 var date = new Date();
+ 
+
+$(".btn").addClass("btn-" + bootstrapSkin);	
+var validator;
+
+$(document).ready(function() {
+	//初始化单位列表
+	initUnitList();
+	initTypeList();
+	
+	jQuery.validator.addMethod("lrunlv", function(value, element) {
+			return this.optional(element) || /^\d+(\.\d{1,2})?$/.test(value);
+		}, "小数位不能超过三位");
+	/* jQuery.validator.addMethod("positive", function(value, element) {
+			return this.optional(element) || /^\[0-9]\D*$/.test(value);
+		}, "只能是正数"); */
+		validator = $("#typeAddForm").validate({
+			debug : true,
+			showErrors : showErrors,
+			rules : {
+				material_code : {
+					required : true,
+					isCode : true,
+					maxlength : 50,
+					remote : {
+						url : path + "api/sys/material/checkMaterialCode",
+						type : "post",
+						dataType : "json",
+						async : false,
+						data : {
+							material_code : function() {
+								return $('#material_code').val()
+							},
+							/* store_id: function(){return store_id}, */
+							material_category : function() {
+								return material_category
+							},
+							token : function() {
+								return securityContext.token
+							}
+						}
+					}
+				},
+				material_name : {
+					required : true,
+					maxlength : 50,
+
+				},
+
+				material_category : {
+					required : true,
+					maxlength : 50,
+				},
+				material_specifications : {
+					maxlength : 100,
+				},
+				unit : {
+					required : true,
+					maxlength : 50,
+				},
+// 				price : {
+// 					required : true,
+// 					number : true,
+// 					maxlength : 50,
+					positive : true,
+// 					lrunlv : true,
+// 				},
+				material_type : {
+					required : true,
+					maxlength : 50,
+				},
+				material_instruction : {
+					maxlength : 200,
+				},
+				material_status : {
+					required : true,
+					maxlength : 50,
+				}
+			},
+			messages : {
+				material_code : {
+					required : "[物料编码]不能为空！",
+					maxlength : "[物料编码]最大长度为50！",
+					remote : "当前物料编码已经存在！"
+				},
+				material_name : {
+					required : "[物料名称]不能为空！",
+					maxlength : "[物料名称]最大长度为50！",
+				},
+				material_category : {
+					required : "[物料类别]不能为空！",
+					maxlength : "[物料类别]最大长度为50！",
+				},
+				material_specifications : {
+					maxlength : "[规格型号]最大长度为100！",
+				},
+				unit : {
+					required : "[单位]不能为空！",
+					maxlength : "[单位]最大长度为50！",
+				},
+// 				price : {
+// 					required : "[单价]不能为空！",
+// 					number : "[单价]必须为数字!",
+// 					maxlength : "[单价]最大长度为50！",
+// 					positive : "[单价]只能是正数",
+// 					lrunlv : "[单价]小数位不能超过三位",
+// 				},
+				material_type : {
+					required : "[物料类型]不能为空！",
+					maxlength : "[物料类型]最大长度为50！",
+				},
+				material_instruction : {
+					maxlength : "[物料说明]最大长度为200！",
+				},
+				material_status : {
+					required : "[物料状态]不能为空！",
+					maxlength : "[物料状态]最大长度为50！",
+				}
+			}
+		});
+	});
+
+	function doaddMaterial() {
+		var result = false;
+		if (validator.form()) {
+			var cc = new InvMaterial();
+			dwr.util.getValues(cc);
+
+			cc.created_by = securityContext.user_id;
+			cc.last_updated_by = securityContext.user_id;
+			/* cc.material_store = store_id; */
+			cc.material_category = material_category;
+			/* cc.material_code = $('#material_code').val(); */
+
+			var url = path + "api/sys/material/addMaterial";
+			url += "?t=" + new Date();
+			url += "&token=" + securityContext.token;
+			$.ajax({
+				type : "post",
+				url : url,
+				data : cc,
+				async : false,
+				success : function(data) {
+					if (data.result_code == "Y") {
+						recordLog("O", "APPLETPC", "物料保存成功",
+								securityContext.user_id);
+						result = true;
+						/* uploadImg(); */
+
+						window.top.bootbox.dialog({
+							title : "提示信息",
+							message : "保存成功！",
+							size : "middle",
+							buttons : {
+								cancelType : {
+									label : "确定",
+									className : "btn-" + bootstrapSkin,
+									callback : function() {
+										return true;
+									}
+								}
+							}
+						});
+
+					} else if (data.result_code == "N") {
+						recordLog("OF", "APPLETPC", "物料保存失败",
+								securityContext.user_id);
+						result = false;
+
+						window.top.bootbox.dialog({
+							title : "错误信息",
+							message : "保存失败！" + "<br><br>" + data.data,
+							size : "middle",
+							buttons : {
+								cancelType : {
+									label : "确定",
+									className : "btn-" + bootstrapSkin,
+									callback : function() {
+										return true;
+									}
+								}
+							}
+						});
+					}
+				}
+			});
+		}
+		return result;
+
+	}
+
+	function removePicture(picture_code) {
+
+		var url = path + "api/sys/material/removePicture";
+		/* url += "?picture_code=" + picture_code; */
+		$
+				.ajax({
+					type : "post",
+					url : url,
+					data : {
+						"picture_code" : picture_code,
+						"token" : securityContext.token
+					},
+					success : function(data) {
+						if (data.result_code == "Y") {
+							recordLog("O", "APPLETPC", "图片删除成功",
+									securityContext.user_id);
+							return;
+						} else if (data.result_code == "N") {
+							recordLog("OF", "APPLETPC", "图片删除失败",
+									securityContext.user_id);
+							window.top.bootbox.dialog({
+								title : "错误信息",
+								message : "保存失败！" + "<br><br>"
+										+ data.data,
+								size : "middle",
+								buttons : {
+									cancelType : {
+										label : "确定",
+										className : "btn-" + bootstrapSkin,
+										callback : function() {
+											return true;
+										}
+									}
+								}
+							});
+						}
+					}
+
+				});
+
+	}
+
+	function openLovLov() {
+		var url = "/APPLETPC/html/common/lov/lov.html";
+		sessionStorage.setItem('lovCode', 'lov_store');//值列表的编码
+		sessionStorage.setItem('lovType', 'single');//值列表选值数量(单个)
+		sessionStorage.setItem('message', '物料');
+		var lovLovFrame = '<iframe id="lovLovFrame" class="my-modal-iframe" width="100%" height="350px" src="'
+				+ url + '"></iframe>';
+		window.top.bootbox.dialog({
+			title : "物料列表",
+			message : lovLovFrame,
+			size : "middle",
+			buttons : {
+				saveType : {
+					label : "确定",
+					className : "btn-" + bootstrapSkin,
+					callback : function() {
+						var result = window.top.document
+								.getElementById("lovLovFrame").contentWindow
+								.getLovData();
+						if (result) {
+							$("#material_store").val(result.lov_value);//将获取到的门店ID写入隐藏框
+							$("#store_name").val(result.lov_text);//将获取到的门店名称写入文本框
+						}
+						;
+						return result;
+					}
+				},
+				cancelType : {
+					label : "取消",
+					className : "btn-default",
+					callback : function() {
+						return true;
+					}
+				}
+			}
+		});
+	}
+
+	// 初始化单位
+	function initUnitList() {
+		var url = path + "api/common/list/getSingleDataDictItemList";
+		url += "?typeCode=unit&enabledFlag=Y";
+		url += "&token=" + securityContext.token;
+
+		$.ajax({
+			type : "get",
+			url : url,
+			async : false,
+			success : function(data) {
+				if (data.result_code == "Y") {
+					$("#unit").html("");
+					$.each(JSON.parse(data.data), function(index, d) {
+						$("#unit").append(
+								'<option value="' + d.item_code + '">'
+										+ d.item_name + '</option')
+					});
+				} else if (data.result_code == "N") {
+					recordLog("OF", "APPLETPC", "单位初始化失败",
+							securityContext.user_id);
+					window.top.bootbox.dialog({
+						title : "错误信息",
+						message : "数据加载失败！" + "<br><br>" + data.data,
+						size : "middle",
+						buttons : {
+							cancelType : {
+								label : "确定",
+								className : "btn-" + bootstrapSkin,
+								callback : function() {
+									return true;
+								}
+							}
+						}
+					});
+				}
+			}
+		});
+	}
+	//初始化物料类型
+	function initTypeList() {
+		var url = path + "api/common/list/getSingleDataDictItemList";
+		url += "?typeCode=material_category&enabledFlag=Y";
+		url += "&token=" + securityContext.token;
+
+		$.ajax({
+			type : "get",
+			url : url,
+			async : false,
+			success : function(data) {
+				if (data.result_code == "Y") {
+					$("#material_type").html("");
+					$.each(JSON.parse(data.data), function(index, d) {
+						$("#material_type").append(
+								'<option value="' + d.item_code + '">'
+										+ d.item_name + '</option')
+					});
+				} else if (data.result_code == "N") {
+					recordLog("OF", "APPLETPC", "单位初始化失败",
+							securityContext.user_id);
+					window.top.bootbox.dialog({
+						title : "错误信息",
+						message : "数据加载失败！" + "<br><br>" + data.data,
+						size : "middle",
+						buttons : {
+							cancelType : {
+								label : "确定",
+								className : "btn-" + bootstrapSkin,
+								callback : function() {
+									return true;
+								}
+							}
+						}
+					});
+				}
+			}
+		});
+	}
+
+	var delParent;
+	var defaults = {
+		fileType : [ "jpg", "png", "bmp", "jpeg" ], // 上传文件的类型
+		fileSize : 1024 * 1024 * 10
+	// 上传文件的大小 10M
+	};
+
+	//向后台传送图片
+	$(".file")
+			.change(
+					function() {
+						if (validator.form()) {
+							var Imgid = generateUUID();
+							var url = path + "api/sys/material/upPicture";
+							url += "?material_code="
+									+ $('#material_code').val();
+							url += "&material_category=" + material_category;
+							url += "&token=" + securityContext.token;
+							url += "&id=" + Imgid;
+
+							var opt = {
+								formData : {
+									"path" : "art/",
+									"name" : "uploadPic"
+								},
+								url : url,
+
+								success : function(data) {
+									alert(data);
+								},
+								error : function(err) {
+									alert(err);
+								}
+							};
+
+							var idFile = $(this).attr("id");
+							var file = document.getElementById(idFile);
+							var imgContainer = $(this).parents(".z_photo"); //存放图片的父亲元素
+							var fileList = file.files; //获取的图片文件
+							//		console.log(fileList+"======filelist=====");
+							var input = $(this).parent();//文本框的父亲元素
+							var imgArr = [];
+							//遍历得到的图片文件
+							var numUp = imgContainer.find(".up-section").length;
+							var totalNum = numUp + fileList.length; //总的数量
+							if (fileList.length > 5 || totalNum > 5) {
+								alert("上传图片数目不可以超过5个，请重新选择"); //一次选择上传超过5个 或者是已经上传和这次上传的到的总数也不可以超过5个
+							} else if (numUp < 5) {
+								fileList = validateUp(fileList);
+								// 			for(var i = 0;i<fileList.length;i++){
+								var imgUrl = window.URL
+										.createObjectURL(fileList[0]);
+								imgArr.push(imgUrl);
+
+								var $section = $("<section class='up-section fl loading' id='"+Imgid+"'>");
+								imgContainer.prepend($section);
+								var $span = $("<span class='up-span'>");
+								$span.appendTo($section);
+
+								var $img0 = $("<img class='close-upimg'>").on(
+										"click", function(event) {
+											event.preventDefault();
+											event.stopPropagation();
+											$(".works-mask").show();
+											delParent = $(this).parent();
+										});
+								$img0
+										.attr("src",
+												"/APPLETPC/js/plugins/uploadImg/img/a7.png")
+										.appendTo($section);
+								var $img = $("<img class='up-img up-opcity'>");
+								$img.attr("src", imgArr[0]);
+								$img.appendTo($section);
+								var $p = $("<p class='img-name-p'>");
+								$p.html(fileList[0].name).appendTo($section);
+								var $input = $("<input id='taglocation' name='taglocation' value='' type='hidden'>");
+								$input.appendTo($section);
+								var $input2 = $("<input id='tags' name='tags' value='' type='hidden'/>");
+								$input2.appendTo($section);
+								uploadImg(opt, fileList[0], $section);
+								// 		   }
+							}
+							setTimeout(function() {
+								$(".up-section").removeClass("loading");
+								$(".up-img").removeClass("up-opcity");
+							}, 450);
+							numUp = imgContainer.find(".up-section").length;
+							if (numUp >= 5) {
+								$(this).parent().hide();
+							}
+
+							//input内容清空
+							$(this).val("");
+						}
+					});
+
+	$(".z_photo").delegate(".close-upimg", "click", function() {
+		$(".works-mask").show();
+		delParent = $(this).parent();
+	});
+	//删除弹出框点击事件
+	$(".wsdel-ok").click(function() {
+		//删除弹出框隐藏
+		$(".works-mask").hide();
+		var numUp = delParent.siblings().length;
+		if (numUp < 6) {
+			delParent.parent().find(".z_file").show();
+		}
+
+		removePicture(delParent.attr('id'));
+		//alert(delParent.attr('id'));
+		delParent.remove();
+
+	});
+
+	$(".wsdel-no").click(function() {
+		$(".works-mask").hide();
+	});
+
+	function validateUp(files) {
+		var arrFiles = [];//替换的文件数组
+		for ( var i = 0, file; file = files[i]; i++) {
+			//获取文件上传的后缀名
+			var newStr = file.name.split("").reverse().join("");
+			if (newStr.split(".")[0] != null) {
+				var type = newStr.split(".")[0].split("").reverse().join("");
+				//						console.log(type+"===type===");
+				if (jQuery.inArray(type, defaults.fileType) > -1) {
+					// 类型符合，可以上传
+					if (file.size >= defaults.fileSize) {
+						alert(file.size);
+						alert('您这个"' + file.name + '"文件大小过大');
+					} else {
+						// 在这里需要判断当前所有文件中
+						arrFiles.push(file);
+					}
+				} else {
+					alert('您这个"' + file.name + '"上传类型不符合');
+				}
+			} else {
+				alert('您这个"' + file.name + '"没有类型, 无法识别');
+			}
+		}
+		return arrFiles;
+	}
+
+	function uploadImg(opt, file, obj) {
+		$("#imguploadFinish").val(false);
+		// 验证通过图片异步上传
+		var url = opt.url;
+		var data = new FormData();
+		data.append("path", opt.formData.path);
+		data.append("file", file);
+		/* alert(url); */
+		$
+				.ajax({
+					type : 'POST',
+					url : url,
+					data : data,
+					processData : false,
+					contentType : false,
+					dataType : 'json',
+					success : function(data) {
+						/* alert(JSON.stringify(data)); */
+						//					console.log("chenggong");
+						// obj.remove();
+						// 上传成功
+						if (data.error == 0) {
+							recordLog("O", "APPLETPC", "图片上传成功",
+									securityContext.user_id);
+							$(".up-section").removeClass("loading");
+							$(".up-img").removeClass("up-opcity");
+							$("#imguploadFinish").val(true);
+							var htmlStr = "<input type='text' style='display:none;' name='"
+								+ opt.formData.name
+								+ "' value='"
+								+ data.url
+								+ "'>";
+							obj.append(htmlStr);
+							if (successCallBack) {
+								successCallBack(data);
+							}
+						}
+
+						if (data.error == 1) {
+							recordLog("O", "APPLETPC", "图片上传成功",
+									securityContext.user_id);
+							obj.remove();
+							$("#imguploadFinish").val(false);
+							if (errorCallBack) {
+								errorCallBack(data.url);
+							}
+						}
+					},
+					error : function(e) {
+						recordLog("O", "APPLETPC", "图片上传失败",
+								securityContext.user_id);
+						obj.remove();
+						var err = "上传失败，请联系管理员！";
+						$("#imguploadFinish").val(false);
+						//if (errorCallBack) {
+						//errorCallBack(err);
+						//}
+					}
+				});
+	}
+</script>

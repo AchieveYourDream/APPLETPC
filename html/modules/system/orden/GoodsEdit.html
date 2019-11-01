@@ -1,0 +1,281 @@
+<script type="text/javascript">
+	if (sessionStorage.getItem('securityContext') == null) {
+		window.location.href = "/APPLETPC/login.html";
+	}
+	var securityContext = JSON.parse(sessionStorage.getItem('securityContext'));
+	var bootstrapSkin = securityContext.bootstrapSkin;
+	var path = sessionStorage.getItem('path');
+	var currentCode = sessionStorage.getItem('currentCode');
+	var id = sessionStorage.getItem('id');
+</script>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport"
+	content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+<title>编辑门店信息</title>
+<link type="text/css" rel="stylesheet"
+	href="/APPLETPC/css/common/common.css">
+<script type="text/javascript" src="/APPLETPC/js/common/common.js"></script>
+<script type="text/javascript" src="/APPLETPC/js/common/util.js"></script>
+<script type="text/javascript"
+	src="/APPLETPC/js/jquery/jquery-2.2.3.min.js"></script>
+<script type="text/javascript" src="/APPLETPC/js/json/json2.js"></script>
+<link type="text/css" rel="stylesheet"
+	href="/APPLETPC/js/bootstrap/css/bootstrap.css">
+<script type="text/javascript"
+	src="/APPLETPC/js/bootstrap/js/bootstrap.js"></script>
+<script type='text/javascript'
+	src='/APPLETPC/js/json/model/SysDicount.js'></script>
+<script type='text/javascript' src='/APPLETPC/js/json/model/SysLog.js'></script>
+<!-- jquery-validator -->
+<script type="text/javascript"
+	src="/APPLETPC/js/plugins/jquery-validate/jquery.validate.min.js"></script>
+<script type="text/javascript"
+	src="/APPLETPC/js/plugins/jquery-validate/jquery.validate.plu.js"></script>
+<script type="text/javascript"
+	src="/APPLETPC/js/plugins/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js"></script>
+<link type="text/css" rel="stylesheet"
+	href="/APPLETPC/js/plugins/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css">
+</head>
+<body class="my-body-content">
+	<form id="typeAddForm" name="typeAddForm" class="my-form-content">
+		<table class="my-form-table-content">
+<input  id="id" name="id" type="hidden" >
+			<tr>
+<!-- 				<td class="my-form-table-td-label"> -->
+<!-- 					<label class="control-label" style="margin:5px;padding:0px;">ID</label> -->
+<!-- 				</td> -->
+<!-- 				<td class="my-form-table-td-content"> -->
+<!-- 					 -->
+<!-- 				</td> -->
+				
+				<td class="my-form-table-td-label">
+					<label class="control-label" style="margin:5px;padding:0px;" >分类代码</label>
+				</td>
+				<td class="my-form-table-td-content">
+					<input readonly id="categorycode" name="categorycode" type="text" class="form-control input-sm" style="width:180px;padding:5px;float:left;"></input> 
+				</td>
+				<td class="my-form-table-td-label">
+					<label class="control-label" style="margin:5px;padding:0px;">产品代码</label>
+				</td>
+				<td class="my-form-table-td-content">
+					<input readonly id="code" name="code" type="text" class="form-control input-sm" style="width:180px;padding:5px;float:left;">
+				</td>
+			</tr>
+
+			<tr>
+				<td class="my-form-table-td-label">
+					<label class="control-label" style="margin:5px;padding:0px;">中文标题</label>
+				</td>
+				<td class="my-form-table-td-content" style="width:210px;float:left;">
+					<input readonly id="titlezh" name="titlezh" type="text" class="form-control input-sm" style="width:180px;padding:5px;float:left;">
+				</td>
+				<td class="my-form-table-td-label">
+					<label class="control-label" style="margin:5px;padding:0px;">英文标题</label>
+				</td>
+				<td class="my-form-table-td-content">
+					<input readonly id="titleen" name="titleen" class="form-control input-sm" style="width:180px;padding:5px;float:left;"></input> 
+					
+				</td>
+				
+			</tr>
+
+			
+			<tr>
+				<td class="my-form-table-td-label">
+					<label class="control-label" style="margin:5px;padding:0px;">人民币价格</label>
+				</td>
+				<td class="my-form-table-td-content">
+					<input readonly id="pricecny" name="pricecny" type="text" class="form-control input-sm" style="width:180px;padding:5px;float:left;">
+				</td>
+			
+				<td class="my-form-table-td-label">
+					<label class="control-label" style="margin:5px;padding:0px;">美元价格</label>
+				</td>
+				<td class="my-form-table-td-content">
+				<input readonly id="priceus" name="priceus" type="text" class="form-control input-sm" style="width:180px;padding:5px;float:left;">
+					
+				</td>
+			
+			</tr>
+			<tr>
+				<td class="my-form-table-td-label">
+					<label class="control-label" style="margin:5px;padding:0px;">最低折扣</label>
+				</td>
+				<td class="my-form-table-td-content">
+					<input id="lowerdiscount" name="lowerdiscount" type="text" class="form-control input-sm" style="width:180px;padding:5px;float:left;">
+				</td>
+			
+				<td class="my-form-table-td-label">
+					<label class="control-label" style="margin:5px;padding:0px;">最高折扣</label>
+				</td>
+				<td class="my-form-table-td-content">
+				<input id="highdiscount" name="highdiscount" type="text" class="form-control input-sm" style="width:180px;padding:5px;float:left;">
+					
+				</td>
+			
+			</tr>
+			<tr>
+				<td class="my-form-table-td-label">
+					<label class="control-label" style="margin:5px;padding:0px;">库存数量</label>
+				</td>
+				<td class="my-form-table-td-content">
+				<input readonly id="amount" name="amount" type="text" class="form-control input-sm" style="width:180px;padding:5px;float:left;">
+					
+				</td>
+			
+			</tr>
+		
+
+		</table>
+	</form>
+</body>
+</html>
+
+<script type="text/javascript">
+	
+var validator;
+
+$(document).ready(function() {
+
+selectGoodsByPk();
+validator = $("#typeAddForm").validate({
+		debug: true,
+		showErrors: showErrors,
+		rules: {
+			
+			lowerdiscount : {
+				number : true,
+				min:0.7,
+				maxlength:3,
+			},
+			highdiscount : {
+				number : true,
+				max:1.1,
+				maxlength:3,
+				}
+			},
+		messages: {
+			lowerdiscount: {
+				number:"[最低折扣]必须是数字！",
+				min:"[最低折扣]不能低于0.7折！",
+				maxlength:"[最大长度]不能超过3位！",
+				
+			},
+			highdiscount: {
+				number:"[最高折扣]必须是数字！",
+				max:"[最高折扣]不能高于1.1折！",
+				maxlength:"[最大长度]不能超过3位！",
+			}
+		}
+	});
+	
+});
+
+
+	// 依据id获取单品信息
+	function selectGoodsByPk() {
+
+		var url = path + "api/sys/orden/selectGoodsByPk";
+		url += "?currentTime=" + new Date();
+
+		$.ajax({
+			type : "post",
+			url : url,
+			data:{"token":securityContext.token,"code":currentCode,"id":id},
+			success : function(data) {
+
+				if (data.code == "S") {
+				recordLog("O","APPLETPC","服装物料获取成功",securityContext.user_id);
+					var store = JSON.parse(data.data);
+					
+					dwr.util.setValues(store);
+				} else {
+					recordLog("OF","APPLETPC","服装物料获取失败",securityContext.user_id);
+					window.top.bootbox.dialog({
+						title : "错误信息",
+						message : "数据加载失败！" + "<br><br>" + data.data,
+						size : "middle",
+						buttons : {
+							cancelType : {
+								label : "确定",
+								className : "btn-" + bootstrapSkin,
+								callback : function() {
+									return true;
+								}
+							}
+						}
+					});
+				}
+			}
+		});
+	}
+
+	// 编辑
+function doGoods() {
+	
+		if (validator.form()) {
+		var cc = new SysDicount();
+		cc.goodsid = $('#id').val();
+		cc.lowerdiscount = $('#lowerdiscount').val();
+		cc.highdiscount = $('#highdiscount').val();
+		var url = path+"api/sys/orden/updateDiscount";
+		url += "?t=" + new Date();
+		url+="&token="+securityContext.token;
+
+	$.ajax({
+		type: "post",
+		url: url,
+		data:cc,
+		async:false,
+		success: function(data) {
+				if (data.code == "S") {
+				recordLog("O","APPLETPC","折扣设置成功",securityContext.user_id);
+				 result = true;
+
+					window.top.bootbox.dialog({
+						title: "提示信息",
+						message: "保存成功！",
+						size: "middle",
+						buttons: {
+							cancelType: {
+					      		label: "确定",
+					      		className: "btn-"+bootstrapSkin,
+					      		callback: function() {
+					      			return true;
+					      		}
+							}
+						}
+					});
+        
+				} else {
+				recordLog("OF","APPLETPC","折扣设置失败",securityContext.user_id);
+				result = false;
+				window.top.bootbox.dialog({
+						title: "错误信息",
+						message: "保存失败！" + "<br><br>" + data.data,
+						size: "middle",
+						buttons: {
+							cancelType: {
+					      		label: "确定",
+					      		className: "btn-"+bootstrapSkin,
+					      		callback: function() {
+					      			return true;
+					      		}
+							}
+						}
+					});
+				}
+		    }
+		});
+	}
+	return result;
+	
+}
+
+
+</script>

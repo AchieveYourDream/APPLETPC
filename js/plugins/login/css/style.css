@@ -1,0 +1,58 @@
+
+*, *::after, *::before {
+    box-sizing: border-box;
+}
+
+html {
+    font-size: 62.5%;
+}
+
+body {
+    font-size: 14px;
+    font-family: "PT Sans", sans-serif;
+    color: #4C5B5C;
+    background-color: #fff;
+    margin:0;
+    padding:0;
+}
+
+a {
+    color: #4C5B5C;
+    text-decoration: none;
+}
+
+
+
+/* -------------------------------- 
+
+ Main Content
+
+-------------------------------- */
+.main-wrapper {
+    height: 100vh;
+    overflow: hidden;
+}
+.color-bg {
+    background: #012b52 !important;
+}
+.center{ position: absolute;
+z-index: 10;
+    top: 50%;
+    left: 25%;
+    width: 48%;
+    color: rgb(255, 255, 255);
+    text-align: center;
+    padding: 1em;
+	opacity: 1;
+    transform: translateY(-50%);
+    transition: transform 0.4s 0.3s, opacity 0.4s 0.3s;
+    }
+    
+  #imgId{
+      position: absolute;
+      z-index: -1;
+    }canvas{
+     position: absolute;
+      z-index: 0;
+    }
+   

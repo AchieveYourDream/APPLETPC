@@ -1,0 +1,285 @@
+<script type="text/javascript">
+       if(sessionStorage.getItem('securityContext')==null){
+         window.location.href="/APPLETPC/login.html";
+        }
+        var securityContext = JSON.parse(sessionStorage.getItem('securityContext'));
+
+        var path = sessionStorage.getItem('path');
+</script>
+<!DOCTYPE html>
+<html style="overflow: hidden;">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+<title>小程序资讯管理列表</title>
+
+	<link type="text/css" rel="stylesheet" href="/APPLETPC/css/common/common.css">
+	<script type="text/javascript" src="/APPLETPC/js/common/common.js"></script>
+	<script type="text/javascript" src="/APPLETPC/js/common/util.js"></script>
+	<script type="text/javascript"src="/APPLETPC/js/jquery/jquery-2.2.3.min.js"></script>
+    <script type="text/javascript" src="/APPLETPC/js/json/json2.js"></script>
+    <link type="text/css" rel="stylesheet" href="/APPLETPC/js/bootstrap/css/bootstrap.css">
+    <script type="text/javascript" src="/APPLETPC/js/bootstrap/js/bootstrap.js"></script>
+     <script type="text/javascript" src="/APPLETPC/js/plugins/bootstrap-box/js/bootbox.min.js"></script>
+    <link type="text/css" rel="stylesheet"
+		href="/APPLETPC/js/plugins/bootstrap-datetime/css/bootstrap-datetimepicker.min.css">
+		
+	<script type="text/javascript"
+		src="/APPLETPC/js/plugins/bootstrap-datetime/js/bootstrap-datetimepicker.min.js"></script>
+		
+	<script type="text/javascript"
+		src="/APPLETPC/js/plugins/bootstrap-datetime/js/locales/bootstrap-datetimepicker.zh-CN.js"></script>
+	
+<!-- bootstrap-table -->
+<link type="text/css" rel="stylesheet" href="/APPLETPC/js/plugins/bootstrap-table/css/bootstrap-table.css">
+
+<script type="text/javascript" src="/APPLETPC/js/plugins/bootstrap-table/js/bootstrap-table-500.js"></script>
+
+<script type="text/javascript" src="/APPLETPC/js/plugins/bootstrap-table/local/bootstrap-table-zh-CN.js"></script>
+    
+<style>
+.btn-lg{
+ width:100%;
+ display: inline-block;
+ padding:12px 12px;
+ margin:2px;
+}
+</style>
+<body style="font-size:12px;" >
+<div class="row" style="margin:0px;padding:0px;">
+			
+	<div class="col-md-3" style="padding-left:5px;padding-right:5px;" id="menuDiv">
+			
+<!-- 			<button type="button" class="btn btn-info btn-lg" onclick="dataPush('type_A')">重推门店销售订单到SAP</button> -->
+<!-- 			<button type="button" class="btn btn-success btn-lg" onclick="dataPush('type_A')">重推门店销售订单到SAP</button> -->
+	</div>
+ 	<div class="col-md-9" style="padding-left:5px;padding-right:5px;">
+	<div id="information">
+		<button  class="btn  btn-sm btn-success" onclick="addInformation();">
+            <i class="glyphicon glyphicon-add"></i>&nbsp;新建
+        </button>
+        <button id="refreshTypeBtn" class="btn  btn-sm btn-danger" onclick="deleteRedCollarCache();">
+			            <i class="glyphicon glyphicon-refresh"></i>&nbsp;全部上新
+		</button>
+         		<button class="btn  btn-sm btn-info" onclick="selectAppInformationList();">
+            <i class="glyphicon glyphicon-refresh"></i>&nbsp;刷新
+        </button>
+    </div>
+	
+	
+	
+	<table id="informationTable"  
+		class="table table-condensed "
+			data-toggle="table" 
+			data-toolbar="#information"
+		    data-icon-size="sm"
+			data-pagination="true" 
+			data-page-size="15" 
+		    data-page-list="[15,20,25,30,35,ALL]"
+		    data-undefined-text=""
+		    data-show-columns="true"
+		    >
+			<thead >
+				<tr >
+					<th data-field="title" data-halign="center" data-align="center" >标题</th>
+					<th data-field="content" 	data-halign="center" data-align="center" >咨询内容</th>
+					<th data-field="isvisible" data-halign="center" data-align="center" data-formatter="isshow">是否发布</th>
+					<th data-field="create_date"  data-halign="center" data-align="center"  >创建时间</th>
+					<th data-field="update_date"  data-halign="center" data-align="center" >修改时间</th>
+					<th data-field="detail_url" data-halign="center" data-align="center" >详情utl</th>
+					<th data-field="is_banner_show"data-halign="center" data-align="center" data-formatter="isshow">是否banner显示</th>
+					<th data-halign="center" 		 data-align="center" data-events="operateEvents" data-formatter="operateFormatter">操作</th>
+				</tr>
+			</thead>
+		</table>
+	
+	</div>
+	
+	</div>
+</body>
+</html>
+
+<script type="text/javascript">
+var searchCondition;
+var use_module;
+$(document).ready(function() {
+getAppInformationMenuInfo();
+});
+function operateFormatter(value, row, index) {
+var array=new Array();
+ array.push( '<a type="button" class="editBtn" style="margin-right:15px;"><i class="glyphicon glyphicon-eye-open"></i>编辑</a>');
+ 			if(row.isvisible=='N'){
+              array.push('<a type="button" class="greenBtn" style="margin-right:15px;"><i class="glyphicon glyphicon-arrow-up"></i>发布</a>');
+          	}else{
+          	  array.push('<a type="button" class="delBtn" style="margin-right:15px;"><i class="glyphicon glyphicon-arrow-down"></i>取消</a>');
+          	}       
+             return array.join('');
+         }
+         
+window.operateEvents = {
+             'click .editBtn': function (e, value, row, index) {
+                	editInformation(row.information_id) ;
+                 },
+              'click .delBtn': function (e, value, row, index) {
+                	updateInformationVisible(row.information_id,'N') ;
+                 },
+              'click .greenBtn': function (e, value, row, index) {
+                	updateInformationVisible(row.information_id,'Y') ;
+                 },
+         }; 
+function isshow(value,row,index){
+ 	var show = "";  
+         if(value == "Y") {  
+             var show = '<span style="color:#34df48;font-weight:bold;">是</span>';  
+         }else{  
+             var show = '<span style="color:#f50a05;font-weight:bold;">否</span>';  
+         }  
+         return show;  
+} 
+
+
+// 新建资讯管理
+function addInformation() {
+if(use_module==null){
+$.growl.warning({title: "提醒标题", message: "请选择资讯模块" });
+return ;
+}
+	var url = "/APPLETPC/jsp/modules/redcollar/information/InformationAdd.html";
+	var InformationAddFrame = '<iframe id="InformationAddFrame" class="my-modal-iframe" width="100%" height="600px" src="' + url + '"></iframe>';
+	sessionStorage.setItem('use_module', use_module);
+	window.top.bootbox.dialog({
+		title: "资讯管理-新建",
+		message: InformationAddFrame,
+		size: "medium",
+		buttons: {
+			saveType: {
+	      		label: "保存",
+	      		className: "btn-"+bootstrapSkin,
+	      		callback: function() {
+	      			var result = window.top.document.getElementById("InformationAddFrame").contentWindow.uploadImage();
+	      			if (result) {
+	      			$.growl.notice({title: "提醒标题", message: "保存成功" });
+	      			selectAppInformationList();
+	      			}
+	      			return result;
+	      		}
+			},
+			cancelType: {
+	      		label: "取消",
+	      		className: "btn-default",
+	      		callback: function() {
+	      			return true;
+	      		}
+			}
+		}
+	});
+}
+
+// 编辑资讯管理
+function editInformation(information_id) {
+	
+	var url = "/APPLETPC/jsp/modules/redcollar/information/InformationEdit.html";
+	sessionStorage.setItem('information_id', information_id);
+	var InformationEditFrame = '<iframe id="InformationEditFrame" class="my-modal-iframe" width="100%" height="600px" src="' + url + '"></iframe>';
+	
+	window.top.bootbox.dialog({
+		title: "资讯管理-编辑",
+		message: InformationEditFrame,
+		size: "medium",
+		buttons: {
+			saveType: {
+	      		label: "保存",
+	      		className: "btn-"+bootstrapSkin,
+	      		callback: function() {
+	      			var result = window.top.document.getElementById("InformationEditFrame").contentWindow.doEditInformation();
+	      			if (result) {
+	      				$.growl.notice({title: "提醒标题", message: "保存成功" });
+	      				selectAppInformationList();
+	      			}
+	      			return result;
+	      		}
+			},
+			cancelType: {
+	      		label: "取消",
+	      		className: "btn-default",
+	      		callback: function() { 
+	      			return true;
+	      		}
+			}
+		}
+	});
+}
+
+//资讯管理修改状态
+ function updateInformationVisible(information_id,isvisible){
+	    var url = path+"api/appInformation/updateInformationVisible";
+	   	    url += "?t=" + new Date();
+			$.ajax({
+				type: "POST",
+			    url: url,
+			    data:{"token":securityContext.token,"information_id":information_id,"isvisible":isvisible},
+			    success: function(data){
+					if (data.result_code == "Y") {
+						result = true;
+						$.growl.notice({    title: "错误标题", message:"修改成功"});
+						selectAppInformationList();
+					} else if (data.result_code == "N") {
+						result = false;
+						$.growl.error({    title: "错误标题", message: data.result_info});
+						}
+				    }
+				});
+
+} 
+
+
+//初始化资讯信息菜单列表
+function  getAppInformationMenuInfo(){
+		var url = path+"api/appInformation/getAppInformationMenuInfo";
+		url += "?t=" + new Date();
+        $.ajax({
+            url: url,
+            type: 'GET',
+            headers:{"token":securityContext.token},
+            success: function (data) {
+            	
+				if (data.result_code == "Y") {
+				debugger;
+				$.each(JSON.parse(data.result_info), function(index, d) {
+						$("#menuDiv").append('<button type="button" class="btn '+bootstarp_btnstlye[index]+' btn-lg" onclick="redresh(\'' + d.node_code+'\')">'+d.node_name+'</button>')
+				 });
+				 
+				} else if (data.result_code == "N") {
+					result = false;
+				$.growl.error({    title: "错误标题", message: data.result_info});
+				}
+            }
+        });
+}
+//获取列表
+function redresh(obj){
+use_module=obj;
+selectAppInformationList();
+}
+//获取红领小程序资讯管理列表 
+function selectAppInformationList(){
+	var url = path+"api/appInformation/selectAppInformationList";
+		url += "?t=" + new Date();
+		$.ajax({
+			type: "POST",
+		    url: url,
+		    data:{"use_module":use_module,"token":securityContext.token},
+		    success: function(data){
+				if (data.result_code == "Y") {
+					$("#informationTable").bootstrapTable("load", JSON.parse(data.result_info));
+				} else if (data.result_code == "N") {
+					$.growl.error({    title: "错误标题", message: data.result_info});
+				}
+		    }
+		});
+
+}
+    
+</script>

@@ -1,0 +1,118 @@
+<script type="text/javascript">
+         if(sessionStorage.getItem('securityContext')==null){
+         window.location.href="/APPLETPC/login.html";
+        }
+        var securityContext = JSON.parse(sessionStorage.getItem('securityContext'));
+
+        var path = sessionStorage.getItem('path');
+        var id = sessionStorage.getItem('id');
+</script>
+<!DOCTYPE html>
+<html style="overflow-x: hidden; ">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+	<title>投诉建议详情</title>
+	<link type="text/css" rel="stylesheet" href="/APPLETPC/css/common/common.css">
+    <link type="text/css" rel="stylesheet" href="/APPLETPC/js/bootstrap/css/bootstrap.css">
+	<script type="text/javascript" src="/APPLETPC/js/common/common.js"></script>
+	<script type="text/javascript" src="/APPLETPC/js/common/util.js"></script>
+	<script type="text/javascript"src="/APPLETPC/js/jquery/jquery-2.2.3.min.js"></script>
+    <script type="text/javascript" src="/APPLETPC/js/json/json2.js"></script>
+    <script type="text/javascript" src="/APPLETPC/js/bootstrap/js/bootstrap.js"></script>
+	
+	
+<!-- bootstrap-table -->
+	<link type="text/css" rel="stylesheet"
+		href="/APPLETPC/js/plugins/bootstrap-table/css/bootstrap-table.css">
+		
+	<script type="text/javascript"
+		src="/APPLETPC/js/plugins/bootstrap-table/js/bootstrap-table.js"></script>
+	
+	<script type="text/javascript"
+		src="/APPLETPC/js/plugins/bootstrap-table/local/bootstrap-table-zh-CN.js"></script>
+		
+		
+<style>
+img{
+   width:200px;
+   height:200px;
+}
+
+
+</style>		
+</head>
+<body class="my-body-content">
+	<form id="CusDemandForm" name="CusDemandForm" class="form-horizontal">
+	  <div class="form-group">
+	    <label for="inputEmail3" class="col-sm-2 control-label">投诉者手机号</label>
+	    <div class="col-sm-8">
+	      <input type="member_tel" class="form-control" id="member_tel" >
+	    </div>
+	  </div>
+	  
+	  <div class="form-group">
+	    <label for="inputEmail3" class="col-sm-2 control-label">投诉信息</label>
+	    <div class="col-sm-8">
+	 	  <textarea class="form-control" rows="3" id="message"></textarea>
+	    </div>
+	  </div>
+	  
+	  
+	  <div class="form-group" class="col-sm-10" id="imgDiv">
+	  </div>
+ 		
+	</form>
+</body>
+</html>
+
+<script type="text/javascript">
+
+$(document).ready(function() {
+		
+		var url = path+"api/customized/selectAppComplaintSuggestByPk";
+		url += "?t=" + new Date();
+		
+		$.ajax({
+			type: "POST",
+		    url: url,
+		    async: false,
+		    data:{"id":id,"token":securityContext.token},
+		    success: function(data){
+				
+				if (data.result_code == "Y") {
+				var cs=JSON.parse(data.result_info)
+				$("#member_tel").val(cs.member_tel);
+				$("#message").val(cs.message);
+				debugger;
+				if(cs.images_url!=null && cs.images_url!=""){
+				var  arr=cs.images_url.split(",");
+				for (var i=0;i<arr.length;i++){
+					 $("#imgDiv").append('<img src="'+arr[i]+'" class="col-sm-4"></img>')
+				}
+				}
+				} else if (data.result_code == "N") {
+					result = false;
+					window.parent.bootbox.dialog({
+						title: "错误信息",
+						message: "获取失败！" + "<br><br>" + data.result_info,
+						size: "middle",
+						buttons: {
+							cancelType: {
+					      		label: "确定",
+					      		className: "btn-"+bootstrapSkin,
+					      		callback: function() {
+					      			return true;
+					      		}
+							}
+						}
+					});
+				}
+		    }
+		});
+});
+
+
+</script>
