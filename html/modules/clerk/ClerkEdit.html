@@ -426,8 +426,8 @@ function  uploadImage(){
 	      		callback: function() {
 	      			var result = window.top.document.getElementById("lovLovFrame").contentWindow.getLovData();
 	      			if(result){
-	      			$("#store_code").val(result.lov_value);//将获取到的门店ID写入隐藏框
-	      			$("#store_name").val(result.lov_text);//将获取到的门店名称写入文本框
+	      			$("#store_code").val(result.lovValue);//将获取到的门店ID写入隐藏框
+	      			$("#store_name").val(result.lovText);//将获取到的门店名称写入文本框
 	      			};
 	      			return result;
 	      		}

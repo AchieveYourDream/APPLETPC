@@ -230,11 +230,11 @@ function doAddInformation(Information_image) {
 		    async: false,
 		    success: function(data){
 				
-				if (data.result_code == "Y") {
+				if (data.code == "S") {
 					result = true;
-				} else if (data.result_code == "N") {
+				} else {
 					result = false;
-					$.growl.warning({    title: "错误标题", message: data.result_info});
+					$.growl.warning({    title: "错误标题", message: data.data});
 				}
 		    }
 		});

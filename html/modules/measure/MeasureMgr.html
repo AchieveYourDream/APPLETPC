@@ -168,7 +168,7 @@ function editMeasureOrder(measure_id) {
 	      		callback: function() {
 	      			var result = window.top.document.getElementById("MeasureOrderEditFrame").contentWindow.updateMeasureOrderClrek();
 	      			if (result) {
-	      				$.growl.notice({title: "提醒标题", message: "指派成功" });
+	      				$.growl.notice({title: "提示信息", message: "指派成功" });
 	      				redresh();
 	      			}
 	      			return result;

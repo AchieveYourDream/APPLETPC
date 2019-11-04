@@ -130,7 +130,7 @@ queryDictList();
 	function queryDictList() {
 		$("#storeTable").bootstrapTable('removeAll');
 
-		var url = path + "api/sys/orden/getImgProductList";
+		var url = path + "app/system/orden/getImgProductList";
 
 		/* url += "?currentTime=" + new Date();  */
 
@@ -138,26 +138,26 @@ queryDictList();
 			type : "get",
 			url : url,
 			data : {
-				"token" : securityContext.token
+				"Authorization" : securityContext.Authorization
 			},
 			success : function(data) {
 
 				if (data.code == "S") {
 					recordLog("O","APPLETPC","服装单品获取成功",securityContext.user_id);
 					$("#storeTable").bootstrapTable("load",
-							JSON.parse(data.result_info));
+							data.data);
 
 					currentStoreId = null;
 				} else {
 					recordLog("OF","APPLETPC","服装单品获取失败",securityContext.user_id);
 					window.top.bootbox.dialog({
 						title : "错误信息",
-						message : "数据加载失败！" + "<br><br>" + data.result_info,
+						message : "数据加载失败！" + "<br><br>" + data.data,
 						size : "middle",
 						buttons : {
 							cancelType : {
 								label : "确定",
-								className : "btn-" + bootstrapSkin,
+								className : "btn-success"
 								callback : function() {
 									return true;
 								}
@@ -185,7 +185,7 @@ queryDictList();
 					buttons : {
 						saveType : {
 							label : "确定",
-							className : "btn-" + bootstrapSkin,
+							className : "btn-success"
 							callback : function() {
 								return true;
 							}
@@ -211,7 +211,7 @@ queryDictList();
  			buttons: {
  				saveType: {
  		      		label: "保存",
- 		      		className: "btn-"+bootstrapSkin,
+ 		      		className: "btn-success",
  		      		callback: function() {
  		      			var result = window.top.document.getElementById("storeEditFrame").contentWindow.doProductStore();
  		      			if (result) {
@@ -292,7 +292,7 @@ queryDictList();
 							buttons : {
 								saveType : {
 									label : "确定",
-									className : "btn-" + bootstrapSkin,
+									className : "btn-success"
 									callback : function() {
 										return true;
 									}
@@ -310,7 +310,7 @@ queryDictList();
 							buttons : {
 								saveType : {
 									label : "确定",
-									className : "btn-" + bootstrapSkin,
+									className : "btn-success"
 									callback : function() {
 										return true;
 										
@@ -339,7 +339,7 @@ queryDictList();
 							buttons : {
 								saveType : {
 									label : "确定",
-									className : "btn-" + bootstrapSkin,
+									className : "btn-success"
 									callback : function() {
 										return true;
 									}
@@ -356,7 +356,7 @@ queryDictList();
 							buttons : {
 								saveType : {
 									label : "确定",
-									className : "btn-" + bootstrapSkin,
+									className : "btn-success"
 									callback : function() {
 										return true;
 									}

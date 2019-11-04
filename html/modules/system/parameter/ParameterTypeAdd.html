@@ -1,10 +1,10 @@
 <script type="text/javascript">
-         if(sessionStorage.getItem('securityContext')==null){
-         window.location.href="/APPLETPC/login.html";
-        }
-        var securityContext = JSON.parse(sessionStorage.getItem('securityContext'));
+    if(sessionStorage.getItem('securityContext')==null){
+        window.location.href="/APPLETPC/login.html";
+    }
+    var securityContext = JSON.parse(sessionStorage.getItem('securityContext'));
 
-        var path = sessionStorage.getItem('path');
+    var path = sessionStorage.getItem('path');
 </script>
 <!DOCTYPE html>
 <html>
@@ -18,6 +18,7 @@
 
 	<!-- Styles -->
 	<script src="/APPLETPC/js/jquery/jquery-3.4.1.min.js"></script>
+	<script src="/APPLETPC/js/json/model/SysParameterType.js"></script>
 
 </head>
 <body class="my-body-content">
@@ -29,151 +30,112 @@
 			<div class="row">
 				<div class="col-lg-12" >
 					<div class="card" >
-							<form id="typeAddForm" name="typeAddForm" class="my-form-content">
-								<table class="my-form-table-content">
-									<tr>
-										<td class="my-form-table-td-label" style="width:120px;">
-											<label class="control-label" style="margin:5px;padding:0px;">类型编码</label>
-										</td>
-										<td class="my-form-table-td-content" style="width:150px;">
-											<input id="type_code" name="type_code" type="text" class="form-control input-sm" style="width:130px;padding:5px;;">
-										</td>
-									</tr>
+						<form id="typeAddForm" name="typeAddForm" class="my-form-content">
+							<table class="my-form-table-content">
+								<tr>
+									<td class="my-form-table-td-label" style="width:120px;">
+										<label class="control-label" style="margin:5px;padding:0px;">类型编码</label>
+									</td>
+									<td class="my-form-table-td-content" style="width:150px;">
+										<input id="typeCode" name="typeCode" type="text" class="form-control input-sm" style="width:130px;padding:5px;float: left">
+									</td>
+								</tr>
 
-									<tr>
-										<td class="my-form-table-td-label">
-											<label class="control-label" style="margin:5px;padding:0px;">类型名称</label>
-										</td>
-										<td class="my-form-table-td-content">
-											<input id="type_name" name="type_name" type="text" class="form-control input-sm" style="width:130px;padding:5px;;">
-										</td>
-									</tr>
+								<tr>
+									<td class="my-form-table-td-label">
+										<label class="control-label" style="margin:5px;padding:0px;">类型名称</label>
+									</td>
+									<td class="my-form-table-td-content">
+										<input id="typeName" name="typeName" type="text" class="form-control input-sm" style="width:130px;padding:5px;float: left">
+									</td>
+								</tr>
 
 
-									<tr>
-										<td class="my-form-table-td-label">
-											<label class="control-label" style="margin:5px;padding:0px;">说明</label>
-										</td>
-										<td class="my-form-table-td-content">
-											<input id="description" name="description" type="text" class="form-control input-sm" style="width:130px;padding:5px;;">
-										</td>
-									</tr>
-								</table>
-							</form>
+								<tr>
+									<td class="my-form-table-td-label">
+										<label class="control-label" style="margin:5px;padding:0px;">说明</label>
+									</td>
+									<td class="my-form-table-td-content">
+										<input id="description" name="description" type="text" class="form-control input-sm" style="width:130px;padding:5px;float: left">
+									</td>
+								</tr>
+							</table>
+						</form>
 					</div></div></div></section></div></div>
 </body>
 </html>
 
 <script type="text/javascript">
-var validator;
-//
-// $(document).ready(function() {
-// 	validator = $("#typeAddForm").validate({
-// 		debug: true,
-// 		showErrors: showErrors,
-// 		rules: {
-// 			type_code: {
-// 				required: true,
-// 				maxlength: 50,
-// 				isCode: true,
-// 				remote: {
-// 					url:path+"api/sys/parameter/checkParameterTypeCode?t=" + new Date(),
-// 					type: "get",
-// 					data: {
-// 						typeCode: function(){return $('#type_code').val()},
-// 						token:function(){return securityContext.token}
-// 					}
-// 				}
-// 			},
-// 			type_name: {
-// 				required: true,
-// 				maxlength: 100
-// 			},
-// 			'display_order':{
-// 				required: true,
-// 				maxlength: 5,
-// 				number: true
-// 			},
-// 			description: {
-// 				maxlength: 200
-// 			}
-// 		},
-// 		messages: {
-// 			type_code: {
-// 				required: "[类型编码]不能为空！",
-// 				maxlength: "[类型编码]最大长度为50！",
-// 				remote: "当前类型编码已经存在！"
-// 			},
-// 			type_name: {
-// 				required: "[类型名称]不能为空！",
-// 				maxlength: "[类型名称]最大长度为100！"
-// 			},
-// 			'display_order':{
-// 				required: "[显示顺序]不能为空！",
-// 				maxlength: "[显示顺序]最大值为99999！",
-// 				number: "[显示顺序]必须是数字！"
-// 			},
-// 			description: {
-// 				maxlength: "[说明]最大长度为200！"
-// 			}
-// 		}
-// 	});
-// });
-//
-// function doAddParameterType() {
-// 	var result = false;
-// 	if (validator.form()) {
-// 		var pt = new SysParameterType();
-// 		dwr.util.getValues(pt);
-//
-// 		var url = path+"api/sys/parameter/addParameterType";
-// 		url += "?t=" + new Date();
-// 		url+="&token="+securityContext.token;
-//
-// 		$.ajax({
-// 			type: "get",
-// 		    url: url,
-// 		    data: pt,
-// 		    async: false,
-// 		    success: function(data){
-//
-// 				if (data.result_code == "Y") {
-// 					result = true;
-// 					window.top.bootbox.dialog({
-// 						title: "提示信息",
-// 						message: "保存成功！",
-// 						size: "small",
-// 						buttons: {
-// 							cancelType: {
-// 					      		label: "确定",
-// 					      		className: "btn-"+bootstrapSkin,
-// 					      		callback: function() {
-// 					      			return true;
-// 					      		}
-// 							}
-// 						}
-// 					});
-// 				} else if (data.result_code == "N") {
-// 					result = false;
-//
-// 					window.top.bootbox.dialog({
-// 						title: "错误信息",
-// 						message: "保存失败！" + "<br><br>" + data.result_info,
-// 						size: "middle",
-// 						buttons: {
-// 							cancelType: {
-// 					      		label: "确定",
-// 					      		className: "btn-"+bootstrapSkin,
-// 					      		callback: function() {
-// 					      			return true;
-// 					      		}
-// 							}
-// 						}
-// 					});
-// 				}
-// 		    }
-// 		});
-// 	}
-// 	return result;
-// }
+    var validator;
+    $(document).ready(function() {
+        validator = $("#typeAddForm").validate({
+            debug: true,
+            showErrors: showErrors,
+            rules: {
+                typeCode: {
+                    required: true,
+                    maxlength: 50,
+                    isCode: true,
+                    remote: {
+                        url:path+"app/system/parameter/checkParameterTypeCode?t=" + new Date(),
+                        type: "get",
+                        headers: {"Authorization":securityContext.Authorization},
+                        data: {
+                            typeCode: function(){return $('#typeCode').val()},
+                        }
+                    }
+                },
+                typeName: {
+                    required: true,
+                    maxlength: 100
+                },
+                description: {
+                    maxlength: 200
+                }
+            },
+            messages: {
+                typeCode: {
+                    required: "[类型编码]不能为空！",
+                    maxlength: "[类型编码]最大长度为50！",
+                    remote: "当前类型编码已经存在！"
+                },
+                typeName: {
+                    required: "[类型名称]不能为空！",
+                    maxlength: "[类型名称]最大长度为100！"
+                },
+                description: {
+                    maxlength: "[说明]最大长度为200！"
+                }
+            }
+        });
+    });
+
+    function doAddParameterType() {
+        var result = false;
+        if (validator.form()) {
+            var pt = new SysParameterType();
+            dwr.util.getValues(pt);
+
+            var url = path+"app/system/parameter/addParameterType";
+            url += "?t=" + new Date();
+
+            $.ajax({
+                type: "post",
+                url: url,
+                data: pt,
+				async:false,
+                headers: {"Authorization":securityContext.Authorization},
+                success: function(data){
+
+                    if (data.code == "S") {
+                        result = true;
+                    } else {
+                        result = false;
+                        $.growl.error({title: "提示信息", message:"数据加载失败！" + "<br><br>" + data.data});
+                    }
+                }
+            });
+        }
+        return result;
+    }
 </script>

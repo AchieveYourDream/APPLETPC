@@ -84,7 +84,7 @@ $(document).ready(function() {
 					dataType: "json",
 					data: {
 						searchCode: function(){return $('#search_code').val()},
-						token:function(){return securityContext.token}
+						Authorization:function(){return securityContext.Authorization}
 					}
 				}
 			},
@@ -121,7 +121,7 @@ function doAddSearchDefine() {
 		
 		var url = path+"/app/sys/search/addSearchDefine";
 		url += "?t=" + new Date();
-		url+="&token="+securityContext.token;
+		url+="&Authorization="+securityContext.Authorization;
 		$.ajax({
 			type: "post",
 		    url: url,

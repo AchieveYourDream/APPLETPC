@@ -129,7 +129,7 @@ getOrdenList();
 	function getOrdenList() {
 		$("#storeTable").bootstrapTable('removeAll');
 
-		var url = path + "api/sys/orden/getOrdenList";
+		var url = path + "app/system/orden/getOrdenList";
 
 		url += "?pubmemberid=" + securityContext.user_id; 
 
@@ -137,26 +137,26 @@ getOrdenList();
 			type : "get",
 			url : url,
 			data : {
-				"token" : securityContext.token
+				"Authorization" : securityContext.Authorization
 			},
 			success : function(data) {
 
-				if (data.result_code == "Y") {
+				if (data.code == "S") {
 					recordLog("O","APPLETPC","服装单品获取成功",securityContext.user_id);
 					$("#storeTable").bootstrapTable("load",
-							JSON.parse(data.result_info));
+							data.data);
 
 					currentStoreId = null;
-				} else if (data.result_code == "N") {
+				} else {
 					recordLog("OF","APPLETPC","服装单品获取失败",securityContext.user_id);
 					window.top.bootbox.dialog({
 						title : "错误信息",
-						message : "数据加载失败！" + "<br><br>" + data.result_info,
+						message : "数据加载失败！" + "<br><br>" + data.data,
 						size : "middle",
 						buttons : {
 							cancelType : {
 								label : "确定",
-								className : "btn-" + bootstrapSkin,
+								className : "btn-success"
 								callback : function() {
 									return true;
 								}
@@ -184,7 +184,7 @@ getOrdenList();
 					buttons : {
 						saveType : {
 							label : "确定",
-							className : "btn-" + bootstrapSkin,
+							className : "btn-success"
 							callback : function() {
 								return true;
 							}

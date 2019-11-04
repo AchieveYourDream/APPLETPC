@@ -65,7 +65,7 @@
 					<label class="control-label" style="margin:5px;padding:0px;">值列表编码</label>
 				</td>
 				<td class="my-form-table-td-content" style="width:200px;">
-					<input id="lov_code" name="lov_code" type="text" class="form-control input-sm" style="width:180px;padding:5px;float:left;">
+					<input id="lovCode" name="lovCode" type="text" class="form-control input-sm" style="width:180px;padding:5px;float:left;">
 				</td>
 				
 				<td class="my-form-table-td-label" style="width:60px;">
@@ -136,16 +136,16 @@ $(document).ready(function() {
 		debug: true,
 		showErrors: showErrors,
 		rules: {
-			lov_code: {
+			lovCode: {
 				required: true,
 				maxlength: 50,
 				isCode: true,
 				remote: {
-					url:path+"api/sys/lov/checkLovCode?t=" + new Date(),
+					url:path+"app/system/lov/checkLovCode?t=" + new Date(),
 					type: "get",
 					data: {
 						Authorization:function(){return securityContext.Authorization},
-						lovCode: function(){return $('#lov_code').val()},
+						lovCode: function(){return $('#lovCode').val()},
 						operationType: operationType
 					}
 				}
@@ -159,7 +159,7 @@ $(document).ready(function() {
 			}
 		},
 		messages: {
-			lov_code: {
+			lovCode: {
 				required: "[值列表编码]不能为空！",
 				maxlength: "[值列表编码]最大长度为50！",
 				remote: "当前值列表编码已经存在！"
@@ -180,7 +180,7 @@ $(document).ready(function() {
     });
 	
 	if (operationType == "edit") {
-		$("#lov_code").attr("readonly","readonly");
+		$("#lovCode").attr("readonly","readonly");
 		$("#view_name").attr("disabled",true);
 	}
 	
@@ -196,7 +196,7 @@ $(document).ready(function() {
 function getLovViewList() {
 	$("#lovColumnTable").bootstrapTable('removeAll');
 	
-	var url = path+"api/sys/lov/getLovViewList";
+	var url = path+"app/system/lov/getLovViewList";
     url += "?currentTime=" + new Date();
     
     $.ajax({
@@ -207,18 +207,18 @@ function getLovViewList() {
 		success: function(data) {
 			if (data.code == "S") {
 				$("#view_name").html("");
-			    $.each(JSON.parse(data.result_info), function(index, d){
+			    $.each(data.data, function(index, d){
 			        $("#view_name").append('<option value="' + d + '">' + d + '</option>')
 			    });
 			} else {
 				window.top.bootbox.dialog({
 					title: "错误信息",
-					message: "数据加载失败！" + "<br><br>" + data.result_info,
+					message: "数据加载失败！" + "<br><br>" + data.data,
 					size: "middle",
 					buttons: {
 						cancelType: {
 				      		label: "确定",
-				      		className: "btn-"+bootstrapSkin,
+				      		className: "btn-success",
 				      		callback: function() {
 				      			return true;
 				      		}
@@ -232,7 +232,7 @@ function getLovViewList() {
 
 function getLovDefineInfo() {
 	if (lovCode) {
-		var url = path+"api/sys/lov/getLovDefineInfo";
+		var url = path+"app/system/lov/getLovDefineInfo";
 	    url += "?currentTime=" + new Date();
 	    url += "&lovCode=" + lovCode;
 	    
@@ -244,18 +244,18 @@ function getLovDefineInfo() {
 					success: function(data) {
 				
 				if (data.code == "S") {
-					var sld = JSON.parse(data.result_info);
+					var sld = data.data;
 					dwr.util.setValues(sld);
 					
 				} else {
 					window.top.bootbox.dialog({
 						title: "错误信息",
-						message: "数据加载失败！" + "<br><br>" + data.result_info,
+						message: "数据加载失败！" + "<br><br>" + data.data,
 						size: "middle",
 						buttons: {
 							cancelType: {
 					      		label: "确定",
-					      		className: "btn-"+bootstrapSkin,
+					      		className: "btn-success",
 					      		callback: function() {
 					      			return true;
 					      		}
@@ -271,7 +271,7 @@ function getLovDefineInfo() {
 function getLovColumnList() {
 	$("#lovColumnTable").bootstrapTable('removeAll');
 	
-	var url = path+"api/sys/lov/getLovColumnList";
+	var url = path+"app/system/lov/getLovColumnList";
     url += "?currentTime=" + new Date();
     url += "&lovCode=" + lovCode;
     url += "&viewName=" + $("#view_name").val();
@@ -283,7 +283,7 @@ function getLovColumnList() {
 		headers:{"Authorization":securityContext.Authorization},
 		success: function(data) {
 			if (data.code == "S") {
-				var lovData = JSON.parse(data.result_info);
+				var lovData = data.data;
 				
 				$.each(lovData, function(index, d){
 					if (d.display_flag == 'Y') {
@@ -309,12 +309,12 @@ function getLovColumnList() {
 			} else {
 				window.top.bootbox.dialog({
 					title: "错误信息",
-					message: "数据加载失败！" + "<br><br>" + data.result_info,
+					message: "数据加载失败！" + "<br><br>" + data.data,
 					size: "middle",
 					buttons: {
 						cancelType: {
 				      		label: "确定",
-				      		className: "btn-"+bootstrapSkin,
+				      		className: "btn-success",
 				      		callback: function() {
 				      			return true;
 				      		}
@@ -330,7 +330,7 @@ function doSaveLov() {
 	var result = false;
 	if (validator.form()) {
 		var sld = new SysLovDefine();
-		sld.lov_code = $("#lov_code").val();
+		sld.lovCode = $("#lovCode").val();
 		sld.lov_name = $("#lov_name").val();
 		sld.view_name = $("#view_name").val();
 		sld.description = $("#description").val();
@@ -343,7 +343,7 @@ function doSaveLov() {
 		var selectedReturnTextIndex = $("input[name='return_text_flag_radio']:checked").val();
 		
 		$.each(slc, function(index, d){
-			slc[index].lov_code = sld.lov_code;
+			slc[index].lovCode = sld.lovCode;
 			
 			if ($('#display_flag_checkbox_' + index).is(':checked')) {
 				slc[index].display_flag = "Y";
@@ -366,7 +366,7 @@ function doSaveLov() {
 		
 // 		var slcJson = JSON.stringify(slc);
 		
-		var url = path+"api/sys/lov/saveLovInfo";
+		var url = path+"app/system/lov/saveLovInfo";
 		url += "?t=" + new Date();
 		url+="&Authorization="+securityContext.Authorization;
 // 		var postData = "SysLovDefine=" + converSpecialCharOfUrl(encodeURI(sldJson));
@@ -392,7 +392,7 @@ function doSaveLov() {
 						buttons: {
 							cancelType: {
 					      		label: "确定",
-					      		className: "btn-"+bootstrapSkin,
+					      		className: "btn-success",
 					      		callback: function() {
 					      			return true;
 					      		}
@@ -404,12 +404,12 @@ function doSaveLov() {
 					
 					window.top.bootbox.dialog({
 						title: "错误信息",
-						message: "保存失败！" + "<br><br>" + data.result_info,
+						message: "保存失败！" + "<br><br>" + data.data,
 						size: "middle",
 						buttons: {
 							cancelType: {
 					      		label: "确定",
-					      		className: "btn-"+bootstrapSkin,
+					      		className: "btn-success",
 					      		callback: function() {
 					      			return true;
 					      		}

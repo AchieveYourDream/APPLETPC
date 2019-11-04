@@ -192,7 +192,7 @@ function addGoods() {
 	      		callback: function() {
 	      			var result = window.top.document.getElementById("goodsAddFrame").contentWindow.doAddGoods();
 	      			if (result) {
-	      			$.growl.notice({title: "提醒标题", message: "保存成功" });
+	      			$.growl.notice({title: "提示信息", message: "保存成功" });
 	      			redresh();
 	      			}
 	      			return result;
@@ -227,7 +227,7 @@ function editGoods(goods_id) {
 	      		callback: function() {
 	      			var result = window.top.document.getElementById("goodsEditFrame").contentWindow.doEditGoods();
 	      			if (result) {
-	      				$.growl.notice({title: "提醒标题", message: "保存成功" });
+	      				$.growl.notice({title: "提示信息", message: "保存成功" });
 	      				redresh();
 	      			}
 	      			return result;

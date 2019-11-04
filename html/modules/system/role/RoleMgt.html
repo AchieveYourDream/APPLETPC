@@ -1,386 +1,286 @@
 <script type="text/javascript">
-        if(sessionStorage.getItem('securityContext')==null){
-         window.location.href="/APPLETPC/login.html";
-        }
-        var securityContext = JSON.parse(sessionStorage.getItem('securityContext'));
+    if (sessionStorage.getItem('securityContext') == null) {
+        window.location.href = "/APPLETPC/login.html";
+    }
+    var securityContext = JSON.parse(sessionStorage.getItem('securityContext'));
 
-       var path = sessionStorage.getItem('path');
+    var path = sessionStorage.getItem('path');
 </script>
 <!DOCTYPE html>
 <html>
 <head>
-	<meta charset="utf-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
-	<title>角色管理</title>
+    <title>角色管理</title>
 
-	<link type="text/css" rel="stylesheet" href="/APPLETPC/css/common/common.css">
-    <link type="text/css" rel="stylesheet" href="/APPLETPC/js/bootstrap/css/bootstrap.css">
-	<script type="text/javascript" src="/APPLETPC/js/common/common.js"></script>
-	<script type="text/javascript" src="/APPLETPC/js/common/util.js"></script>
-	<script type="text/javascript" src="/APPLETPC/js/jquery/jquery-2.2.3.min.js"></script>
-    <script type="text/javascript" src="/APPLETPC/js/json/json2.js"></script>
-    <script type="text/javascript" src="/APPLETPC/js/bootstrap/js/bootstrap.js"></script>
-	<script type="text/javascript" src="/APPLETPC/js/plugins/bootstrap-box/js/bootbox.min.js"></script>
-	
-	<script type='text/javascript' src='/APPLETPC/js/json/model/SysLog.js'></script>
-	
-	<!-- bootstrap-table -->
-	<link type="text/css" rel="stylesheet"
-		href="/APPLETPC/js/plugins/bootstrap-table/css/bootstrap-table.css">
-		
-	<script type="text/javascript"
-		src="/APPLETPC/js/plugins/bootstrap-table/js/bootstrap-table.js"></script>
-	
-	<script type="text/javascript"
-		src="/APPLETPC/js/plugins/bootstrap-table/local/bootstrap-table-zh-CN.js"></script>
-	
+    <script src="/APPLETPC/js/jquery/jquery-3.4.1.min.js"></script>
+
 </head>
 <body style="font-size:12px;">
-		
-	<div class="container-fluid" style="margin:0px;padding-top:1px;padding-right:5px;padding-bottom:1px;padding-left:5px;">
-	
-	   	<div id="typeToolbar">
-			<button id="addTypeBtn" class="btn  btn-sm">
-	            <i class="glyphicon glyphicon-plus"></i>&nbsp;新建
-	        </button>
-	        <button id="editTypeBtn" class="btn  btn-sm">
-	            <i class="glyphicon glyphicon-pencil"></i>&nbsp;编辑
-	        </button>
-	        <button id="delTypeBtn" class="btn  btn-sm">
-	            <i class="glyphicon glyphicon-remove"></i>&nbsp;删除
-	        </button>
-	        <button id="allTypeBtn" class="btn  btn-sm">
-	            <i class="glyphicon glyphicon-cog"></i>&nbsp;权限配置
-	        </button>
-	    </div>
-	   
-	    <table id="roleTable"
-	    	   class="table table-condensed"
-	           data-toggle="table"
-	           data-toolbar="#typeToolbar"
-	           data-height="400"
-	           data-pagination="true"
-	           data-page-size="10"
-	           data-page-list="[10,15,20,25]"
-	           data-striped="true"
-	           data-search="true">
-	           <thead>
-	           	<tr>
-	                <th data-field="role_id" data-halign="center" data-align="left">角色编码</th>
-	                <th data-field="role_name" data-halign="center" data-align="left">角色名称</th>
-	                <th data-field="description" data-halign="center" data-align="left">说明</th>
-	            </tr>
-	           </thead>
-		</table>
-	    
-	    
-	    
-	</div>
+<div class="content-wrap">
+    <div class="main">
+        <!-- /# row -->
+        <section class="mainSection">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="card">
+                        <div class="container-fluid"
+                             style="margin:0px;padding-top:1px;padding-right:5px;padding-bottom:1px;padding-left:5px;">
+
+                            <div id="typeToolbar">
+                                <button id="addTypeBtn" class="btn  btn-sm btn-success">
+                                    <i class="glyphicon glyphicon-plus"></i>&nbsp;新建
+                                </button>
+                                <button id="editTypeBtn" class="btn  btn-sm btn-warning">
+                                    <i class="glyphicon glyphicon-pencil"></i>&nbsp;编辑
+                                </button>
+                                <button id="delTypeBtn" class="btn  btn-sm btn-danger" >
+                                    <i class="glyphicon glyphicon-remove"></i>&nbsp;删除
+                                </button>
+                                <button id="allTypeBtn" class="btn  btn-sm btn-info">
+                                    <i class="glyphicon glyphicon-cog"></i>&nbsp;权限配置
+                                </button>
+                            </div>
+
+                            <table id="roleTable"
+                                   class="table table-condensed"
+                                   data-toggle="table"
+                                   data-toolbar="#typeToolbar"
+                                   data-height="650"
+                                   data-pagination="true"
+                                   data-page-size="10"
+                                   data-page-list="[10,15,20,25]"
+                                   data-striped="true"
+                                   data-search="true">
+                                <thead>
+                                <tr>
+                                    <th data-field="roleId" data-halign="center" data-align="left">角色编码</th>
+                                    <th data-field="roleName" data-halign="center" data-align="left">角色名称</th>
+                                    <th data-field="description" data-halign="center" data-align="left">说明</th>
+                                </tr>
+                                </thead>
+                            </table>
+
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
 </body>
 </html>
 <script type="text/javascript">
-var currentRoleId;
-var role_name;
-$(".btn").addClass("btn-"+bootstrapSkin);
-$(document).ready(function() {
+    var currentRoleId;
+    var roleName;
+    $(document).ready(function () {
 
 
-	$("#addTypeBtn").on("click", function () {
-		addRole();
-	});
-	
-	$("#editTypeBtn").on("click", function () {
+        $("#addTypeBtn").on("click", function () {
+            addRole();
+        });
 
-		updateRole();
-	});
-	
-	$("#delTypeBtn").on("click", function () {
-		deleteRole();
-	});
-	
-	$("#allTypeBtn").on("click", function () {
-		allocation();
-	});
-	
-	$("#roleTable").on('click-row.bs.table', function (e, row, $element) {
-        $('.warning').removeClass('warning');
-        $($element).addClass('warning');
-        role_name=row.role_name;
-        currentRoleId = row.role_id;
+        $("#editTypeBtn").on("click", function () {
+
+            updateRole();
+        });
+
+        $("#delTypeBtn").on("click", function () {
+            deleteRole();
+        });
+
+        $("#allTypeBtn").on("click", function () {
+            allocation();
+        });
+
+        $("#roleTable").on('click-row.bs.table', function (e, row, $element) {
+            $('.warning').removeClass('warning');
+            $($element).addClass('warning');
+            roleName = row.roleName;
+            currentRoleId = row.roleId;
+        });
+        $("#roleTable").on('dbl-click-row.bs.table', function (e, row, $element) {
+            $('.warning').removeClass('warning');
+            $($element).addClass('warning');
+            roleName = row.roleName;
+            currentRoleId = row.roleId;
+            updateRole();
+        });
+
+
+        queryRoleList();
     });
-    $("#roleTable").on('dbl-click-row.bs.table', function (e, row, $element) {
-        $('.warning').removeClass('warning');
-        $($element).addClass('warning');
-         role_name=row.role_name;
-        currentRoleId = row.role_id;
-        updateRole();
-    });
-	
-	
-	queryRoleList();
-	$(window).resize(function(){
-         $("#roleTable").bootstrapTable("resetView");
-     });
-});
 
-// 获取角色管理列表
-function queryRoleList() {
-	$("#roleTable").bootstrapTable('removeAll');
-	
-	var url = path+"api/sys/role/getRoleManagementList";
-    url += "?currentTime=" + new Date();
-    
-    $.ajax({
-		type: "get",
-		url: url,
-		headers:{"token":securityContext.token},
-		success: function(data) {
-			if (data.code == "S") {
-				$("#roleTable").bootstrapTable("load", JSON.parse(data.result_info));
-				currentRoleId = null;
-			} else if (json.result_code == "N") {
-				window.top.bootbox.dialog({
-					title: "错误信息",
-					message: "数据加载失败！" + "<br><br>" + data.result_info,
-					size: "middle",
-					buttons: {
-						cancelType: {
-				      		label: "确定",
-				      		className: "btn-"+bootstrapSkin,
-				      		callback: function() {
-				      			return true;
-				      		}
-						}
-					}
-				});
-			}
-		}
-	});
-}
+    // 获取角色管理列表
+    function queryRoleList() {
+        $("#roleTable").bootstrapTable('removeAll');
+
+        var url = path + "app/system/role/getRoleList";
+        url += "?currentTime=" + new Date();
+
+        $.ajax({
+            type: "get",
+            url: url,
+            headers: {"Authorization": securityContext.Authorization},
+            success: function (data) {
+                if (data.code == "S") {
+                    $("#roleTable").bootstrapTable("load", data.data);
+                    currentRoleId = null;
+                } else {
+                    $.growl.error({title: "提示信息", message:"数据加载失败！" + "<br><br>" + data.data});
+                }
+            }
+        });
+    }
 
 
+    // 添加角色管理
+    function addRole() {
+        var url = "/APPLETPC/html/modules/system/role/RoleAdd.html";
 
-// 添加角色管理
-function addRole() {
-	var url ="/APPLETPC/html/modules/system/role/RoleAdd.html";
-	
-	var typeAddFrame = '<iframe id="typeAddFrame" class="my-modal-iframe" width="100%" height="150px" src="' + url + '"></iframe>';
-	
-	window.top.bootbox.dialog({
-		title: "角色管理-新建",
-		message: typeAddFrame,
-		size: "small",
-		buttons: {
-			saveType: {
-	      		label: "保存",
-	      		className: "btn-"+bootstrapSkin,
-	      		callback: function() {
-	      			var result = window.top.document.getElementById("typeAddFrame").contentWindow.doAddRole();
-	      			if (result) {
-	      				queryRoleList();
-	      			}
-	      			return true;
-	      		}
-			},
-			cancelType: {
-	      		label: "取消",
-	      		className: "btn-default",
-	      		callback: function() {
-	
-	      			return true;
-	      		}
-			}
-		}
-	});
-}
+        var typeAddFrame = '<iframe id="typeAddFrame" class="my-modal-iframe" width="100%" height="150px" src="' + url + '"></iframe>';
 
-//编辑角色信息
-function updateRole() {
-	if (!currentRoleId) {
-		window.top.bootbox.dialog({ 
-		    size: 'small',
-		    message: "请选择要编辑的角色！",
-		    buttons: {
-			saveType: {
-	      		label: "确定",
-	      		className: "btn-"+bootstrapSkin,
-	      		callback: function() {
-	      		return true;
-	      		}
-	      		  }
-	      		}
-		});
-		return;
-	}
-	
-	var url ="/APPLETPC/html/modules/system/role/RoleEdit.html";
-	 sessionStorage.setItem('roleId', currentRoleId);
-	
-	var typeEditFrame = '<iframe id="typeEditFrame" class="my-modal-iframe" width="100%" height="200px" src="' + url + '"></iframe>';
-	
-	window.top.bootbox.dialog({
-		title: "角色管理信息-编辑",
-		message: typeEditFrame,
-		size: "small",
-		buttons: {
-			saveType: {
-	      		label: "保存",
-	      		className: "btn-"+bootstrapSkin,
-	      		callback: function() {
-	      			var result = window.top.document.getElementById("typeEditFrame").contentWindow.doRoleUpdate();
-	      			if (result) {
-	      			
-	      				queryRoleList();
-	      			}
-	      			return result;
-	      		}
-			},
-			cancelType: {
-	      		label: "取消",
-	      		className: "btn-default",
-	      		callback: function() {
-	      			return true;
-	      		}
-			}
-		}
-	});
-}
+        window.top.bootbox.dialog({
+            title: "角色管理-新建",
+            message: typeAddFrame,
+            size: "small",
+            buttons: {
+                saveType: {
+                    label: "保存",
+                    className: "btn-success",
+                    callback: function () {
+                        var result = window.top.document.getElementById("typeAddFrame").contentWindow.doAddRole();
+                        if (result) {
+                            $.growl.warning({title: "提示信息", message:"保存成功"});
+                            queryRoleList();
+                        }
+                        return result;
+                    }
+                },
+                cancelType: {
+                    label: "取消",
+                    className: "btn-default",
+                    callback: function () {
 
-//删除角色信息
-function deleteRole() {
-     window.top.bootbox.dialog({
-						title: "提示信息",
-						message: "删除角色同时删除关联表数据，确定要删除吗？",
-						size: "middle",
-						buttons: {
-							okType: {
-					      		label: "确定",
-					      		className: "btn-"+bootstrapSkin,
-					      		callback: function() {
-					      			if (!currentRoleId) {
-										window.top.bootbox.dialog({ 
-										    size: 'small',
-										    message: "请选择要删除的角色！",
-										    buttons: {
-											saveType: {
-									      		label: "确定",
-									      		className: "btn-"+bootstrapSkin,
-									      		callback: function() {
-									      		return true;
-									      		}
-									      		  }
-									      		}
-										    
-										});
-										return;
-									}
-									
-									var url =path+"api/sys/role/roleDelete";
-									url += "?role_id=" + currentRoleId;
-								
-								$.ajax({
-									type: "get",
-									url: url,
-									datatype: "jsonp",
-									async:false,
-									headers:{"token":securityContext.token},
-									success: function(data) {
-									
-									if (data.code == "S") {
-									recordLog("O","APPLETPC","角色"+ role_name+"删除成功",securityContext.user_id);
-										result = true;
-// 									var source= "系统管理>角色权限管理>删除角色";
-// 									var content="角色编码:"+currentRoleId+";删除成功";
-// 									var id = <%=securityContext.getUser_id()%>;		
-// 									var con = "/APPLETPC";
-// 							         createOperationLog(source,content,id,con);
-										window.top.bootbox.dialog({
-											title: "提示信息",
-											message: "删除成功！",
-											size: "middle",
-											buttons: {
-												cancelType: {
-										      		label: "确定",
-										      		className: "btn-"+bootstrapSkin,
-										      		callback: function() {
-										      			return true;
-										      		}
-												}
-											}
-										});
-										queryRoleList();
-									} else {
-									recordLog("OF","APPLETPC","角色"+ role_name+"删除失败"+ data.result_info,securityContext.user_id);
-										result = false;
-// 									var source= "系统管理>角色权限管理>删除角色";
-// 									var content="角色编码:"+currentRoleId+";删除失败"+json.result_info;
-// 									var id = <%=securityContext.getUser_id()%>;		
-// 									var con = "/APPLETPC";
-// 							        createOperationLog(source,content,id,con);
-										
-										window.top.bootbox.dialog({
-											title: "错误信息",
-											message: "删除失败！" + "<br><br>" + data.result_info,
-											size: "middle",
-											buttons: {
-												cancelType: {
-										      		label: "确定",
-										      		className: "btn-"+bootstrapSkin,
-										      		callback: function() {
-										      			return true;
-										      		}
-												}
-											}
-										});
-									}
-							    }
-							});
-								
-					      		}
-							},
-							cancelType: {
-					      		label: "取消",
-					      		className: "btn-default",
-					      		callback: function() {
-					      			return true;
-					      		}
-							}
-						}
-						
-					});
-}
+                        return true;
+                    }
+                }
+            }
+        });
+    }
 
-//分配权限
-function allocation() {
-		if (!currentRoleId) {
-				window.top.bootbox.dialog({ 
-				    size: 'small',
-				    message: "请选择要配置的角色！",
-				    buttons: {
-					saveType: {
-			      		label: "确定",
-			      		className: "btn-"+bootstrapSkin,
-			      		callback: function() {
-			      		return true;
-			      		}
-			      		  }
-			      		}
-				});
-				return;
-			}
-          
-		   	var url ="/APPLETPC/html/modules/system/role/AuthorityMgt.html";
-			sessionStorage.setItem('roleId', currentRoleId);
-			var typeEditFrame = '<iframe id="typeEditFrame" class="my-modal-iframe" width="100%" height="400px" src="' + url + '"></iframe>';
-			
-			window.top.bootbox.dialog({
-				title: "分配权限",
-				message: typeEditFrame,
-				size: "large"
-				
-			});
-   
-}
+    //编辑角色信息
+    function updateRole() {
+        if (!currentRoleId) {
+            $.growl.warning({title: "提示信息", message:"请选择要配置的角色！"});
+            return;
+        }
+
+        var url = "/APPLETPC/html/modules/system/role/RoleEdit.html";
+        sessionStorage.setItem('roleId', currentRoleId);
+
+        var typeEditFrame = '<iframe id="typeEditFrame" class="my-modal-iframe" width="100%" height="200px" src="' + url + '"></iframe>';
+
+        window.top.bootbox.dialog({
+            title: "角色管理信息-编辑",
+            message: typeEditFrame,
+            size: "small",
+            buttons: {
+                saveType: {
+                    label: "保存",
+                    className: "btn-success",
+                    callback: function () {
+                        var result = window.top.document.getElementById("typeEditFrame").contentWindow.doRoleUpdate();
+                        if (result) {
+                            $.growl.warning({title: "提示信息", message:"编辑成功"});
+                            queryRoleList();
+                        }
+                        return result;
+                    }
+                },
+                cancelType: {
+                    label: "取消",
+                    className: "btn-default",
+                    callback: function () {
+                        return true;
+                    }
+                }
+            }
+        });
+    }
+
+    //删除角色信息
+    function deleteRole() {
+        window.top.bootbox.dialog({
+            title: "提示信息",
+            message: "删除角色同时删除关联表数据，确定要删除吗？",
+            size: "middle",
+            buttons: {
+                okType: {
+                    label: "确定",
+                    className: "btn-success",
+                    callback: function () {
+                        if (!currentRoleId) {
+                            $.growl.warning({title: "提示信息", message:"请选择要删除的角色！"});
+                            return;
+                        }
+
+                        var url = path + "app/system/role/roleDelete";
+                        url += "?roleId=" + currentRoleId;
+
+                        $.ajax({
+                            type: "get",
+                            url: url,
+                            async: false,
+                            headers: {"Authorization":securityContext.Authorization},
+                            success: function (data) {
+
+                                if (data.code == "S") {
+                                    $.growl.notice({title: "提示信息", message: "删除成功" });
+                                    queryRoleList();
+                                    return true;
+                                } else {
+                                    $.growl.error({title: "提示信息", message:"数据加载失败！" + "<br><br>" + data.data});
+                                    return false;
+
+                                }
+                            }
+                        });
+
+                    }
+                },
+                cancelType: {
+                    label: "取消",
+                    className: "btn-default",
+                    callback: function () {
+                        return true;
+                    }
+                }
+            }
+
+        });
+    }
+
+    //分配权限
+    function allocation() {
+        if (!currentRoleId) {
+            $.growl.warning({title: "提示信息", message:"请选择要配置的角色！"});
+            return;
+        }
+
+        var url = "/APPLETPC/html/modules/system/role/AuthorityMgt.html";
+        sessionStorage.setItem('roleId', currentRoleId);
+        var typeEditFrame = '<iframe id="typeEditFrame" class="my-modal-iframe" width="100%" height="500px" src="' + url + '"></iframe>';
+
+        window.top.bootbox.dialog({
+            title: "分配权限",
+            message: typeEditFrame,
+            size: "large"
+
+        });
+
+    }
 </script>

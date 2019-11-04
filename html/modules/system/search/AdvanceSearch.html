@@ -60,10 +60,10 @@ $(document).ready(function() {
 	var url = path+"/app/sys/search/getSearchColumnList";
 	url += "?t=" + new Date();
 	url += "&searchCode=" + searchCode;
-	url+="&token="+securityContext.token;
+	url+="&Authorization="+securityContext.Authorization;
 	$.post(url, function(data) {
-		if (data.result_code == "Y") {
-			sscVO = JSON.parse(data.result_info);
+		if (data.code == "S") {
+			sscVO = data.data;
 			
 			var html = '';
 			
@@ -74,34 +74,34 @@ $(document).ready(function() {
 				html += '	</td>';
 				html += '	<td class="my-form-table-td-content">';
 				
-				if (d.element_type == 'text') {
+				if (d.elementType == 'text') {
 					html += '<input id="' + d.column_code + '" name="' + d.column_code + '" type="text" class="form-control input-sm" style="width:180px;padding:5px;float:left;">';
-				} else if (d.element_type == 'select') {
+				} else if (d.elementType == 'select') {
 					html += '<select id="' + d.column_code + '" name="' + d.column_code + '" class="form-control input-sm" style="width:180px;padding:5px;float:left;">';
 					html += '	<option value=""></option>';
 					
-					var data = getDataDictTypeList(d.ddt_code);
+					var data = getDataDictTypeList(d.ddtCode);
 					$.each(data, function(i, d1){
-						html += '	<option value="' + d1.item_code + '">' + d1.item_name + '</option>';
+						html += '	<option value="' + d1.itemCode + '">' + d1.itemName + '</option>';
 					});
 					
 					html += '</select>';
-				} else if (d.element_type == 'radio') {
-					var data = getDataDictTypeList(d.ddt_code);
+				} else if (d.elementType == 'radio') {
+					var data = getDataDictTypeList(d.ddtCode);
 					$.each(data, function(i, d1){
-						html += '<input type="radio" name="' + d.column_code + '">' + d1.item_name;
+						html += '<input type="radio" name="' + d.column_code + '">' + d1.itemName;
 						
 						html += '&nbsp;&nbsp;&nbsp;&nbsp;';
 					});
-				} else if (d.element_type == 'checkbox') {
-					if (d.ddt_code) {
-						var data = getDataDictTypeList(d.ddt_code);
-// 						var arry=d.attribute_value.split(",");
+				} else if (d.elementType == 'checkbox') {
+					if (d.ddtCode) {
+						var data = getDataDictTypeList(d.ddtCode);
+// 						var arry=d.attributeValue.split(",");
 						$.each(data, function(i, d1){
-// 							if (jQuery.inArray( d1.item_code, arry)!=-1) {
-// 								html += '<input type="checkbox" name="' + d.column_code + '" value="' + d1.item_code + '" checked="checked">' + d1.item_name;
+// 							if (jQuery.inArray( d1.itemCode, arry)!=-1) {
+// 								html += '<input type="checkbox" name="' + d.column_code + '" value="' + d1.itemCode + '" checked="checked">' + d1.itemName;
 // 							} else {
-								html += '<input type="checkbox" name="' + d.column_code + '" value="' + d1.item_code + '">' + d1.item_name;
+								html += '<input type="checkbox" name="' + d.column_code + '" value="' + d1.itemCode + '">' + d1.itemName;
 // 							}
 							
 							html += '&nbsp;&nbsp;&nbsp;&nbsp;';
@@ -109,49 +109,49 @@ $(document).ready(function() {
 					} else {
 						html += '<input type="checkbox" id="' + d.column_code + '">';
 					}
-				} else if (d.element_type == 'lov') {
+				} else if (d.elementType == 'lov') {
 					html += '<div class="input-group">';
 					
 					html += '	<input type="hidden" id="' + d.column_code + '" name="' + d.column_code + '">';
 					html += '	<input type="text" id="' + d.column_code + '_text" name="' + d.column_code + '_text" class="form-control input-sm" style="width:155px;padding:5px;float:left;background-color:#fff" readOnly>';
 					
 					html += '	<span class="input-group-btn">';
-					html += '		<button id="' + d.column_code + '_btn" class="btn btn-default" type="button" style="padding:4px 6px" onclick="openLov(\'' + d.lov_code + '\',\'' + d.column_code + '\');">';
+					html += '		<button id="' + d.column_code + '_btn" class="btn btn-default" type="button" style="padding:4px 6px" onclick="openLov(\'' + d.lovCode + '\',\'' + d.column_code + '\');">';
 					html += '			<i class="glyphicon glyphicon-search"></i>';
 					html += '		</button>';
 					html += '	</span>';
 					html += '</div>';
-				} else if (d.element_type == 'tree') {
+				} else if (d.elementType == 'tree') {
 					html += '<div class="input-group">';
 					
 					html += '	<input type="hidden" id="' + d.column_code + '" name="' + d.column_code + '">';
 					html += '	<input type="text" id="' + d.column_code + '_text" name="' + d.column_code + '_text" class="form-control input-sm" style="width:155px;padding:5px;float:left;background-color:#fff" readOnly>';
 					
 					html += '	<span class="input-group-btn">';
-					html += '		<button id="' + d.column_code + '_btn" class="btn btn-default" type="button" style="padding:4px 6px" onclick="openTree(\'' + d.ds_code + '\',\'' + d.column_code + '\');">';
+					html += '		<button id="' + d.column_code + '_btn" class="btn btn-default" type="button" style="padding:4px 6px" onclick="openTree(\'' + d.dsCode + '\',\'' + d.column_code + '\');">';
 					html += '			<i class="glyphicon glyphicon-search"></i>';
 					html += '		</button>';
 					html += '	</span>';
 					html += '</div>';
-				} else if (d.element_type == 'date') {
+				} else if (d.elementType == 'date') {
 					html += '<input type="hidden" id="' + d.column_code + '"/>';
 					html += '<div class="input-group date form_date" data-date-format="yyyy-mm-dd" data-link-field="' + d.column_code + '" data-link-format="yyyy-mm-dd">';
 					html += '	<input class="form-control input-sm" type="text" id="' + d.column_code + '_text" style="width:140px;padding:5px;float:left;background-color:#fff" readonly>';
 					html += '	<span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>';
 					html += '</div>';
-				} else if (d.element_type == 'time') {
+				} else if (d.elementType == 'time') {
 					html += '<input type="hidden" id="' + d.column_code + '"/>';
 					html += '<div class="input-group date form_time" data-date-format="hh:ii:ss" data-link-field="' + d.column_code + '" data-link-format="hh:ii:ss">';
 					html += '	<input class="form-control input-sm" type="text" id="' + d.column_code + '_text" style="width:140px;padding:5px;float:left;background-color:#fff" readonly>';
 					html += '	<span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>';
 					html += '</div>';
-				} else if (d.element_type == 'datetime') {
+				} else if (d.elementType == 'datetime') {
 					html += '<input type="hidden" id="' + d.column_code + '"/>';
 					html += '<div class="input-group date form_datetime" data-date-format="yyyy-mm-dd hh:ii:ss" data-link-field="' + d.column_code + '" data-link-format="yyyy-mm-dd hh:ii:ss">';
 					html += '	<input class="form-control input-sm" type="text" id="' + d.column_code + '_text" style="width:140px;padding:5px;float:left;background-color:#fff" readonly>';
 					html += '	<span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>';
 					html += '</div>';
-				} else if (d.element_type == 'monthtime') {
+				} else if (d.elementType == 'monthtime') {
 					html += '<input type="hidden" id="' + d.column_code + '"/>';
 					html += '<div class="input-group date form_month form_month_date" data-date-format="yyyy-mm" data-link-field="' + d.column_code + '" data-link-format="yyyy-mm">';
 					html += '	<input class="form-control input-sm" type="text" id="' + d.column_code + '_text" style="width:140px;padding:5px;float:left;background-color:#fff" readonly>';
@@ -198,9 +198,9 @@ $(document).ready(function() {
 			
 			if (storageSSCVO) {
 				$.each(sscVO, function(index, d){
-					if (d.element_type == 'text') {
+					if (d.elementType == 'text') {
 						$("#" + d.column_code).val(getSearchColumnValue(d.column_code));
-					} else if (d.element_type == 'select') {
+					} else if (d.elementType == 'select') {
 						$("#" + d.column_code).val(getSearchColumnValue(d.column_code));
 						var count = $("#" + d.column_code + " option").length;
 						for(var i=0; i<count; i++) {
@@ -209,35 +209,35 @@ $(document).ready(function() {
 								break;
 							}
 						}
-					} else if (d.element_type == 'radio') {
+					} else if (d.elementType == 'radio') {
 						$("input[name='" + d.column_code + "'][value=" + getSearchColumnValue(d.column_code) + "]").attr("checked", true);
-					} else if (d.element_type == 'checkbox') {
+					} else if (d.elementType == 'checkbox') {
 						$("input[name='" + d.column_code + "'][value=" + getSearchColumnValue(d.column_code) + "]").attr("checked", true);
-					} else if (d.element_type == 'lov') {
-						var lovText = getLovDisplayText(d.lov_code, getSearchColumnValue(d.column_code));
+					} else if (d.elementType == 'lov') {
+						var lovText = getLovDisplayText(d.lovCode, getSearchColumnValue(d.column_code));
 						$("#" + d.column_code + "_text").val(lovText);
-					} else if (d.element_type == 'tree') {
-						var lotText = getTreeDisplayText(d.ds_code, getSearchColumnValue(d.column_code));
+					} else if (d.elementType == 'tree') {
+						var lotText = getTreeDisplayText(d.dsCode, getSearchColumnValue(d.column_code));
 						$("#" + d.column_code + "_text").val(lotText);
-					} else if (d.element_type == 'date') {
+					} else if (d.elementType == 'date') {
 						$("#" + d.column_code).val(getSearchColumnValue(d.column_code));
 						$("#" + d.column_code + "_text").val(getSearchColumnValue(d.column_code));
-					} else if (d.element_type == 'time') {
+					} else if (d.elementType == 'time') {
 						$("#" + d.column_code).val(getSearchColumnValue(d.column_code));
 						$("#" + d.column_code + "_text").val(getSearchColumnValue(d.column_code));
-					} else if (d.element_type == 'datetime') {
+					} else if (d.elementType == 'datetime') {
 						$("#" + d.column_code).val(getSearchColumnValue(d.column_code));
 						$("#" + d.column_code + "_text").val(getSearchColumnValue(d.column_code));
-					} else if (d.element_type == 'monthtime') {
+					} else if (d.elementType == 'monthtime') {
 						$("#" + d.column_code).val(getSearchColumnValue(d.column_code));
 						$("#" + d.column_code + "_text").val(getSearchColumnValue(d.column_code));
 					}
 				});
 			}
-		} else if (data.result_code == "N") {
+		} else {
 			window.top.bootbox.dialog({
 				title: "错误信息",
-				message: "数据加载失败！" + "<br><br>" + data.result_info,
+				message: "数据加载失败！" + "<br><br>" + data.data,
 				size: "middle",
 				buttons: {
 					cancelType: {
@@ -269,22 +269,22 @@ function getSearchColumnValue(columnCode) {
 function getDataDictTypeList(typeCode){
 	var ddi;
 	
-	var url = path+"api/common/list/getSingleDataDictItemList";
+	var url = path+"app/system/datadict/getSingleDataDictItemList";
     url += "?typeCode=" + typeCode;
-    url += "&enabledFlag=Y";
+
 	
 	$.ajax({
 		type: "GET",
 		url: url,
 		async: false,
-		headers:{"token":securityContext.token},
+		headers:{"Authorization":securityContext.Authorization},
 		success: function(data) {
-			if (data.result_code == "Y") {
-				ddi = JSON.parse(data.result_info);
-			} else if (data.result_code == "N") {
+			if (data.code == "S") {
+				ddi = data.data;
+			} else {
 				window.top.bootbox.dialog({
 					title: "错误信息",
-					message: "数据加载失败！" + "<br><br>" + data.result_info,
+					message: "数据加载失败！" + "<br><br>" + data.data,
 					size: "middle",
 					buttons: {
 						cancelType: {
@@ -320,8 +320,8 @@ function openLov(lovCode, lovId) {
 	      		callback: function() {
 	      			var result = window.top.document.getElementById("lovFrame").contentWindow.getLovData();
 	      			if(result){
-	      			$("#" + lovId).val(result.lov_value);
-	      			$("#" + lovId + "_text").val(result.lov_text);
+	      			$("#" + lovId).val(result.lovValue);
+	      			$("#" + lovId + "_text").val(result.lovText);
 	      			};
 	      			return result;
 	      		}
@@ -351,14 +351,14 @@ function getLovDisplayText(lovCode, lovValue){
 		url: url,
 		datatype: "json",
 		async: false,
-		headers:{"token":securityContext.token},
+		headers:{"Authorization":securityContext.Authorization},
 		success: function(data) {
-			if (data.result_code == "Y") {
-				lovText = data.result_info;
-			} else if (data.result_code == "N") {
+			if (data.code == "S") {
+				lovText = data.data;
+			} else {
 				window.top.bootbox.dialog({
 					title: "错误信息",
-					message: "数据加载失败！" + "<br><br>" + data.result_info,
+					message: "数据加载失败！" + "<br><br>" + data.data,
 					size: "middle",
 					buttons: {
 						cancelType: {
@@ -394,8 +394,8 @@ function openTree(structCode, lotId) {
 	      		className: "btn-default",
 	      		callback: function() {
 	      			var result = window.top.document.getElementById("lotFrame").contentWindow.getLotData();
-	      			$("#" + lotId).val(result.lot_value);
-	      			$("#" + lotId + "_text").val(result.lot_text);
+	      			$("#" + lotId).val(result.lotValue);
+	      			$("#" + lotId + "_text").val(result.lotText);
 	      			return result;
 	      		}
 			},
@@ -423,14 +423,14 @@ function getTreeDisplayText(structCode, nodeCode){
 		url: url,
 		datatype: "json",
 		async: false,
-		headers:{"token":securityContext.token},
+		headers:{"Authorization":securityContext.Authorization},
 		success: function(data) {
-			if (data.result_code == "Y") {
-				lotText = data.result_info;
-			} else if (data.result_code == "N") {
+			if (data.code == "S") {
+				lotText = data.data;
+			} else {
 				window.top.bootbox.dialog({
 					title: "错误信息",
-					message: "数据加载失败！" + "<br><br>" + data.result_info,
+					message: "数据加载失败！" + "<br><br>" + data.data,
 					size: "middle",
 					buttons: {
 						cancelType: {
@@ -451,20 +451,20 @@ function getTreeDisplayText(structCode, nodeCode){
 
 function getAdvanceSearchConditions() {
 	$.each(sscVO, function(index, d){
-		if (sscVO[index].element_type == 'text'
-				|| sscVO[index].element_type == 'select'
-				|| sscVO[index].element_type == 'lov'
-				|| sscVO[index].element_type == 'tree'
-				|| sscVO[index].element_type == 'date'
-				|| sscVO[index].element_type == 'time'
-				|| sscVO[index].element_type == 'datetime'
-				|| sscVO[index].element_type == 'monthtime') {
+		if (sscVO[index].elementType == 'text'
+				|| sscVO[index].elementType == 'select'
+				|| sscVO[index].elementType == 'lov'
+				|| sscVO[index].elementType == 'tree'
+				|| sscVO[index].elementType == 'date'
+				|| sscVO[index].elementType == 'time'
+				|| sscVO[index].elementType == 'datetime'
+				|| sscVO[index].elementType == 'monthtime') {
 			sscVO[index].column_value = $('#' + d.column_code).val();
-		} else if (sscVO[index].element_type == 'radio') {
+		} else if (sscVO[index].elementType == 'radio') {
 			sscVO[index].column_value = $("input[name='" + sscVO[index].column_code + "']:checked").val();
-		} else if (sscVO[index].element_type == 'checkbox') {
+		} else if (sscVO[index].elementType == 'checkbox') {
 		debugger;
-			if (sscVO[index].ddt_code) {
+			if (sscVO[index].ddtCode) {
 				$("input[name='" + sscVO[index].column_code + "']:checked").each(function(){
 									      sscVO[index].column_value+=$(this).val()+",";//将选中的值添加到数组chk_value中  
 				});

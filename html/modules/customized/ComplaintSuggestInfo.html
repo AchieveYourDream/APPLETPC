@@ -82,8 +82,8 @@ $(document).ready(function() {
 		    data:{"id":id,"token":securityContext.token},
 		    success: function(data){
 				
-				if (data.result_code == "Y") {
-				var cs=JSON.parse(data.result_info)
+				if (data.code == "S") {
+				var cs=data.data
 				$("#member_tel").val(cs.member_tel);
 				$("#message").val(cs.message);
 				debugger;
@@ -93,16 +93,16 @@ $(document).ready(function() {
 					 $("#imgDiv").append('<img src="'+arr[i]+'" class="col-sm-4"></img>')
 				}
 				}
-				} else if (data.result_code == "N") {
+				} else {
 					result = false;
 					window.parent.bootbox.dialog({
 						title: "错误信息",
-						message: "获取失败！" + "<br><br>" + data.result_info,
+						message: "获取失败！" + "<br><br>" + data.data,
 						size: "middle",
 						buttons: {
 							cancelType: {
 					      		label: "确定",
-					      		className: "btn-"+bootstrapSkin,
+					      		className: "btn-success",
 					      		callback: function() {
 					      			return true;
 					      		}

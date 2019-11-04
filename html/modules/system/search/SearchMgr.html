@@ -106,11 +106,11 @@
 			                <th data-field="column_name" data-halign="center" data-align="left" data-sortable="true">列名称</th>
 			                <th data-field="column_sql" data-halign="center" data-align="left" data-sortable="true">列SQL</th>
 			                <th data-field="operation_symbol_name" data-halign="center" data-align="left" data-sortable="true">操作符</th>
-			                <th data-field="element_type_name" data-halign="center" data-align="left" data-sortable="true">元素类型</th>
-			                <th data-field="ddt_text" data-halign="center" data-align="left" data-sortable="true">数据字典</th>
-			                <th data-field="ds_text" data-halign="center" data-align="left" data-sortable="true">数据结构</th>
-			                <th data-field="lov_text" data-halign="center" data-align="left" data-sortable="true">值列表</th>
-			                <th data-field="display_order" data-halign="center" data-align="right" data-sortable="true">显示顺序</th>
+			                <th data-field="elementTypeName" data-halign="center" data-align="left" data-sortable="true">元素类型</th>
+			                <th data-field="ddtText" data-halign="center" data-align="left" data-sortable="true">数据字典</th>
+			                <th data-field="dsText" data-halign="center" data-align="left" data-sortable="true">数据结构</th>
+			                <th data-field="lovText" data-halign="center" data-align="left" data-sortable="true">值列表</th>
+			                <th data-field="displayOrder" data-halign="center" data-align="right" data-sortable="true">显示顺序</th>
 			                <th data-field="description" data-halign="center" data-align="left">说明</th>
 			            </tr>
 			    	</thead>
@@ -175,21 +175,21 @@ function querySearchDefineList() {
 	
 	var url = path+"/app/sys/search/getSearchDefineList";
     url += "?t=" + new Date();
-    url+="&token="+securityContext.token;
+    url+="&Authorization="+securityContext.Authorization;
     $.ajax({
 		type: "POST",
 		url: url,
 		success: function(data) {
 			
-			if (data.result_code == "Y") {
-				$("#searchDefineTable").bootstrapTable("load", JSON.parse(data.result_info));
+			if (data.code == "S") {
+				$("#searchDefineTable").bootstrapTable("load", data.data);
 				
 				currentSearchCode = null;
 				currentColumnCode = null;
-			} else if (data.result_code == "N") {
+			} else {
 				window.top.bootbox.dialog({
 					title: "错误信息",
-					message: "数据加载失败！" + "<br><br>" + data.result_info,
+					message: "数据加载失败！" + "<br><br>" + data.data,
 					size: "middle",
 					buttons: {
 						cancelType: {
@@ -212,20 +212,20 @@ function querySearchColumnList() {
     var url = path+"/app/sys/search/getSearchColumnList";
     url += "?t=" + new Date();
     url += "&searchCode=" + currentSearchCode;
-    url+="&token="+securityContext.token;
+    url+="&Authorization="+securityContext.Authorization;
     $.ajax({
 		type: "POST",
 		url: url,
 		success: function(data) {
 			
-			if (data.result_code == "Y") {
-				$("#searchColumnTable").bootstrapTable("load", JSON.parse(data.result_info));
+			if (data.code == "S") {
+				$("#searchColumnTable").bootstrapTable("load", data.data);
 				
 				currentColumnCode = null;
-			} else if (data.result_code == "N") {
+			} else {
 				window.top.bootbox.dialog({
 					title: "错误信息",
-					message: "数据加载失败！" + "<br><br>" + data.result_info,
+					message: "数据加载失败！" + "<br><br>" + data.data,
 					size: "middle",
 					buttons: {
 						cancelType: {
@@ -344,7 +344,7 @@ function removeSearchDefine() {
 	        	var url = path+"/app/sys/search/removeSearchDefine";
 	        	
 	        	var postData = "searchCode=" + currentSearchCode;
-	        	url+="?token"+securityContext.token;
+	        	url+="?Authorization"+securityContext.Authorization;
 	        	$.ajax({
 	        		type: "post",
 	        	    url: url,
@@ -521,7 +521,7 @@ function removeSearchColumn() {
 	    callback: function (result) {
 	        if (result) {
 	        	var url = path+"/app/sys/search/removeSearchColumn";
-	        	url+="?token"+securityContext.token;
+	        	url+="?Authorization"+securityContext.Authorization;
 	        	$.ajax({
 	        		type: "POST",
 	        	    url: url,
@@ -530,7 +530,7 @@ function removeSearchColumn() {
 	        	    async: false,
 	        	    success: function(data){
 	        			
-	        			if (data.result_code == "Y") {
+	        			if (data.code == "S") {
 	        			recordLog("O","APPLETPC","高级搜索:"+currentSearchCode+",搜索列"+currentColumnCode+"删除成功",securityContext.user_id);
 	        				querySearchColumnList();
 	        				
@@ -548,11 +548,11 @@ function removeSearchColumn() {
 	        						}
 	        					}
 	        				});
-	        			} else if (data.result_code == "N") {
-	        			recordLog("OF","APPLETPC","高级搜索:"+currentSearchCode+",搜索列"+currentColumnCode+"删除失败"+ data.result_info,securityContext.user_id);
+	        			} else {
+	        			recordLog("OF","APPLETPC","高级搜索:"+currentSearchCode+",搜索列"+currentColumnCode+"删除失败"+ data.data,securityContext.user_id);
 	        				window.top.bootbox.dialog({
 	        					title: "错误信息",
-	        					message: "删除失败！" + "<br><br>" + data.result_info,
+	        					message: "删除失败！" + "<br><br>" + data.data,
 	        					size: "middle",
 	        					buttons: {
 	        						cancelType: {

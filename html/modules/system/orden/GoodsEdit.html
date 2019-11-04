@@ -3,7 +3,7 @@
 		window.location.href = "/APPLETPC/login.html";
 	}
 	var securityContext = JSON.parse(sessionStorage.getItem('securityContext'));
-	var bootstrapSkin = securityContext.bootstrapSkin;
+
 	var path = sessionStorage.getItem('path');
 	var currentCode = sessionStorage.getItem('currentCode');
 	var id = sessionStorage.getItem('id');
@@ -180,13 +180,13 @@ validator = $("#typeAddForm").validate({
 	// 依据id获取单品信息
 	function selectGoodsByPk() {
 
-		var url = path + "api/sys/orden/selectGoodsByPk";
+		var url = path + "app/system/orden/selectGoodsByPk";
 		url += "?currentTime=" + new Date();
 
 		$.ajax({
 			type : "post",
 			url : url,
-			data:{"token":securityContext.token,"code":currentCode,"id":id},
+			data:{"Authorization":securityContext.Authorization,"code":currentCode,"id":id},
 			success : function(data) {
 
 				if (data.code == "S") {
@@ -203,7 +203,7 @@ validator = $("#typeAddForm").validate({
 						buttons : {
 							cancelType : {
 								label : "确定",
-								className : "btn-" + bootstrapSkin,
+								className : "btn-success"
 								callback : function() {
 									return true;
 								}
@@ -223,9 +223,9 @@ function doGoods() {
 		cc.goodsid = $('#id').val();
 		cc.lowerdiscount = $('#lowerdiscount').val();
 		cc.highdiscount = $('#highdiscount').val();
-		var url = path+"api/sys/orden/updateDiscount";
+		var url = path+"app/system/orden/updateDiscount";
 		url += "?t=" + new Date();
-		url+="&token="+securityContext.token;
+		url+="&Authorization="+securityContext.Authorization;
 
 	$.ajax({
 		type: "post",
@@ -244,7 +244,7 @@ function doGoods() {
 						buttons: {
 							cancelType: {
 					      		label: "确定",
-					      		className: "btn-"+bootstrapSkin,
+					      		className: "btn-success",
 					      		callback: function() {
 					      			return true;
 					      		}
@@ -262,7 +262,7 @@ function doGoods() {
 						buttons: {
 							cancelType: {
 					      		label: "确定",
-					      		className: "btn-"+bootstrapSkin,
+					      		className: "btn-success",
 					      		callback: function() {
 					      			return true;
 					      		}

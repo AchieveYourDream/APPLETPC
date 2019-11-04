@@ -567,7 +567,7 @@ function getSubSelectInfo() {
 			$.ajax({
 				type : "POST",
 				url : url,
-				data:{"token":securityContext.token,"node_code":$("#main_style").val()},
+				data:{"token":securityContext.token,"nodeCode":$("#main_style").val()},
 				success : function(data) {
 					if (data.code == "S") {
 						$("#sub_style").html('<option value="">空</option>')
@@ -585,7 +585,7 @@ function getSubSelectInfo() {
 
 // 初始化服装风格
 function initGoodsStyle() {
-		var url = path + "api/common/list/getSingleDataDictItemList";
+		var url = path + "app/system/datadict/getSingleDataDictItemList";
 		url += "?typeCode=app_goos_style&enabledFlag=Y";
 
 		$.ajax({
@@ -596,7 +596,7 @@ function initGoodsStyle() {
 				if (data.code == "S") {
 					$("#style_type").html('<option value="">空</option>');
 					$.each(JSON.parse(data.data), function(index, d) {
-						$("#style_type").append('<option value="' + d.item_code + '">'+ d.item_name + '</option>')
+						$("#style_type").append('<option value="' + d.itemCode + '">'+ d.itemName + '</option>')
 					});
 						$("#style_type").trigger("chosen:updated"); 
 				} else {

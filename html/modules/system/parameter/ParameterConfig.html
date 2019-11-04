@@ -47,7 +47,7 @@ $(document).ready(function() {
 });
 
 function initParameterTypeList() {
-	var url = path+"api/sys/parameter/getParameterTypeList";
+	var url = path+"app/system/parameter/getParameterTypeList";
 	url += "?t=" + new Date();
 	
 	$.ajax({
@@ -57,8 +57,8 @@ function initParameterTypeList() {
 	    headers:{"token":securityContext.token},
 	    success: function(data){
 		
-		if (data.result_code == "Y") {
-			ptList = JSON.parse(data.result_info);
+		if (data.code == "S") {
+			ptList = data.data;
 			
 			var html = '';
 			$.each(ptList, function(index, d){
@@ -68,7 +68,7 @@ function initParameterTypeList() {
 				}
 				html += '>';
 				html += '<a id="' + d.type_code + '" href="#" onclick="initParameterConfig(\'' + d.type_code + '\')">';
-				html += d.type_name;
+				html += d.typeName;
 				html += '</a>';
 				html += '</li>';
 		    });
@@ -76,15 +76,15 @@ function initParameterTypeList() {
 			$("#parameterTypeList").append(html);
 			
 			initParameterConfig(ptList[0].type_code);
-		} else if (data.result_code == "N") {
+		}else {
 			window.top.bootbox.dialog({
 				title: "错误信息",
-				message: "数据加载失败！" + "<br><br>" + data.result_info,
+				message: "数据加载失败！" + "<br><br>" + data.data,
 				size: "middle",
 				buttons: {
 					cancelType: {
 			      		label: "确定",
-			      		className: "btn-"+bootstrapSkin,
+			      		className: "btn-success",
 			      		callback: function() {
 			      			return true;
 			      		}

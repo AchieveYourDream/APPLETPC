@@ -182,7 +182,7 @@ function addClerk() {
 	      		callback: function() {
 	      			var result = window.top.document.getElementById("ClerkAddFrame").contentWindow.uploadImage();
 	      			if (result) {
-	      			$.growl.notice({title: "提醒标题", message: "保存成功" });
+	      			$.growl.notice({title: "提示信息", message: "保存成功" });
 	      			redresh();
 	      			}
 	      			return result;
@@ -218,7 +218,7 @@ function editClerk(store_code,clerk_id) {
 	      		callback: function() {
 	      			var result = window.top.document.getElementById("ClerkEditFrame").contentWindow.doEditClerk();
 	      			if (result) {
-	      				$.growl.notice({title: "提醒标题", message: "保存成功" });
+	      				$.growl.notice({title: "提示信息", message: "保存成功" });
 	      				redresh();
 	      			}
 	      			return result;

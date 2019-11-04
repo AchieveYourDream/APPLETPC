@@ -191,7 +191,7 @@ getUserInfo();
 
 // 获取当前用户信息
 function getUserInfo() {
-	var url = path+"api/sys/user/getUserInfo";
+	var url = path+"app/system/user/getUserInfo";
 	url += "?t=" + new Date();
 	url += "&userId=" + userid;
 	
@@ -199,20 +199,20 @@ function getUserInfo() {
 		type: "get",
 		url: url,
 		async:false,
-		headers:{"token":securityContext.token},
+		headers:{"Authorization":securityContext.Authorization},
 		success: function(data) {
-			if (data.result_code == "Y") {
-				var su = JSON.parse(data.result_info);
+			if (data.code == "S") {
+				var su = data.data;
 				dwr.util.setValues(su);
-			} else if (data.result_code == "N") {
+			} else {
 				window.top.bootbox.dialog({
 					title: "错误信息",
-					message: "数据加载失败！" + "<br><br>" + data.result_info,
+					message: "数据加载失败！" + "<br><br>" + data.data,
 					size: "middle",
 					buttons: {
 						cancelType: {
 				      		label: "确定",
-				      		className: "btn-"+bootstrapSkin,
+				      		className: "btn-success",
 				      		callback: function() {
 				      			return true;
 				      		}
@@ -242,10 +242,10 @@ function doEditUser() {
 		    url: url,
 		    data: su,
 		    async: false,
-		    headers:{"token":securityContext.token},
+		    headers:{"Authorization":securityContext.Authorization},
 		    success: function(data){
 				
-				if (data.result_code == "Y") {
+				if (data.code == "S") {
 				result = true;
 			//	var source= "系统管理>用户管理>编辑用户";
 				//var content="账号:"+su.username+".保存成功";
@@ -258,14 +258,14 @@ function doEditUser() {
 						buttons: {
 							cancelType: {
 					      		label: "确定",
-					      		className: "btn-"+bootstrapSkin,
+					      		className: "btn-success",
 					      		callback: function() {
 					      			return true;
 					      		}
 							}
 						}
 					});
-				} else if (data.result_code == "N") {
+				} else {
  			//	var source= "系统管理>用户管理>编辑用户";
  			//	var content="账号:"+su.username+".保存失败"+ json.result_info;
 			//	recordLog('operate',source,content);
@@ -273,12 +273,12 @@ function doEditUser() {
 					
 					window.top.bootbox.dialog({
 						title: "错误信息",
-						message: "保存失败！" + "<br><br>" + data.result_info,
+						message: "保存失败！" + "<br><br>" + data.data,
 						size: "middle",
 						buttons: {
 							cancelType: {
 					      		label: "确定",
-					      		className: "btn-"+bootstrapSkin,
+					      		className: "btn-success",
 					      		callback: function() {
 					      			return true;
 					      		}

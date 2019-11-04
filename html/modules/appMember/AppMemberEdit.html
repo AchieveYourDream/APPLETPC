@@ -137,16 +137,16 @@ $(document).ready(function() {
 	$.ajax({
 			type: "POST",
 		    url: url,
-		    data:{"token":securityContext.token,"member_tel":member_tel},
+		    data:{"Authorization":securityContext.Authorization,"member_tel":member_tel},
 		    success: function(data){
 				
-				if (data.result_code == "Y") {
+				if (data.code == "S") {
 					result = true;
-					var sp = JSON.parse(data.result_info);
+					var sp = data.data;
 						dwr.util.setValues(sp);
-				} else if (data.result_code == "N") {
+				} else {
 					result = false;
-					$.growl.error({title: "提示信息",message:data.result_info});
+					$.growl.error({title: "提示信息",message:data.data});
 				}
 		    }
 	});
@@ -161,7 +161,7 @@ function doEditAppMember() {
 		
 		var url = path+"api/appmember/updateAppMember";
 		url += "?t=" + new Date();
-		url+="&token="+securityContext.token;
+		url+="&Authorization="+securityContext.Authorization;
 
 		$.ajax({
 			type: "POST",
@@ -170,12 +170,12 @@ function doEditAppMember() {
 		    async: false,
 		    success: function(data){
 				
-				if (data.result_code == "Y") {
+				if (data.code == "S") {
 					result = true;
 					$.growl.notice({title: "提示信息",message:"保存成功"});
-				} else if (data.result_code == "N") {
+				} else {
 					result = false;
-					$.growl.error({title: "提示信息",message:data.result_info});
+					$.growl.error({title: "提示信息",message:data.data});
 				}
 		    }
 		});

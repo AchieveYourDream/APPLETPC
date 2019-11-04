@@ -52,7 +52,7 @@
 			           data-striped="true"
 			           data-search="true">
 			    	<thead>
-<!-- 			       <tr><th data-field="DESCRIPTION" data-halign="center" data-align="left" data-sortable="true">角色说明</th><th data-field="ROLE_ID" data-halign="center" data-align="left" data-sortable="true">角色ID</th><th data-field="ROLE_NAME" data-halign="center" data-align="left" data-sortable="true">角色名称</th></tr> -->
+<!-- 			       <tr><th data-field="DESCRIPTION" data-halign="center" data-align="left" data-sortable="true">角色说明</th><th data-field="roleId" data-halign="center" data-align="left" data-sortable="true">角色ID</th><th data-field="roleName" data-halign="center" data-align="left" data-sortable="true">角色名称</th></tr> -->
 			    	</thead>
 				</table>
 			</div>
@@ -109,20 +109,7 @@ var url = path+"api/common/lov/getLovCount";
 		      th+='</tr>';
 				$("thead").html(th);
 			} else {
-				window.top.bootbox.dialog({
-					title: "错误信息",
-					message: "数据加载失败！" + "<br><br>" + data.data,
-					size: "middle",
-					buttons: {
-						cancelType: {
-				      		label: "确定",
-				      		className: "btn-success",
-				      		callback: function() {
-				      			return true;
-				      		}
-						}
-					}
-				});
+                $.growl.error({title: "提示信息", message:"数据加载失败！" + "<br><br>" + data.data});
 			}
 		}
 	});
@@ -145,20 +132,7 @@ function getLovDataList(){
 			$('#lovTable').bootstrapTable('refresh');
 				$("#lovTable").bootstrapTable("load", JSON.parse(data.data));
 			} else {
-				window.top.bootbox.dialog({
-					title: "错误信息",
-					message: "数据加载失败！" + "<br><br>" + data.data,
-					size: "middle",
-					buttons: {
-						cancelType: {
-				      		label: "确定",
-				      		className: "btn-success",
-				      		callback: function() {
-				      			return true;
-				      		}
-						}
-					}
-				});
+                $.growl.error({title: "提示信息", message:"数据加载失败！" + "<br><br>" + data.data});
 			}
 		}
 	});
@@ -176,8 +150,8 @@ function getLovData() {
 		return false;
 	}
 		var lov = new Lov();
-		lov.lov_value = LovRow[returnValueColumn];
-		lov.lov_text = LovRow[returnTextColumn];
+		lov.lovValue = LovRow[returnValueColumn];
+		lov.lovText = LovRow[returnTextColumn];
 		return lov;
 	} else if (lovType == "multi") {
 	
@@ -194,8 +168,8 @@ function getLovData() {
 		}
 		for(var i=0; i <rows.length; i++) {
 			var lov = new Lov();
-			lov.lov_value = rows[i][returnValueColumn];
-			lov.lov_text = rows[i][returnTextColumn];
+			lov.lovValue = rows[i][returnValueColumn];
+			lov.lovText = rows[i][returnTextColumn];
 			lovArr.push(lov);
 		}
 		return lovArr;

@@ -3,7 +3,7 @@
 		window.location.href = "/APPLETPC/login.html";
 	}
 	var securityContext = JSON.parse(sessionStorage.getItem('securityContext'));
-	var bootstrapSkin = securityContext.bootstrapSkin;
+
 	var path = sessionStorage.getItem('path');
 	var member_id = sessionStorage.getItem("member_id");
 </script>
@@ -628,7 +628,7 @@
 	};
 	
 	function getInventory() {
-		var url = path + "/api/sys/member/getMemberInfoById";
+		var url = path + "/app/system/member/getMemberInfoById";
 		url += "?t=" + new Date();
 		$.ajax({
 			type : "POST",
@@ -636,29 +636,29 @@
 			async : false,
 			data : {
 				"member_id" : member_id,
-				"token" : securityContext.token
+				"Authorization" : securityContext.Authorization
 			},
 			success : function(data) {
-				if (data.result_code == "Y") {
+				if (data.code == "S") {
 					recordLog("O","APPLETPC","获取会员详情成功",securityContext.user_id);
-					var ra = JSON.parse(data.result_info);
+					var ra = data.data;
 					initCityLinkage(ra.province?"":ra.province);
 					initCountyLinkage(ra.city?"":ra.city);
 					dwr.util.setValues(ra);
 					tempMemberName = ra.real_name;
                     tempMemberPhone = ra.mobilephone;
                     tempMemberId = ra.member_id;
-				} else if (data.result_code == "N") {
+				} else {
 					recordLog("OF","APPLETPC","获取会员详情失败",securityContext.user_id);
 					result = false;
 					window.parent.bootbox.dialog({
 						title : "错误信息",
-						message : "保存失败！" + "<br><br>" + data.result_info,
+						message : "保存失败！" + "<br><br>" + data.data,
 						size : "middle",
 						buttons : {
 							cancelType : {
 								label : "确定",
-								className : "btn-" + bootstrapSkin,
+								className : "btn-success"
 								callback : function() {
 									return true;
 								}
@@ -671,31 +671,31 @@
 	}
 	// 初始化省
 	function initProvince() {
-		var url = path + "api/sys/store/getCtiyCountyList";
-		url += "?parent_node_code=ROOT";
+		var url = path + "app/system/store/getCtiyCountyList";
+		url += "?parent_nodeCode=ROOT";
 		$.ajax({
 			type : "get",
 			url : url,
 			async : false,
-			headers:{"token":securityContext.token},
+			headers:{"Authorization":securityContext.Authorization},
 			success : function(data) {
-				if (data.result_code == "Y") {
+				if (data.code == "S") {
 					recordLog("O","APPLETPC","初始化省成功",securityContext.user_id);
-					$.each(JSON.parse(data.result_info), function(index, d) {
+					$.each(data.data, function(index, d) {
 						$("#province").append(
-								'<option value="' + d.node_code + '">'
-										+ d.node_name + '</option')
+								'<option value="' + d.nodeCode + '">'
+										+ d.nodeName + '</option')
 					});
-				} else if (data.result_code == "N") {
+				} else {
 				recordLog("OF","APPLETPC","初始化省失败",securityContext.user_id);
 					window.parent.bootbox.dialog({
 						title : "错误信息",
-						message : "数据加载失败！" + "<br><br>" + data.result_info,
+						message : "数据加载失败！" + "<br><br>" + data.data,
 						size : "middle",
 						buttons : {
 							cancelType : {
 								label : "确定",
-								className : "btn-" + bootstrapSkin,
+								className : "btn-success"
 								callback : function() {
 									return true;
 								}
@@ -708,35 +708,35 @@
 	}
 	// 初始化市
 	function initCity() {
-		var url = path + "api/sys/store/getCtiyCountyList";
-		url += "?parent_node_code="+$("#province").val();
+		var url = path + "app/system/store/getCtiyCountyList";
+		url += "?parent_nodeCode="+$("#province").val();
 
 		$.ajax({
 			type : "get",
 			url : url,
 			async : false,
-			headers:{"token":securityContext.token},
+			headers:{"Authorization":securityContext.Authorization},
 			success : function(data) {
-				if (data.result_code == "Y") {
+				if (data.code == "S") {
 				recordLog("O","APPLETPC","初始化市成功",securityContext.user_id);
 					$("#city").html("");
 					$("#county").html("");
-					$.each(JSON.parse(data.result_info), function(index, d) {
+					$.each(data.data, function(index, d) {
 						$("#city").append(
-								'<option value="' + d.node_code + '">'
-										+ d.node_name + '</option')
+								'<option value="' + d.nodeCode + '">'
+										+ d.nodeName + '</option')
 					});
 					initCounty();
-				} else if (data.result_code == "N") {
+				} else {
 				recordLog("OF","APPLETPC","初始化市失败",securityContext.user_id);
 					window.parent.bootbox.dialog({
 						title : "错误信息",
-						message : "数据加载失败！" + "<br><br>" + data.result_info,
+						message : "数据加载失败！" + "<br><br>" + data.data,
 						size : "middle",
 						buttons : {
 							cancelType : {
 								label : "确定",
-								className : "btn-" + bootstrapSkin,
+								className : "btn-success"
 								callback : function() {
 									return true;
 								}
@@ -749,34 +749,34 @@
 	}
 	// 初始化县
 	function initCounty() {
-		var url = path + "api/sys/store/getCtiyCountyList";
-		url += "?parent_node_code="+$("#city").val();
+		var url = path + "app/system/store/getCtiyCountyList";
+		url += "?parentNodeCode="+$("#city").val();
 
 		$.ajax({
 			type : "get",
 			url : url,
 			async : false,
-			headers:{"token":securityContext.token},
+			headers:{"Authorization":securityContext.Authorization},
 			success : function(data) {
-				if (data.result_code == "Y") {
+				if (data.code == "S") {
 				recordLog("O","APPLETPC","初始化县成功",securityContext.user_id);
 					$("#county").html("");
-					$.each(JSON.parse(data.result_info), function(index, d) {
+					$.each(data.data, function(index, d) {
 						$("#county").append(
-								'<option value="' + d.node_code + '">'
-										+ d.node_name + '</option')
+								'<option value="' + d.nodeCode + '">'
+										+ d.nodeName + '</option')
 					});
 					
-				} else if (data.result_code == "N") {
+				} else {
 				recordLog("OF","APPLETPC","初始化县失败",securityContext.user_id);
 					window.parent.bootbox.dialog({
 						title : "错误信息",
-						message : "数据加载失败！" + "<br><br>" + data.result_info,
+						message : "数据加载失败！" + "<br><br>" + data.data,
 						size : "middle",
 						buttons : {
 							cancelType : {
 								label : "确定",
-								className : "btn-" + bootstrapSkin,
+								className : "btn-success"
 								callback : function() {
 									return true;
 								}
@@ -789,34 +789,34 @@
 	}
 	// 初始化市
 	function initCityLinkage(province) {
-		var url = path + "api/sys/store/getCtiyCountyList";
-		url += "?parent_node_code=" +province;
+		var url = path + "app/system/store/getCtiyCountyList";
+		url += "?parentNodeCode=" +province;
 		$.ajax({
 			type : "get",
 			url : url,
 			async : false,
-			headers:{"token":securityContext.token},
+			headers:{"Authorization":securityContext.Authorization},
 			success : function(data) {
-				if (data.result_code == "Y") {
+				if (data.code == "S") {
 				recordLog("O","APPLETPC","省市联动成功",securityContext.user_id);
 					$("#city").html("");
 					$("#county").html("");
-					$.each(JSON.parse(data.result_info), function(index, d) {
+					$.each(data.data, function(index, d) {
 						$("#city").append(
-								'<option value="' + d.node_code + '">'
-										+ d.node_name + '</option')
+								'<option value="' + d.nodeCode + '">'
+										+ d.nodeName + '</option')
 					});
 
-				} else if (data.result_code == "N") {
+				} else {
 				recordLog("OF","APPLETPC","省市联动失败",securityContext.user_id);
 					window.parent.bootbox.dialog({
 						title : "错误信息",
-						message : "数据加载失败！" + "<br><br>" + data.result_info,
+						message : "数据加载失败！" + "<br><br>" + data.data,
 						size : "middle",
 						buttons : {
 							cancelType : {
 								label : "确定",
-								className : "btn-" + bootstrapSkin,
+								className : "btn-success"
 								callback : function() {
 									return true;
 								}
@@ -829,34 +829,34 @@
 	}
 	// 初始化县
 	function initCountyLinkage(city) {
-		var url = path + "api/sys/store/getCtiyCountyList";
-		url += "?parent_node_code=" + city;
+		var url = path + "app/system/store/getCtiyCountyList";
+		url += "?parentNodeCode=" + city;
 
 		$.ajax({
 			type : "get",
 			url : url,
 			async : false,
-			headers:{"token":securityContext.token},
+			headers:{"Authorization":securityContext.Authorization},
 			success : function(data) {
-				if (data.result_code == "Y") {
+				if (data.code == "S") {
 				recordLog("O","APPLETPC","市县联动成功",securityContext.user_id);
 					$("#county").html("");
-					$.each(JSON.parse(data.result_info), function(index, d) {
+					$.each(data.data, function(index, d) {
 						$("#county").append(
-								'<option value="' + d.node_code + '">'
-										+ d.node_name + '</option')
+								'<option value="' + d.nodeCode + '">'
+										+ d.nodeName + '</option')
 					});
 
-				} else if (data.result_code == "N") {
+				} else {
 					recordLog("OF","APPLETPC","市县联动失败",securityContext.user_id);
 					window.parent.bootbox.dialog({
 						title : "错误信息",
-						message : "数据加载失败！" + "<br><br>" + data.result_info,
+						message : "数据加载失败！" + "<br><br>" + data.data,
 						size : "middle",
 						buttons : {
 							cancelType : {
 								label : "确定",
-								className : "btn-" + bootstrapSkin,
+								className : "btn-success"
 								callback : function() {
 									return true;
 								}
@@ -870,23 +870,23 @@
 	
 	//初始化会员等级
 	function initTypeList() {
-		var url = path + "api/common/list/getSingleDataDictItemList";
+		var url = path + "app/system/datadict/getSingleDataDictItemList";
 		url += "?typeCode=member_level&enabledFlag=Y";
 		$.ajax({
 			type : "get",
 			url : url,
 			async : false,
-			headers:{"token":securityContext.token},
+			headers:{"Authorization":securityContext.Authorization},
 			success : function(data) {
-				if (data.result_code == "Y") {
+				if (data.code == "S") {
 					$("#member_level").html("");
-					$.each(JSON.parse(data.result_info), function(index, d) {
-						$("#member_level").append( '<option value="' + d.item_code + '">' + d.item_name + '</option')
+					$.each(data.data, function(index, d) {
+						$("#member_level").append( '<option value="' + d.itemCode + '">' + d.itemName + '</option')
 					});
-				} else if (data.result_code == "N") {
+				} else {
 					window.parent.bootbox.dialog({
 						title : "错误信息",
-						message : "数据加载失败！" + "<br><br>" + data.result_info,
+						message : "数据加载失败！" + "<br><br>" + data.data,
 						size : "middle",
 						buttons : {
 							cancelType : {
@@ -904,23 +904,23 @@
 	}
 	//初始化会员类型
 	function initmembertype() {
-		var url = path + "api/common/list/getSingleDataDictItemList";
+		var url = path + "app/system/datadict/getSingleDataDictItemList";
 		url += "?typeCode=member_type&enabledFlag=Y";
 		$.ajax({
 			type : "get",
 			url : url,
 			async : false,
-			headers:{"token":securityContext.token},
+			headers:{"Authorization":securityContext.Authorization},
 			success : function(data) {
-				if (data.result_code == "Y") {
+				if (data.code == "S") {
 					$("#member_type").html("");
-					$.each(JSON.parse(data.result_info), function(index, d) {
-						$("#member_type").append( '<option value="' + d.item_code + '">' + d.item_name + '</option')
+					$.each(data.data, function(index, d) {
+						$("#member_type").append( '<option value="' + d.itemCode + '">' + d.itemName + '</option')
 					});
-				} else if (data.result_code == "N") {
+				} else {
 					window.parent.bootbox.dialog({
 						title : "错误信息",
-						message : "数据加载失败！" + "<br><br>" + data.result_info,
+						message : "数据加载失败！" + "<br><br>" + data.data,
 						size : "middle",
 						buttons : {
 							cancelType : {
@@ -938,23 +938,23 @@
 	}
 	//初始化客户来源渠道 (参观团、散客、老客户、工装 )
 	function initmemberSources() {
-		var url = path + "api/common/list/getSingleDataDictItemList";
+		var url = path + "app/system/datadict/getSingleDataDictItemList";
 		url += "?typeCode=member_sources&enabledFlag=Y";
 		$.ajax({
 			type : "get",
 			url : url,
 			async : false,
-			headers:{"token":securityContext.token},
+			headers:{"Authorization":securityContext.Authorization},
 			success : function(data) {
-				if (data.result_code == "Y") {
+				if (data.code == "S") {
 					$("#sources").html("");
-					$.each(JSON.parse(data.result_info), function(index, d) {
-						$("#sources").append( '<option value="' + d.item_code + '">' + d.item_name + '</option')
+					$.each(data.data, function(index, d) {
+						$("#sources").append( '<option value="' + d.itemCode + '">' + d.itemName + '</option')
 					});
-				} else if (data.result_code == "N") {
+				} else {
 					window.parent.bootbox.dialog({
 						title : "错误信息",
-						message : "数据加载失败！" + "<br><br>" + data.result_info,
+						message : "数据加载失败！" + "<br><br>" + data.data,
 						size : "middle",
 						buttons : {
 							cancelType : {
@@ -989,24 +989,24 @@
   	 
 	//初始化回访记录
     function initVisit(){
-        var url =path+"api/sys/member/getVisitByMemberId?memberId="+member_id+ "&t=" + new Date();
+        var url =path+"app/system/member/getVisitByMemberId?memberId="+member_id+ "&t=" + new Date();
         $.ajax({
             type: "GET",
             url: url,
             async:false,
-            headers:{"token":securityContext.token},
+            headers:{"Authorization":securityContext.Authorization},
             success: function(data) {
-            	var json = JSON.parse(data.result_info);
+            	var json = data.data;
             	for(var i=0;i<json.length;i++){
             		if(json[i].visit_remarks.length > 8 ){
             			json[i].visit_remarks = json[i].visit_remarks.substring(0,7)+"...";
             		}
             	}
-                if (data.result_code == "Y") {
+                if (data.code == "S") {
                     $("#visitTable").bootstrapTable("load", json);
-                } else if (data.result_code == "N") {
+                } else {
                     recordLog("OF","APPLETPC","会员回访记录初始化失败",securityContext.user_id);
-                    layer.msg("初始化会员回访回访记录失败："+data.result_info);
+                    layer.msg("初始化会员回访回访记录失败："+data.data);
                 }
             }
         });
@@ -1052,18 +1052,18 @@
     
   //初始化单条回访记录，用于编辑回访记录
     function initVisitById(){
-        var url = path+"/api/sys/member/getVisitById?t=" + new Date();
+        var url = path+"/app/system/member/getVisitById?t=" + new Date();
         $.ajax({
             type: "GET",
             url: url,
             async: false,
-            data:{"id":visitRowId,"token":securityContext.token},
+            data:{"id":visitRowId,"Authorization":securityContext.Authorization},
             success: function(data){
-                if (data.result_code == "Y") {
-                    var ra=JSON.parse(data.result_info)
+                if (data.code == "S") {
+                    var ra=data.data
                     dwr.util.setValues(ra);
-                } else if (data.result_code == "N") {
-                    layer.msg("初始化回访记录失败"+data.result_info);
+                } else {
+                    layer.msg("初始化回访记录失败"+data.data);
             	}
             }
         });
@@ -1091,16 +1091,16 @@
   	//初始化sieble订单信息
     function initSiebelOrder(){
     
-        var url =path+"api/sys/member/selectPCSPMTMOrdenByPhone?member_phone="+tempMemberPhone+ "&t=" + new Date();
+        var url =path+"app/system/member/selectPCSPMTMOrdenByPhone?member_phone="+tempMemberPhone+ "&t=" + new Date();
         $.ajax({
             type: "GET",
             url: url,
             async:false,
-            headers:{"token":securityContext.token},
+            headers:{"Authorization":securityContext.Authorization},
             success: function(data) {
                 //因数据库原因，将物料名称在页面上赋值
-                var json = JSON.parse(data.result_info);
-                if (data.result_code == "Y") {
+                var json = data.data;
+                if (data.code == "S") {
                 	for(var i=0;i<json.length;i++){
                 		json[i].order_create_time = new Date(json[i].order_create_time).format("yyyy-MM-dd");
                 		/* if(json[i].good_name.length > 8 ){
@@ -1108,9 +1108,9 @@
                   		} */
                 	}
                     $("#orderTable").bootstrapTable("load", json);
-                } else if (data.result_code == "N") {
+                } else {
                     recordLog("OF","SPMTMWEB","会员消费记录初始化失败",securityContext.member_id);
-                    layer.msg("初始化会员消费记录失败："+data.result_info);
+                    layer.msg("初始化会员消费记录失败："+data.data);
                 }
             }        });
     }
@@ -1164,21 +1164,21 @@
     		return;
     	}
     	 $("#showOrderSection").fadeIn(1200);
-    	var url = path+"/api/sys/member/getSiebleOrderByOrderNo?t=" + new Date();
+    	var url = path+"/app/system/member/getSiebleOrderByOrderNo?t=" + new Date();
         $.ajax({
             type: "GET",
             url: url,
             async: false,
-            data:{"order_no":orderRowId,"token":securityContext.token,"member_phone":tempMemberPhone},
+            data:{"order_no":orderRowId,"Authorization":securityContext.Authorization,"member_phone":tempMemberPhone},
             success: function(data){
-                if (data.result_code == "Y") {
+                if (data.code == "S") {
                     //OrderInfoRead();			//设置消费记录页面只读
-                    var json=JSON.parse(data.result_info);
+                    var json=data.data;
                     json.order_create_time = new Date(json.order_create_time).format("yyyy-MM-dd  hh:mm:ss");
                     dwr.util.setValues(json);
                     document.getElementsByName("order_no")[1].value=json.order_no;
-                } else if (data.result_code == "N") {
-                    layer.msg("初始化回访记录失败"+data.result_info);
+                } else {
+                    layer.msg("初始化回访记录失败"+data.data);
             	}
             }
         });

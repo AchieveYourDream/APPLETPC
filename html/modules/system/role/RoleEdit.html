@@ -1,195 +1,147 @@
 <script type="text/javascript">
-           if(sessionStorage.getItem('securityContext')==null){
-         window.location.href="/APPLETPC/login.html";
-        }
-        var securityContext = JSON.parse(sessionStorage.getItem('securityContext'));
+    if (sessionStorage.getItem('securityContext') == null) {
+        window.location.href = "/APPLETPC/login.html";
+    }
+    var securityContext = JSON.parse(sessionStorage.getItem('securityContext'));
 
-        var path = sessionStorage.getItem('path');
-        var roleId = sessionStorage.getItem('roleId');
+    var path = sessionStorage.getItem('path');
+    var roleId = sessionStorage.getItem('roleId');
 </script>
 <!DOCTYPE html>
 <html>
 <head>
-	<meta charset="utf-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
-	<title>角色编辑</title>
+    <title>角色编辑</title>
 
-	<link type="text/css" rel="stylesheet" href="/APPLETPC/css/common/common.css">
-	<script type="text/javascript" src="/APPLETPC/js/common/common.js"></script>
-	<script type="text/javascript" src="/APPLETPC/js/common/util.js"></script>
-	<script type="text/javascript"src="/APPLETPC/js/jquery/jquery-2.2.3.min.js"></script>
-    <script type="text/javascript" src="/APPLETPC/js/json/json2.js"></script>
-    <link type="text/css" rel="stylesheet" href="/APPLETPC/js/bootstrap/css/bootstrap.css">
-    <script type="text/javascript" src="/APPLETPC/js/bootstrap/js/bootstrap.js"></script>
-	
-	
-	<script type='text/javascript' src='/APPLETPC/js/json/model/SysRole.js'></script>
-	<!-- jquery-validator -->
-	<script type="text/javascript"
-		src="/APPLETPC/js/plugins/jquery-validate/jquery.validate.min.js"></script>
-	<script type="text/javascript"
-		src="/APPLETPC/js/plugins/jquery-validate/jquery.validate.plu.js"></script>
+    <script src="/APPLETPC/js/jquery/jquery-3.4.1.min.js"></script>
+    <script type='text/javascript' src='/APPLETPC/js/json/model/SysRole.js'></script>
 </head>
 <body class="my-body-content">
-	<form id="typeEditForm" name="typeEditForm" class="my-form-content">
-	 
-		<table class="my-form-table-content">
-			<tr>
-				<td class="my-form-table-td-label" style="width:60px;">
-					<label class="control-label" style="margin:5px;padding:0px;">编码</label>
-				</td>
-				<td class="my-form-table-td-content" style="width:200px;">
-					<input id="role_id" name="role_id" type="text" class="form-control input-sm" style="width:180px;padding:5px;float:left;" readOnly>
-				</td>
-			</tr>
-			<tr>
-				<td class="my-form-table-td-label">
-					<label class="control-label" style="margin:5px;padding:0px;">名称</label>
-				</td>
-				<td class="my-form-table-td-content">
-					<input id="role_name" name="role_name" type="text" class="form-control input-sm" style="width:180px;padding:5px;float:left;">
-				</td>
-			</tr>
-			<tr>
-				<td class="my-form-table-td-label">
-					<label class="control-label" style="margin:5px;padding:0px;">说明</label>
-				</td>
-				<td class="my-form-table-td-content">
-					<input id="description" name="description" type="text" class="form-control input-sm" style="width:180px;padding:5px;float:left;">
-				</td>
-			</tr>
-		</table>
-	</form>
+<div class="content-wrap">
+    <div class="main">
+        <!-- /# row -->
+        <section class="subSection">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="card">
+                        <form id="typeEditForm" name="typeEditForm" class="my-form-content">
+
+                            <table class="my-form-table-content">
+                                <tr>
+                                    <td class="my-form-table-td-label" style="width:60px;">
+                                        <label class="control-label" style="margin:5px;padding:0px;">编码</label>
+                                    </td>
+                                    <td class="my-form-table-td-content" style="width:200px;">
+                                        <input id="roleId" name="roleId" type="text" class="form-control input-sm"
+                                               style="width:180px;padding:5px;float:left;" readOnly>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="my-form-table-td-label">
+                                        <label class="control-label" style="margin:5px;padding:0px;">名称</label>
+                                    </td>
+                                    <td class="my-form-table-td-content">
+                                        <input id="roleName" name="roleName" type="text" class="form-control input-sm"
+                                               style="width:180px;padding:5px;float:left;">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="my-form-table-td-label">
+                                        <label class="control-label" style="margin:5px;padding:0px;">说明</label>
+                                    </td>
+                                    <td class="my-form-table-td-content">
+                                        <input id="description" name="description" type="text"
+                                               class="form-control input-sm"
+                                               style="width:180px;padding:5px;float:left;">
+                                    </td>
+                                </tr>
+                            </table>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
 </body>
 </html>
 
 <script type="text/javascript">
-var validator;
-$("#role_id").val(roleId);
-$(document).ready(function() {
-	validator = $("#typeEditForm").validate({
-		debug: true,
-		showErrors: showErrors,
-		rules: {
-			role_name : {
-				required : true,
-				maxlength : 50,
-			},
-			description: {
-				maxlength: 100
-			}
-		},
-		messages: {
-			role_name: {
-				required: "[类型名称]不能为空！",
-				maxlength: "[类型名称]最大长度为50！",
-			},
-			description: {
-				maxlength: "[说明]最大长度为100！"
-			}
-		}
-	});
-	
-	var url = path+"api/sys/role/getRoleInfo";
-	url += "?t=" + new Date();
-	url += "&role_id=" + roleId;
-	
-		$.ajax({
-			type: "get",
-		    url: url,
-		    headers:{"token":securityContext.token},
-		    success: function(data){
-		if (data.code == "S") {
-		
-			var ddt = JSON.parse(data.result_info);
-			
-			dwr.util.setValues(ddt);
-		} else if (data.result_code == "N") {
-			window.top.bootbox.dialog({
-				title: "错误信息",
-				message: "数据加载失败！" + "<br><br>" + data.result_info,
-				size: "middle",
-				buttons: {
-					cancelType: {
-			      		label: "确定",
-			      		className: "btn-"+bootstrapSkin,
-			      		callback: function() {
-			      			return true;
-			      		}
-					}
-				}
-			});
-		}
-		}
-	});
-});
+    var validator;
+    $("#roleId").val(roleId);
+    $(document).ready(function () {
+        validator = $("#typeEditForm").validate({
+            debug: true,
+            showErrors: showErrors,
+            rules: {
+                roleName: {
+                    required: true,
+                    maxlength: 50,
+                },
+                description: {
+                    maxlength: 100
+                }
+            },
+            messages: {
+                roleName: {
+                    required: "[类型名称]不能为空！",
+                    maxlength: "[类型名称]最大长度为50！",
+                },
+                description: {
+                    maxlength: "[说明]最大长度为100！"
+                }
+            }
+        });
 
-function doRoleUpdate() {
-	var result = false;
-	if (validator.form()) {
-		var sr = new SysRole();
-		dwr.util.getValues(sr);
+        var url = path + "app/system/role/getRoleInfo";
+        url += "?t=" + new Date();
+        url += "&roleId=" + roleId;
 
-		var url = path+"api/sys/role/roleEdit";
-		url += "?t=" + new Date();
-		var a=securityContext.token
-		url+="&token="+securityContext.token;
-		
-	$.ajax({
-			type: "POST",
-		    url: url,
-		    data: sr,
-		    async: false,
-		    success: function(text, status){
-				if (text.result_code == "Y") {
-					result = true;
-// 				var source= "系统管理>角色权限管理>编辑角色";
-// 				var content="编辑<"+ddt.role_name+">保存成功";
-// 				var id = <%=securityContext.getUser_id()%>;		
-// 				var con = "/APPLETPC";
-// 		        createOperationLog(source,content,id,con);
-					window.top.bootbox.dialog({
-						title: "提示信息",
-						message: "保存成功！",
-						size: "middle",
-						buttons: {
-							cancelType: {
-					      		label: "确定",
-					      		className: "btn-"+bootstrapSkin,
-					      		callback: function() {
-					      			return true;
-					      		}
-							}
-						}
-					});
-				} else if (text.result_code == "N") {
-					result = false;
-// 				var source= "系统管理>角色权限管理>编辑角色";
-// 				var content="编辑<"+ddt.role_name+">保存失败"+data.result_info;
-// 				var id = <%=securityContext.getUser_id()%>;		
-// 				var con = "/APPLETPC";
-// 		         createOperationLog(source,content,id,con);
-					
-					window.top.bootbox.dialog({
-						title: "错误信息",
-						message: "保存失败！" + "<br><br>" + text.result_info,
-						size: "middle",
-						buttons: {
-							cancelType: {
-					      		label: "确定",
-					      		className: "btn-"+bootstrapSkin,
-					      		callback: function() {
-					      			return true;
-					      		}
-							}
-						}
-					});
-				}
-		    }
-		});
-	}
-	return result;
-}
+        $.ajax({
+            type: "get",
+            url: url,
+            headers: {"Authorization": securityContext.Authorization},
+            success: function (data) {
+                if (data.code == "S") {
+
+                    var ddt = data.data;
+
+                    dwr.util.setValues(ddt);
+                } else {
+                    $.growl.error({title: "提示信息", message:"数据加载失败！" + "<br><br>" + data.data});
+                }
+            }
+        });
+    });
+
+    function doRoleUpdate() {
+        var result = false;
+        if (validator.form()) {
+            var sr = new SysRole();
+            dwr.util.getValues(sr);
+
+            var url = path + "app/system/role/editRole";
+            url += "?t=" + new Date();
+
+            $.ajax({
+                type: "POST",
+                url: url,
+                data: sr,
+                async: false,
+                headers: {"Authorization":securityContext.Authorization},
+                success: function (data) {
+                    if (data.code == "S") {
+                        result = true;
+                    } else  {
+                        result = false;
+                        $.growl.error({title: "提示信息", message:"数据加载失败！" + "<br><br>" + data.data});
+                    }
+                }
+            });
+        }
+        return result;
+    }
 </script>

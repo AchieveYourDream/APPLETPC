@@ -98,8 +98,8 @@ function onTreeNodeSelectedHandler(event, data) {
 function getLotData() {
 	if (treeType == "single") {
 		var lot = new Lot();
-		lot.lot_value = LotData.data.node_code;
-		lot.lot_text = LotData.text;
+		lot.lotValue = LotData.data.nodeCode;
+		lot.lotText = LotData.text;
 		return lot;
 	} else if (treeType == "multi") {
 		var lotArr = new Array();

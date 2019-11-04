@@ -148,22 +148,22 @@ $(document).ready(function() {
 		    data:{"demand_id":demand_id,"token":securityContext.token},
 		    success: function(data){
 				
-				if (data.result_code == "Y") {
-				var cd=JSON.parse(data.result_info)
+				if (data.code == "S") {
+				var cd=data.data
 					dwr.util.setValues(cd);
 					
 					$("#cusDemandLine").bootstrapTable("load", cd.list);
 					
-				} else if (data.result_code == "N") {
+				} else {
 					result = false;
 					window.parent.bootbox.dialog({
 						title: "错误信息",
-						message: "获取失败！" + "<br><br>" + data.result_info,
+						message: "获取失败！" + "<br><br>" + data.data,
 						size: "middle",
 						buttons: {
 							cancelType: {
 					      		label: "确定",
-					      		className: "btn-"+bootstrapSkin,
+					      		className: "btn-success",
 					      		callback: function() {
 					      			return true;
 					      		}

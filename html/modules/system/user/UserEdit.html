@@ -60,13 +60,13 @@
    	       class="table table-condensed"
            data-toggle="table"
            data-toolbar="#roleToolbar"
-           data-unique-id="role_id"
+           data-unique-id="roleId"
            data-height="250"
            data-striped="true">
 		<thead>
         	<tr>
-                <th data-field="role_id" data-halign="center" data-align="right">角色编号</th>
-                <th data-field="role_name" data-halign="center" data-align="left">角色名称</th>
+                <th data-field="roleId" data-halign="center" data-align="right">角色编号</th>
+                <th data-field="roleName" data-halign="center" data-align="left">角色名称</th>
             </tr>
 		</thead>
 	</table>
@@ -97,7 +97,7 @@ $(document).ready(function() {
 
 // 获取当前用户角色列表
 function getUserRoleList(){
-	var url = path+"api/sys/user/getUserRoleList";
+	var url = path+"app/system/user/getUserRoleList";
     url += "?currentTime=" + new Date();
     url += "&userId=" + userId;
     
@@ -105,14 +105,14 @@ function getUserRoleList(){
 		type: "get",
 		url: url,
 		async:false,
-		headers:{"token":securityContext.token},
+		headers:{"Authorization":securityContext.Authorization},
 		success: function(data) {
-			if (data.result_code == "Y") {
-				$("#roleTable").bootstrapTable("load", JSON.parse(data.result_info));
-			} else if (data.result_code == "N") {
+			if (data.code == "S") {
+				$("#roleTable").bootstrapTable("load", data.data);
+			} else {
 				window.top.bootbox.dialog({
 					title: "错误信息",
-					message: "数据加载失败！" + "<br><br>" + data.result_info,
+					message: "数据加载失败！" + "<br><br>" + data.data,
 					size: "middle",
 					buttons: {
 						cancelType: {
@@ -149,16 +149,16 @@ function addRole() {
 	      			
 	      			
 	      			if (row) {
-	      				if (!$("#roleTable").bootstrapTable("getRowByUniqueId", row.lov_value)) {
-	      					$("#roleTable").bootstrapTable("append", {user_id: "", role_id: row.lov_value, role_name: row.lov_text});
+	      				if (!$("#roleTable").bootstrapTable("getRowByUniqueId", row.lovValue)) {
+	      					$("#roleTable").bootstrapTable("append", {user_id: "", roleId: row.lovValue, roleName: row.lovText});
 	      					
-	      					addRoleIdArr.push(row.lov_value);
+	      					addRoleIdArr.push(row.lovValue);
 	      					
 		      				
 	      				} else {
 	      					window.top.bootbox.dialog({ 
 	      					    size: 'small',
-	      					    message: "当前角色[！" + row.lov_text+ "]已经存在！",
+	      					    message: "当前角色[！" + row.lovText+ "]已经存在！",
 	      					    buttons: {
 			saveType: {
 	      		label: "确定",
@@ -205,10 +205,10 @@ function delRole(){
 		return;
 	}
    
-    $("#roleTable").bootstrapTable("removeByUniqueId", currentRoleRow.role_id);
+    $("#roleTable").bootstrapTable("removeByUniqueId", currentRoleRow.roleId);
     
     if (currentRoleRow.user_id) {
-    	delRoleIdArr.push(currentRoleRow.role_id);
+    	delRoleIdArr.push(currentRoleRow.roleId);
     }
 }	
 
@@ -235,7 +235,7 @@ function doEditUser() {
 			return result;
 	    }
 		
-		var url = path+"api/sys/user/editUser";
+		var url = path+"app/system/user/editUser";
 		url += "?t=" + new Date();
 		url +="&id="+userId;
 		url += "&addRoleIds=" + addRoleIdArr.join(",");;
@@ -244,9 +244,9 @@ function doEditUser() {
 			type: "POST",
 		    url: url,
 		    async: false,
-		    headers:{"token":securityContext.token},
+		    headers:{"Authorization":securityContext.Authorization},
 		    success: function(data){
-				if (data.result_code == "Y") {
+				if (data.code == "S") {
 				
 // 				var source= "系统管理>用户管理>编辑用户";
 // 				var content="账号:"+su.username+".保存成功";
@@ -268,9 +268,9 @@ function doEditUser() {
 							}
 						}
 					});
-				} else if (data.result_code == "N") {
+				} else {
 // 				var source= "系统管理>用户管理>编辑用户";
-// 				var content="账号:"+su.username+".保存失败"+ data.result_info;
+// 				var content="账号:"+su.username+".保存失败"+ data.data;
 // 				var id = <%=securityContext.getUser_id()%>;		
 // 				var con ="/APPLETPC";
 // 		         createOperationLog(source,content,id,con);					
@@ -278,7 +278,7 @@ function doEditUser() {
 					
 					window.top.bootbox.dialog({
 						title: "错误信息",
-						message: "保存失败！" + "<br><br>" + data.result_info,
+						message: "保存失败！" + "<br><br>" + data.data,
 						size: "middle",
 						buttons: {
 							cancelType: {

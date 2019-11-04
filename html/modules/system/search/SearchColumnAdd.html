@@ -75,7 +75,7 @@
 					<label class="control-label" style="margin:5px;padding:0px;">元素类型</label>
 				</td>
 				<td class="my-form-table-td-content">
-					<select id="element_type" name="element_type" class="form-control input-sm" style="width:180px;padding:5px;float:left;" onchange="elementTypeChange();"></select>
+					<select id="elementType" name="elementType" class="form-control input-sm" style="width:180px;padding:5px;float:left;" onchange="elementTypeChange();"></select>
 				</td>
 				
 				<td class="my-form-table-td-label">
@@ -83,10 +83,10 @@
 				</td>
 				<td class="my-form-table-td-content">
 					<div class="input-group">
-						<input type="hidden" id="ddt_code" name="ddt_code">
-						<input type="text" id="ddt_text" name="ddt_text" class="form-control input-sm" style="width:155px;padding:5px;float:left;background-color:#fff" readOnly>
+						<input type="hidden" id="ddtCode" name="ddtCode">
+						<input type="text" id="ddtText" name="ddtText" class="form-control input-sm" style="width:155px;padding:5px;float:left;background-color:#fff" readOnly>
 						<span class="input-group-btn">
-        					<button id="ddt_btn" class="btn btn-default" type="button" style="padding:4px 6px" onclick="openLovDataDict();">
+        					<button id="ddtBtn" class="btn btn-default" type="button" style="padding:4px 6px" onclick="openLovDataDict();">
         						<i class="glyphicon glyphicon-search"></i>
         					</button>
       					</span>
@@ -100,10 +100,10 @@
 				</td>
 				<td class="my-form-table-td-content">
 					<div class="input-group">
-						<input type="hidden" id="ds_code" name="ds_code">
-						<input type="text" id="ds_text" name="ds_text" class="form-control input-sm" style="width:155px;padding:5px;float:left;background-color:#fff" readOnly>
+						<input type="hidden" id="dsCode" name="dsCode">
+						<input type="text" id="dsText" name="dsText" class="form-control input-sm" style="width:155px;padding:5px;float:left;background-color:#fff" readOnly>
 						<span class="input-group-btn">
-        					<button id="ds_btn" class="btn btn-default" type="button" style="padding:4px 6px" onclick="openLovDataStruct();">
+        					<button id="dsBtn" class="btn btn-default" type="button" style="padding:4px 6px" onclick="openLovDataStruct();">
         						<i class="glyphicon glyphicon-search"></i>
         					</button>
       					</span>
@@ -115,10 +115,10 @@
 				</td>
 				<td class="my-form-table-td-content">
 					<div class="input-group">
-						<input type="hidden" id="lov_code" name="lov_code">
-						<input type="text" id="lov_text" name="lov_text" class="form-control input-sm" style="width:155px;padding:5px;float:left;background-color:#fff" readOnly>
+						<input type="hidden" id="lovCode" name="lovCode">
+						<input type="text" id="lovText" name="lovText" class="form-control input-sm" style="width:155px;padding:5px;float:left;background-color:#fff" readOnly>
 						<span class="input-group-btn">
-        					<button id="lov_btn" class="btn btn-default" type="button" style="padding:4px 6px" onclick="openLovLov();">
+        					<button id="lovBtn" class="btn btn-default" type="button" style="padding:4px 6px" onclick="openLovLov();">
         						<i class="glyphicon glyphicon-search"></i>
         					</button>
       					</span>
@@ -131,7 +131,7 @@
 					<label class="control-label" style="margin:5px;padding:0px;">显示顺序</label>
 				</td>
 				<td class="my-form-table-td-content">
-					<input id="display_order" name="display_order" type="text" class="form-control input-sm" style="width:180px;padding:5px;float:left;">
+					<input id="displayOrder" name="displayOrder" type="text" class="form-control input-sm" style="width:180px;padding:5px;float:left;">
 				</td>
 				
 				<td class="my-form-table-td-label">
@@ -166,7 +166,7 @@ $(document).ready(function() {
 					data: {
 						searchCode: searchCode,
 						columnCode: function(){return $('#column_code').val()},
-						token:function(){return securityContext.token}
+						Authorization:function(){return securityContext.Authorization}
 					}
 				}
 			},
@@ -178,7 +178,7 @@ $(document).ready(function() {
 				required: true,
 				maxlength: 100
 			},
-			'display_order':{
+			'displayOrder':{
 				required: true,
 				maxlength: 5,
 				number: true
@@ -201,7 +201,7 @@ $(document).ready(function() {
 				required: "[列SQL]不能为空！",
 				maxlength: "[列SQL]最大长度为100！"
 			},
-			'display_order':{
+			'displayOrder':{
 				required: "[显示顺序]不能为空！",
 				maxlength: "[显示顺序]最大值为99999！",
 				number: "[显示顺序]必须是数字！"
@@ -217,23 +217,23 @@ $(document).ready(function() {
 
 // 初始化下拉列表
 function initDropdownList(){
-	var url = path+"api/common/list/getMultiDataDictItemList";
-    url += "?typeCodes='operation_symbol','element_type'";
-    url += "&enabledFlag=Y";
+	var url = path+"app/system/datadict/getMultiDataDictItemList";
+    url += "?typeCodes='operation_symbol','elementType'";
+
 	
 	$.ajax({
 		type: "GET",
 		url: url,
-		headers:{"token":securityContext.token},
+		headers:{"Authorization":securityContext.Authorization},
 		success: function(data) {
 			if (data.code == "S") {
 				$("#operation_symbol").html("");
-			    $("#element_type").html("");
-			    $.each(JSON.parse(data.result_info), function(index, d){
+			    $("#elementType").html("");
+			    $.each(data.data, function(index, d){
 			    	if (d.type_code == "operation_symbol") {
-			    		$("#operation_symbol").append('<option value="' + d.item_code + '">' + d.item_name + '</option>');
-			    	} else if (d.type_code == "element_type") {
-			    		$("#element_type").append('<option value="' + d.item_code + '">' + d.item_name + '</option>');
+			    		$("#operation_symbol").append('<option value="' + d.itemCode + '">' + d.itemName + '</option>');
+			    	} else if (d.type_code == "elementType") {
+			    		$("#elementType").append('<option value="' + d.itemCode + '">' + d.itemName + '</option>');
 			    	}
 			    });
 			    
@@ -241,12 +241,12 @@ function initDropdownList(){
 			} else {
 				window.top.bootbox.dialog({
 					title: "错误信息",
-					message: "数据加载失败！" + "<br><br>" + data.result_info,
+					message: "数据加载失败！" + "<br><br>" + data.data,
 					size: "middle",
 					buttons: {
 						cancelType: {
 				      		label: "确定",
-				      		className: "btn-"+bootstrapSkin,
+				      		className: "btn-success",
 				      		callback: function() {
 				      			return true;
 				      		}
@@ -259,61 +259,61 @@ function initDropdownList(){
 }
 
 function elementTypeChange() {
-	var elementType = $("#element_type").val();
+	var elementType = $("#elementType").val();
 	if (elementType == "text") {
-		$("#ddt_text").attr("disabled", true);
-		$("#ddt_btn").attr("disabled", true);
-		$("#ddt_code").val("");
-		$("#ddt_text").val("");
+		$("#ddtText").attr("disabled", true);
+		$("#ddtBtn").attr("disabled", true);
+		$("#ddtCode").val("");
+		$("#ddtText").val("");
 		
-		$("#lov_text").attr("disabled", true);
-		$("#lov_btn").attr("disabled", true);
-		$("#lov_code").val("");
-		$("#lov_text").val("");
+		$("#lovText").attr("disabled", true);
+		$("#lovBtn").attr("disabled", true);
+		$("#lovCode").val("");
+		$("#lovText").val("");
 		
-		$("#ds_text").attr("disabled", true);
-		$("#ds_btn").attr("disabled", true);
-		$("#ds_code").val("");
-		$("#ds_text").val("");
+		$("#dsText").attr("disabled", true);
+		$("#dsBtn").attr("disabled", true);
+		$("#dsCode").val("");
+		$("#dsText").val("");
 	} else if (elementType == "select" || elementType == "radio" || elementType == "checkbox") {
-		$("#ddt_text").attr("disabled", false);
-		$("#ddt_btn").attr("disabled", false);
+		$("#ddtText").attr("disabled", false);
+		$("#ddtBtn").attr("disabled", false);
 		
-		$("#lov_text").attr("disabled", true);
-		$("#lov_btn").attr("disabled", true);
-		$("#lov_code").val("");
-		$("#lov_text").val("");
+		$("#lovText").attr("disabled", true);
+		$("#lovBtn").attr("disabled", true);
+		$("#lovCode").val("");
+		$("#lovText").val("");
 		
-		$("#ds_text").attr("disabled", true);
-		$("#ds_btn").attr("disabled", true);
-		$("#ds_code").val("");
-		$("#ds_text").val("");
+		$("#dsText").attr("disabled", true);
+		$("#dsBtn").attr("disabled", true);
+		$("#dsCode").val("");
+		$("#dsText").val("");
 	} else if (elementType == "lov") {
-		$("#ddt_text").attr("disabled", true);
-		$("#ddt_btn").attr("disabled", true);
-		$("#ddt_code").val("");
-		$("#ddt_text").val("");
+		$("#ddtText").attr("disabled", true);
+		$("#ddtBtn").attr("disabled", true);
+		$("#ddtCode").val("");
+		$("#ddtText").val("");
 		
-		$("#lov_text").attr("disabled", false);
-		$("#lov_btn").attr("disabled", false);
+		$("#lovText").attr("disabled", false);
+		$("#lovBtn").attr("disabled", false);
 		
-		$("#ds_text").attr("disabled", true);
-		$("#ds_btn").attr("disabled", true);
-		$("#ds_code").val("");
-		$("#ds_text").val("");
+		$("#dsText").attr("disabled", true);
+		$("#dsBtn").attr("disabled", true);
+		$("#dsCode").val("");
+		$("#dsText").val("");
 	} else if (elementType == "tree") {
-		$("#ddt_text").attr("disabled", true);
-		$("#ddt_btn").attr("disabled", true);
-		$("#ddt_code").val("");
-		$("#ddt_text").val("");
+		$("#ddtText").attr("disabled", true);
+		$("#ddtBtn").attr("disabled", true);
+		$("#ddtCode").val("");
+		$("#ddtText").val("");
 		
-		$("#lov_text").attr("disabled", true);
-		$("#lov_btn").attr("disabled", true);
-		$("#lov_code").val("");
-		$("#lov_text").val("");
+		$("#lovText").attr("disabled", true);
+		$("#lovBtn").attr("disabled", true);
+		$("#lovCode").val("");
+		$("#lovText").val("");
 		
-		$("#ds_text").attr("disabled", false);
-		$("#ds_btn").attr("disabled", false);
+		$("#dsText").attr("disabled", false);
+		$("#dsBtn").attr("disabled", false);
 	}
 }
 
@@ -330,12 +330,12 @@ function openLovDataDict() {
 		buttons: {
 			saveType: {
 	      		label: "确定",
-	      		className: "btn-"+bootstrapSkin,
+	      		className: "btn-success",
 	      		callback: function() {
 	      			var result = window.top.document.getElementById("dataDictLovFrame").contentWindow.getLovData();
 	      			if(result){
-	      			$("#ddt_code").val(result.lov_value);
-	      			$("#ddt_text").val(result.lov_text);
+	      			$("#ddtCode").val(result.lovValue);
+	      			$("#ddtText").val(result.lovText);
 	      			};
 	      			return result;
 	      		}
@@ -364,12 +364,12 @@ function openLovLov() {
 		buttons: {
 			saveType: {
 	      		label: "确定",
-	      		className: "btn-"+bootstrapSkin,
+	      		className: "btn-success",
 	      		callback: function() {
 	      			var result = window.top.document.getElementById("lovLovFrame").contentWindow.getLovData();
 	      			if(result){
-	      			$("#lov_code").val(result.lov_value);
-	      			$("#lov_text").val(result.lov_text);
+	      			$("#lovCode").val(result.lovValue);
+	      			$("#lovText").val(result.lovText);
 	      			};
 	      			return result;
 	      		}
@@ -398,12 +398,12 @@ function openLovDataStruct() {
 		buttons: {
 			saveType: {
 	      		label: "确定",
-	      		className: "btn-"+bootstrapSkin,
+	      		className: "btn-success",
 	      		callback: function() {
 	      			var result = window.top.document.getElementById("lovLovFrame").contentWindow.getLovData();
 	      			if(result){
-	      			$("#ds_code").val(result.lov_value);
-	      			$("#ds_text").val(result.lov_text);
+	      			$("#dsCode").val(result.lovValue);
+	      			$("#dsText").val(result.lovText);
 	      			};
 	      			return result;
 	      		}
@@ -429,7 +429,7 @@ function doAddSearchColumn() {
 		
 		var url = path+"/app/sys/search/addSearchColumn";
 		url += "?t=" + new Date();
-		url+="&token="+securityContext.token;
+		url+="&Authorization="+securityContext.Authorization;
 
 		$.ajax({
 			type: "post",
@@ -447,7 +447,7 @@ function doAddSearchColumn() {
 						buttons: {
 							cancelType: {
 					      		label: "确定",
-					      		className: "btn-"+bootstrapSkin,
+					      		className: "btn-success",
 					      		callback: function() {
 					      			return true;
 					      		}
@@ -464,7 +464,7 @@ function doAddSearchColumn() {
 						buttons: {
 							cancelType: {
 					      		label: "确定",
-					      		className: "btn-"+bootstrapSkin,
+					      		className: "btn-success",
 					      		callback: function() {
 					      			return true;
 					      		}

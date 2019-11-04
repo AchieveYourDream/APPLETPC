@@ -455,7 +455,7 @@ validator = $("#GoodsAddForm").validate({
 		   }
 		   $(".dept_select").trigger("chosen:updated")
 		} else {
-			$.growl.error({    title: "错误标题", message: data.result_info});
+			$.growl.error({    title: "错误标题", message: data.data});
 		}
 		}
 	});
@@ -488,7 +488,7 @@ if(validator.form()){
 					result = true;
 				} else {
 					result = false;
-					$.growl.warning({    title: "错误标题", message: data.result_info});
+					$.growl.warning({    title: "错误标题", message: data.data});
 				}
 		    }
 		});
@@ -582,7 +582,7 @@ function getMainSelectInfo() {
 				success : function(data) {
 					if (data.code == "S") {
 						$("#main_style").html("")
-						$.each(JSON.parse(data.result_info), function(index, d) {
+						$.each(data.data, function(index, d) {
                        	var option='<option value="' + d.code + '">'+ d.name + '</option>';
                        	$("#main_style").append(option);  
 					});
@@ -601,11 +601,11 @@ function getSubSelectInfo() {
 				type : "POST",
 				url : url,
 				async:false,
-				data:{"token":securityContext.token,"node_code":$("#main_style").val()},
+				data:{"token":securityContext.token,"nodeCode":$("#main_style").val()},
 				success : function(data) {
 					if (data.code == "S") {
 						$("#sub_style").html('<option value="">空</option>')
-						$.each(JSON.parse(data.result_info), function(index, d) {
+						$.each(data.data, function(index, d) {
                        	var option='<option value="' + d.code + '">'+ d.name + '</option>';
                        	$("#sub_style").append(option);  
 					});
@@ -619,7 +619,7 @@ function getSubSelectInfo() {
 
 // 初始化服装风格
 function initGoodsStyle() {
-		var url = path + "api/common/list/getSingleDataDictItemList";
+		var url = path + "app/system/datadict/getSingleDataDictItemList";
 		url += "?typeCode=app_goos_style&enabledFlag=Y";
 
 		$.ajax({
@@ -630,14 +630,14 @@ function initGoodsStyle() {
 			success : function(data) {
 				if (data.code == "S") {
 					$("#style_type").html('<option value="">空</option>');
-					$.each(JSON.parse(data.result_info), function(index, d) {
-						$("#style_type").append('<option value="' + d.item_code + '">'+ d.item_name + '</option>')
+					$.each(data.data, function(index, d) {
+						$("#style_type").append('<option value="' + d.itemCode + '">'+ d.itemName + '</option>')
 					});
 						$("#style_type").trigger("chosen:updated"); 
 				} else {
 					$.growl.error({
 	 			       	title: "提示信息",
-	 			       	message:"数据加载失败！" + "<br><br>" + data.result_info,
+	 			       	message:"数据加载失败！" + "<br><br>" + data.data,
 	 		       });
 				}
 			}

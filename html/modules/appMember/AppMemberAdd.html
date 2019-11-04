@@ -160,12 +160,12 @@ function doAddAppMember() {
 		    async: false,
 		    success: function(data){
 				
-				if (data.result_code == "Y") {
+				if (data.code == "S") {
 					result = true;
 					$.growl.notice({title: "提示信息",message:"保存成功"});
-				} else if (data.result_code == "N") {
+				} else {
 					result = false;
-					$.growl.error({title: "提示信息",message:data.result_info});
+					$.growl.error({title: "提示信息",message:data.data});
 				}
 		    }
 		});

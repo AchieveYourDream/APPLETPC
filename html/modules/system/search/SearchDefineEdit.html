@@ -100,13 +100,13 @@ $(document).ready(function() {
 	url += "&searchCode=" + searchCode;
 	url+="&Authorization="+securityContext.Authorization;
 	$.post(url, function(data) {
-		if (data.result_code == "Y") {
-			var ssd = JSON.parse(data.result_info);
+		if (data.code == "S") {
+			var ssd = data.data;
 			dwr.util.setValues(ssd);
-		} else if (data.result_code == "N") {
+		} else {
 			window.top.bootbox.dialog({
 				title: "错误信息",
-				message: "数据加载失败！" + "<br><br>" + data.result_info,
+				message: "数据加载失败！" + "<br><br>" + data.data,
 				size: "middle",
 				buttons: {
 					cancelType: {

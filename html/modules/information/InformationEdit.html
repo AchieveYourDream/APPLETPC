@@ -221,9 +221,9 @@ validator = $("#InformationEditForm").validate({
 		data:{"token":securityContext.token,"information_id":information_id},
 		success: function(data) {
 		
-		if (data.result_code == "Y") {
+		if (data.code == "S") {
 		debugger;
-			var ai = JSON.parse(data.result_info);
+			var ai = data.data;
 // 			  预览
 	      var pic = $(".preview");
 // 	 	       添加按钮
@@ -239,8 +239,8 @@ validator = $("#InformationEditForm").validate({
 		   dwr.util.setValues(ai);
 		    $("#is_banner_show").trigger("chosen:updated")
 		     $("#isvisible").trigger("chosen:updated")
-		} else if (data.result_code == "N") {
-			$.growl.error({    title: "错误标题", message: data.result_info});
+		} else {
+			$.growl.error({    title: "错误标题", message: data.data});
 		}
 		}
 	});
@@ -263,11 +263,11 @@ function doEditInformation() {
 		    data: ac,
 		    async: false,
 		    success: function(data){
-				if (data.result_code == "Y") {
+				if (data.code == "S") {
 					result = true;
-				} else if (data.result_code == "N") {
+				} else {
 					result = false;
-					$.growl.warning({    title: "错误标题", message: data.result_info});
+					$.growl.warning({    title: "错误标题", message: data.data});
 				}
 		    }
 		});

@@ -115,7 +115,7 @@
 								<input type="hidden" id="store_code" name="store_code">
 								<input type="text" id="store_name"   class="form-control input-sm"  name="store_name" class="form-control input-sm" style="width:145px;padding:5px;float:left;background-color:#fff; border-radius: 3px;" readOnly>
 								<span class="input-group-btn" style="float: left">
-		        					<button id="lov_btn" class="btn btn-default" type="button" style="padding:7px 10px;" onclick="openLovLov();">
+		        					<button id="lovBtn" class="btn btn-default" type="button" style="padding:7px 10px;" onclick="openLovLov();">
 		        						<i class="glyphicon glyphicon-search"></i>
 		        					</button>
 		      					</span>
@@ -394,8 +394,8 @@ return result;
 	      		callback: function() {
 	      			var result = window.top.document.getElementById("lovLovFrame").contentWindow.getLovData();
 	      			if(result){
-	      			$("#store_code").val(result.lov_value);//将获取到的门店ID写入隐藏框
-	      			$("#store_name").val(result.lov_text);//将获取到的门店名称写入文本框
+	      			$("#store_code").val(result.lov);//将获取到的门店ID写入隐藏框
+	      			$("#store_name").val(result.lovText);//将获取到的门店名称写入文本框
 	      			};
 	      			return result;
 	      		}

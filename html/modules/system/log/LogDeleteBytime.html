@@ -118,7 +118,7 @@ $(document).ready(function() {
 										    success: function(data){
 												
 											
-												if (data.result_code == "Y") {
+												if (data.code == "S") {
 												
 														
 													recordLog("O","APPLETPC","日志删除成功",securityContext.user_id);
@@ -130,7 +130,7 @@ $(document).ready(function() {
 														buttons: {
 															cancelType: {
 													      		label: "确定",
-													      		className: "btn-"+bootstrapSkin,
+													      		className: "btn-success",
 												      			callback: function() {
 												      				return true;
 												      		}
@@ -140,17 +140,17 @@ $(document).ready(function() {
 												
 												
 												      		
-											} else if (data.result_code == "N") {
+											} else {
 												recordLog("OF","APPLETPC","日志删除失败"+inventory_number,securityContext.user_id);
 												result=false;
 												window.top.bootbox.dialog({
 													title: "错误信息",
-													message: "删除失败！" + "<br><br>" + data.result_info,
+													message: "删除失败！" + "<br><br>" + data.data,
 													size: "middle",
 													buttons: {
 														cancelType: {
 												      		label: "确定",
-												      		className: "btn-"+bootstrapSkin,
+												      		className: "btn-success",
 												      		callback: function() {
 												      			return true;
 												      		}
@@ -168,7 +168,7 @@ $(document).ready(function() {
 							buttons: {
 								saveType: {
 						      		label: "确定",
-						      		className: "btn-"+bootstrapSkin,
+						      		className: "btn-success",
 					      			callback: function() {
 					      			
 					      			 	

@@ -143,7 +143,7 @@ function isshow(value,row,index){
 // 新建资讯管理
 function addInformation() {
 if(use_module==null){
-$.growl.warning({title: "提醒标题", message: "请选择资讯模块" });
+$.growl.warning({title: "提示信息", message: "请选择资讯模块" });
 return ;
 }
 	var url = "/APPLETPC/jsp/modules/redcollar/information/InformationAdd.html";
@@ -156,11 +156,11 @@ return ;
 		buttons: {
 			saveType: {
 	      		label: "保存",
-	      		className: "btn-"+bootstrapSkin,
+	      		className: "btn-success",
 	      		callback: function() {
 	      			var result = window.top.document.getElementById("InformationAddFrame").contentWindow.uploadImage();
 	      			if (result) {
-	      			$.growl.notice({title: "提醒标题", message: "保存成功" });
+	      			$.growl.notice({title: "提示信息", message: "保存成功" });
 	      			selectAppInformationList();
 	      			}
 	      			return result;
@@ -191,11 +191,11 @@ function editInformation(information_id) {
 		buttons: {
 			saveType: {
 	      		label: "保存",
-	      		className: "btn-"+bootstrapSkin,
+	      		className: "btn-success",
 	      		callback: function() {
 	      			var result = window.top.document.getElementById("InformationEditFrame").contentWindow.doEditInformation();
 	      			if (result) {
-	      				$.growl.notice({title: "提醒标题", message: "保存成功" });
+	      				$.growl.notice({title: "提示信息", message: "保存成功" });
 	      				selectAppInformationList();
 	      			}
 	      			return result;
@@ -221,13 +221,13 @@ function editInformation(information_id) {
 			    url: url,
 			    data:{"token":securityContext.token,"information_id":information_id,"isvisible":isvisible},
 			    success: function(data){
-					if (data.result_code == "Y") {
+					if (data.code == "S") {
 						result = true;
 						$.growl.notice({    title: "错误标题", message:"修改成功"});
 						selectAppInformationList();
-					} else if (data.result_code == "N") {
+					} else {
 						result = false;
-						$.growl.error({    title: "错误标题", message: data.result_info});
+						$.growl.error({    title: "错误标题", message: data.data});
 						}
 				    }
 				});
@@ -245,15 +245,15 @@ function  getAppInformationMenuInfo(){
             headers:{"token":securityContext.token},
             success: function (data) {
             	
-				if (data.result_code == "Y") {
+				if (data.code == "S") {
 				debugger;
-				$.each(JSON.parse(data.result_info), function(index, d) {
-						$("#menuDiv").append('<button type="button" class="btn '+bootstarp_btnstlye[index]+' btn-lg" onclick="redresh(\'' + d.node_code+'\')">'+d.node_name+'</button>')
+				$.each(data.data, function(index, d) {
+						$("#menuDiv").append('<button type="button" class="btn '+bootstarp_btnstlye[index]+' btn-lg" onclick="redresh(\'' + d.nodeCode+'\')">'+d.nodeName+'</button>')
 				 });
 				 
-				} else if (data.result_code == "N") {
+				} else {
 					result = false;
-				$.growl.error({    title: "错误标题", message: data.result_info});
+				$.growl.error({    title: "错误标题", message: data.data});
 				}
             }
         });
@@ -272,10 +272,10 @@ function selectAppInformationList(){
 		    url: url,
 		    data:{"use_module":use_module,"token":securityContext.token},
 		    success: function(data){
-				if (data.result_code == "Y") {
-					$("#informationTable").bootstrapTable("load", JSON.parse(data.result_info));
-				} else if (data.result_code == "N") {
-					$.growl.error({    title: "错误标题", message: data.result_info});
+				if (data.code == "S") {
+					$("#informationTable").bootstrapTable("load", data.data);
+				} else {
+					$.growl.error({    title: "错误标题", message: data.data});
 				}
 		    }
 		});

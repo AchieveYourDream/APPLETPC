@@ -15,69 +15,71 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
 	<title>数据字典项-新建</title>
-	<link type="text/css" rel="stylesheet" href="/APPLETPC/css/common/common.css">
-    <link type="text/css" rel="stylesheet" href="/APPLETPC/js/bootstrap/css/bootstrap.css">
-	<script type="text/javascript" src="/APPLETPC/js/common/common.js"></script>
-	<script type="text/javascript" src="/APPLETPC/js/common/util.js"></script>
-	<script type="text/javascript"src="/APPLETPC/js/jquery/jquery-2.2.3.min.js"></script>
-    <script type="text/javascript" src="/APPLETPC/js/json/json2.js"></script>
-    <script type="text/javascript" src="/APPLETPC/js/bootstrap/js/bootstrap.js"></script>
-	
+	<script src="/APPLETPC/js/jquery/jquery-3.4.1.min.js"></script>
 	<script type='text/javascript' src='/APPLETPC/js/json/model/SysDataDictItem.js'></script>
 	
-	<!-- jquery-validator -->
-	<script type="text/javascript"
-		src="/APPLETPC/js/plugins/jquery-validate/jquery.validate.min.js"></script>
-	<script type="text/javascript"
-		src="/APPLETPC/js/plugins/jquery-validate/jquery.validate.plu.js"></script>
 </head>
 <body class="my-body-content">
-	<form id="itemAddForm" name="itemAddForm" class="my-form-content">
-		<input type="hidden" id="type_code" name="type_code" >
-		
-		<table class="my-form-table-content">
-			<tr>
-				<td class="my-form-table-td-label" style="width:60px;">
-					<label class="control-label" style="margin:5px;padding:0px;">项编码</label>
-				</td>
-				<td class="my-form-table-td-content" style="width:200px;">
-					<input id="item_code" name="item_code" type="text" class="form-control input-sm" style="width:180px;padding:5px;float:left;">
-				</td>
-			</tr>
-			
-			<tr>
-				<td class="my-form-table-td-label">
-					<label class="control-label" style="margin:5px;padding:0px;">项名称</label>
-				</td>
-				<td class="my-form-table-td-content">
-					<input id="item_name" name="item_name" type="text" class="form-control input-sm" style="width:180px;padding:5px;float:left;">
-				</td>
-			</tr>
-			<tr>
-				<td class="my-form-table-td-label">
-					<label class="control-label" style="margin:5px;padding:0px;">显示顺序</label>
-				</td>
-				<td class="my-form-table-td-content">
-					<input id="display_order" name="display_order" type="text" class="form-control input-sm" style="width:180px;padding:5px;float:left;">
-				</td>
-			</tr>
-			
-			
-			<tr>
-				<td class="my-form-table-td-label">
-					<label class="control-label" style="margin:5px;padding:0px;">是否有效</label>
-				</td>
-				<td class="my-form-table-td-content">
-					<input id="enabled_flag" name="enabled_flag" type="checkbox">
-				</td>
-			</tr>
-		</table>
-	</form>
+
+<div class="content-wrap">
+	<div class="main">
+		<!-- /# row -->
+		<section class="subSection">
+			<div class="row">
+				<div class="col-lg-12">
+					<div class="card">
+						<form id="itemAddForm" name="itemAddForm" class="my-form-content">
+							<input id="typeCode" name="typeCode" style="display: none">
+							<table class="my-form-table-content">
+								<tr>
+									<td class="my-form-table-td-label" style="width:60px;">
+										<label class="control-label" style="margin:5px;padding:0px;">项编码</label>
+									</td>
+									<td class="my-form-table-td-content" style="width:200px;">
+										<input id="itemCode" name="itemCode" type="text" class="form-control input-sm"
+											   style="width:180px;padding:5px;float:left;">
+									</td>
+								</tr>
+								<tr>
+									<td class="my-form-table-td-label">
+										<label class="control-label" style="margin:5px;padding:0px;">项名称</label>
+									</td>
+									<td class="my-form-table-td-content">
+										<input id="itemName" name="itemName" type="text" class="form-control input-sm"
+											   style="width:180px;padding:5px;float:left;">
+									</td>
+								</tr>
+								<tr>
+									<td class="my-form-table-td-label">
+										<label class="control-label" style="margin:5px;padding:0px;">显示顺序</label>
+									</td>
+									<td class="my-form-table-td-content">
+										<input id="displayOrder" name="displayOrder" type="text"
+											   class="form-control input-sm"
+											   style="width:180px;padding:5px;float:left;">
+									</td>
+								</tr>
+								<tr>
+									<td class="my-form-table-td-label">
+										<label class="control-label" style="margin:5px;padding:0px;">是否有效</label>
+									</td>
+									<td class="my-form-table-td-content">
+										<input id="enabledFlag" name="enabledFlag" type="checkbox">
+									</td>
+								</tr>
+							</table>
+						</form>
+					</div>
+				</div>
+			</div>
+		</section>
+	</div>
+</div>
 </body>
 </html>
 
 <script type="text/javascript">
-$("#type_code").val(typeCode);
+$("#typeCode").val(typeCode);
 var validator;
 
 $(document).ready(function() {
@@ -85,41 +87,41 @@ $(document).ready(function() {
 		debug: true,
 		showErrors: showErrors,
 		rules: {
-			item_code: {
+			itemCode: {
 				required: true,
 				maxlength: 50,
 				isCode: true,
-				remote: {
-					url:path+"api/sys/datadict/checkDataDictItemCode?t=" + new Date(),
+                remote: {
+					url: path+"app/system/datadict/checkDataDictItemCode?t=" + new Date(),
 					type: "get",
+                    headers: {"Authorization":securityContext.Authorization},
 					data: {
-						typeCode: function(){return $('#type_code').val()},
-						itemCode: function(){return $('#item_code').val()},
-						Authorization:function(){return securityContext.Authorization}
+						typeCode: function(){return $('#typeCode').val()},
+						itemCode: function(){return $('#itemCode').val()}
 					}
 				}
 			},
-			item_name: {
+			itemName: {
 				required: true,
 				maxlength: 100
 			},
-			'display_order':{
+			'displayOrder':{
 				maxlength: 5,
 				number: true,
 				required: true,
 			}
 		},
 		messages: {
-			item_code: {
+			itemCode: {
 				required: "[项编码]不能为空！",
 				maxlength: "[项编码]最大长度为50！",
 				remote: "当前项编码已经存在！"
 			},
-			item_name: {
+			itemName: {
 				required: "[项名称]不能为空！",
 				maxlength: "[项名称]最大长度为100！"
 			},
-			'display_order':{
+			'displayOrder':{
 				maxlength: "[显示顺序]最大值为99999！",
 				number: "[显示顺序]必须是数字！",
 				required: "[项编码]不能为空！",
@@ -127,7 +129,7 @@ $(document).ready(function() {
 		}
 	});
 	
-	$("#enabled_flag").prop("checked", true);
+	$("#enabledFlag").prop("checked", true);
 });
 
 function doAddDataDictItem() {
@@ -137,58 +139,29 @@ function doAddDataDictItem() {
 		
 		dwr.util.getValues(ddi);
 		
-		if ($("#enabled_flag").prop("checked")) {
-			ddi.enabled_flag = "Y";
+		if ($("#enabledFlag").prop("checked")) {
+			ddi.enabledFlag = "Y";
 		} else {
-			ddi.enabled_flag = "N";
+			ddi.enabledFlag = "N";
 		}
 		
 		
-		var url = path+"api/sys/datadict/addDataDictItem";
+		var url = path+"app/system/datadict/addDataDictItem";
 		url += "?t=" + new Date();
-		url+="&Authorization="+securityContext.Authorization;
 
 		$.ajax({
-			type: "get",
+			type: "post",
 		    url: url,
 		    data: ddi,
 		    async: false,
-		    
+            headers: {"Authorization":securityContext.Authorization},
 		    success: function(data){
 				
-				if (data.result_code == "Y") {
+				if (data.code == "S") {
 					result = true;
-					window.top.bootbox.dialog({
-						title: "提示信息",
-						message: "保存成功！",
-						size: "small",
-						buttons: {
-							cancelType: {
-					      		label: "确定",
-					      		className: "btn-"+bootstrapSkin,
-					      		callback: function() {
-					      			return true;
-					      		}
-							}
-						}
-					});
-				} else if (data.result_code == "N") {
+				} else {
 					result = false;
-				recordLog("OF","APPLETPC","数据字典条目保存失败"+ data.result_info,securityContext.user_id);
-					window.top.bootbox.dialog({
-						title: "错误信息",
-						message: "保存失败！" + "<br><br>" + data.result_info,
-						size: "middle",
-						buttons: {
-							cancelType: {
-					      		label: "确定",
-					      		className: "btn-"+bootstrapSkin,
-					      		callback: function() {
-					      			return true;
-					      		}
-							}
-						}
-					});
+                    $.growl.error({title: "提示信息", message:"数据加载失败！" + "<br><br>" + data.data});
 				}
 		    }
 		});

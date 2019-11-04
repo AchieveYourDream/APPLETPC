@@ -3,7 +3,7 @@
 		window.location.href = "/APPLETPC/login.html";
 	}
 	var securityContext = JSON.parse(sessionStorage.getItem('securityContext'));
-	var bootstrapSkin = securityContext.bootstrapSkin;
+
 	var path = sessionStorage.getItem('path');
 </script>
 <!DOCTYPE html>
@@ -61,7 +61,7 @@
 	</div>
 	
 	<table id="memberTable" class="table table-condensed " data-toggle="table" data-toolbar="#userToolbar" data-icon-size="sm" 
-	data-url="http://localhost:8080/SPMTM/api/sys/member/getPCMemberListByStoreBrand" data-data-type="json" data-query-params="queryParams" 
+	data-url="http://localhost:8080/SPMTM/app/system/member/getPCMemberListByStoreBrand" data-data-type="json" data-query-params="queryParams"
 	data-pagination="true" data-side-pagination="server" data-pagination="true" data-page-size="10" data-page-list="[10,15,30,50,100,ALL]" data-undefined-text="" data-height="550">
 		<thead>
 			<tr>
@@ -151,7 +151,7 @@
 			buttons : {
 				saveType : {
 					label : "确定",
-					className : "btn-" + bootstrapSkin,
+					className : "btn-success"
 					callback : function() {
 						var sscVO = window.top.document.getElementById("logSearchFrame").contentWindow.getAdvanceSearchConditions();
 						searchCondition = JSON.stringify(sscVO);

@@ -1,689 +1,535 @@
 <script type="text/javascript">
-        if(sessionStorage.getItem('securityContext')==null){
-         window.location.href="/APPLETPC/login.html";
-        }
-        var securityContext = JSON.parse(sessionStorage.getItem('securityContext'));
-        var bootstrapSkin=securityContext.bootstrapSkin;
-        var path = sessionStorage.getItem('path');
+    if (sessionStorage.getItem('securityContext') == null) {
+        window.location.href = "/APPLETPC/login.html";
+    }
+    var securityContext = JSON.parse(sessionStorage.getItem('securityContext'));
+    var path = sessionStorage.getItem('path');
 </script>
 <!DOCTYPE html>
 <html>
 <head>
-	<meta charset="utf-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
-	<title>数据结构管理</title>
+    <title>数据结构管理</title>
 
-	<link   type="text/css" rel="stylesheet" href="/APPLETPC/css/common/common.css">
-    <link   type="text/css" rel="stylesheet" href="/APPLETPC/js/bootstrap/css/bootstrap.css">
-	<script type="text/javascript" src="/APPLETPC/js/common/common.js"></script>
-	<script type="text/javascript" src="/APPLETPC/js/common/util.js"></script>
-	<script type="text/javascript"src="/APPLETPC/js/jquery/jquery-2.2.3.min.js"></script>
-    <script type="text/javascript" src="/APPLETPC/js/json/json2.js"></script>
-    <script type="text/javascript" src="/APPLETPC/js/bootstrap/js/bootstrap.js"></script>
-    <script type="text/javascript" src="/APPLETPC/js/plugins/bootstrap-box/js/bootbox.min.js"></script>
-	<!-- bootstrap-table -->
-	<link type="text/css" rel="stylesheet"
-		href="/APPLETPC/js/plugins/bootstrap-table/css/bootstrap-table.css">
-		
-	<script type="text/javascript"
-		src="/APPLETPC/js/plugins/bootstrap-table/js/bootstrap-table.js"></script>
-	
-	<script type="text/javascript"
-		src="/APPLETPC/js/plugins/bootstrap-table/local/bootstrap-table-zh-CN.js"></script>
-		
-	<!-- bootstrap-treeview 多级列表树 插件-->
-	<link type="text/css" rel="stylesheet"
-		href="/APPLETPC/js/plugins/bootstrap-treeview/css/bootstrap-treeview.css">
-	
-	<script type="text/javascript"
-		src="/APPLETPC/js/plugins/bootstrap-treeview/js/bootstrap-treeview.js"></script>
+    <script src="/APPLETPC/js/jquery/jquery-3.4.1.min.js"></script>
+    <!-- bootstrap-treeview 多级列表树 插件-->
+    <link type="text/css" rel="stylesheet" href="/APPLETPC/js/plugins/bootstrap-treeview/css/bootstrap-treeview.css">
+
+    <script type="text/javascript" src="/APPLETPC/js/plugins/bootstrap-treeview/js/bootstrap-treeview.js"></script>
 </head>
 <body>
-	<div class="container-fluid" style="margin:0px;padding:0px;">
-		<div class="row" style="margin:0px;padding:0px;">
-			<div class="col-md-8" style="padding-left:5px;padding-right:5px;">
-            	<div id="dsdToolbar">
-            		<button id="refreshDSDBtn" class="btn btn-sm" onclick="queryDSDList();">
-			            <i class="glyphicon glyphicon-refresh"></i>&nbsp;刷新
-			        </button>
-					<button id="addDSDBtn" class="btn btn-sm" onclick="addDSD();">
-			            <i class="glyphicon glyphicon-plus"></i>&nbsp;新建
-			        </button>
-			        <button id="editDSDBtn" class="btn btn-sm" onclick="editDSD();">
-			            <i class="glyphicon glyphicon-pencil"></i>&nbsp;编辑
-			        </button>
-			        <button id="configStructAttributeBtn" class="btn btn-sm" onclick="configStructAttribute();">
-			            <i class="glyphicon glyphicon-list-alt"></i>&nbsp;扩展属性
-			        </button>
-			    </div>
-			    
-			    <table id="dsdTable"
-			    	   class="table table-condensed"
-			           data-toggle="table"
-			           data-toolbar="#dsdToolbar"
-			           data-height="100%"
-			           data-icon-size="sm"
-			           data-pagination="true"
-			           data-page-size="10"
-			           data-page-list="[10,15,20,25,30]"
-			           data-striped="true"
-			           data-search="true"
-			           data-unique-id="struct_code">
-			        <thead>
-			           	<tr>
-			                <th data-field="struct_code" data-halign="center" data-align="left" data-sortable="true">数据结构编码</th>
-			                <th data-field="struct_name" data-halign="center" data-align="left" data-sortable="true">数据结构名称</th>
-			                <th data-field="node_code_rule_name" data-halign="center" data-align="center" data-sortable="true">节点编码规则</th>
-			                <th data-field="rule_prefix" data-halign="center" data-align="left" data-sortable="true">节点编码前缀</th>
-			                <th data-field="rule_length" data-halign="center" data-align="right">节点编码长度</th>
-			                <th data-field="description" data-halign="center" data-align="left">说明</th>
-			            </tr>
-			        </thead>
-				</table>
-  			</div>
-  			
-  			<div class="col-md-4" style="padding-left:5px;padding-right:5px;">
-  				<div class="bootstrap-table">
-					<div class="fixed-table-toolbar">
-						<div class="bars pull-left">
-							<div id="dsdToolbar">
-								<button id="refreshDSNBtn" class="btn btn-sm" onclick="initDSNTree();">
-						            <i class="glyphicon glyphicon-refresh"></i>&nbsp;刷新
-						        </button>
-								<button id="addDSNBtn" class="btn btn-sm" onclick="addDSN();">
-						            <i class="glyphicon glyphicon-plus"></i>&nbsp;新建
-						        </button>
-						        <button id="editDSNBtn" class="btn btn-sm" onclick="editDSN();">
-						            <i class="glyphicon glyphicon-pencil"></i>&nbsp;编辑
-						        </button>
-						         <button id="editDSNBtn" class="btn btn-sm" onclick="delDSN();">
-						            <i class="glyphicon glyphicon-remove"></i>&nbsp;删除
-						        </button>
-						        <button id="configNodeAttributeBtn" class="btn btn-sm" onclick="configNodeAttribute();">
-						            <i class="glyphicon glyphicon-list-alt"></i>&nbsp;扩展属性
-						        </button>
-							</div>
-						</div>
-					</div>
-					<div class="fixed-table-container" style="padding-top:5px;padding-bottom:0px;border:0px;">
-						<div class="fixed-table-body">
-							<div id="dsnTree" style="font-size:12px;height:450px">
-								
-							</div>
-						</div>
-					</div>
-				</div>
-  			</div>
-		</div>
-	</div>
+<div class="content-wrap">
+    <div class="main">
+        <!-- /# row -->
+        <section class="mainSection">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="card">
+                        <div class="container-fluid" style="margin:0px;padding:0px;">
+                            <div class="row" style="margin:0px;padding:0px;">
+                                <div class="col-md-8" style="padding-left:5px;padding-right:5px;">
+                                    <div id="dsdToolbar">
+                                        <button i class="btn btn-sm btn-primary" onclick="queryDSDList();">
+                                            <i class="glyphicon glyphicon-refresh"></i>&nbsp;刷新
+                                        </button>
+                                        <button  class="btn btn-sm btn-success" onclick="addDSD();">
+                                            <i class="glyphicon glyphicon-plus"></i>&nbsp;新建
+                                        </button>
+                                        <button class="btn btn-sm btn-warning" onclick="editDSD();">
+                                            <i class="glyphicon glyphicon-pencil"></i>&nbsp;编辑
+                                        </button>
+                                        <button  class="btn btn-sm btn-info"
+                                                onclick="configStructAttribute();">
+                                            <i class="glyphicon glyphicon-list-alt"></i>&nbsp;扩展属性
+                                        </button>
+                                    </div>
+
+                                    <table id="dsdTable"
+                                           class="table table-condensed"
+                                           data-toggle="table"
+                                           data-toolbar="#dsdToolbar"
+                                           data-height="650"
+                                           data-icon-size="sm"
+                                           data-pagination="true"
+                                           data-page-size="10"
+                                           data-page-list="[10,15,20,25,30]"
+                                           data-striped="true"
+                                           data-search="true"
+                                           data-unique-id="structCode">
+                                        <thead>
+                                        <tr>
+                                            <th data-field="structCode" data-halign="center" data-align="left"
+                                                data-sortable="true">数据结构编码
+                                            </th>
+                                            <th data-field="structName" data-halign="center" data-align="left"
+                                                data-sortable="true">数据结构名称
+                                            </th>
+                                            <th data-field="nodeCodeRuleName" data-halign="center"
+                                                data-align="center" data-sortable="true">节点编码规则
+                                            </th>
+                                            <th data-field="rulePrefix" data-halign="center" data-align="left"
+                                                data-sortable="true">节点编码前缀
+                                            </th>
+                                            <th data-field="ruleLength" data-halign="center" data-align="right">
+                                                节点编码长度
+                                            </th>
+                                            <th data-field="description" data-halign="center" data-align="left">说明</th>
+                                        </tr>
+                                        </thead>
+                                    </table>
+                                </div>
+
+                                <div class="col-md-4" style="padding-left:5px;padding-right:5px;">
+                                    <div class="bootstrap-table">
+                                        <div class="fixed-table-toolbar">
+                                            <div class="bars pull-left">
+                                                <div >
+                                                    <button  class="btn btn-sm btn-primary"
+                                                            onclick="initDSNTree();">
+                                                        <i class="glyphicon glyphicon-refresh"></i>&nbsp;刷新
+                                                    </button>
+                                                    <button  class="btn btn-sm btn-success" onclick="addDSN();">
+                                                        <i class="glyphicon glyphicon-plus"></i>&nbsp;新建
+                                                    </button>
+                                                    <button  class="btn btn-sm btn-warning" onclick="editDSN();">
+                                                        <i class="glyphicon glyphicon-pencil"></i>&nbsp;编辑
+                                                    </button>
+                                                    <button class="btn btn-sm btn-danger" onclick="delDSN();">
+                                                        <i class="glyphicon glyphicon-remove"></i>&nbsp;删除
+                                                    </button>
+                                                    <button id="configNodeAttributeBtn" class="btn btn-sm btn-info"
+                                                            onclick="configNodeAttribute();">
+                                                        <i class="glyphicon glyphicon-list-alt"></i>&nbsp;扩展属性
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="fixed-table-container"
+                                             style="padding-top:5px;padding-bottom:0px;border:0px;">
+                                            <div class="fixed-table-body">
+                                                <div id="dsnTree" style="font-size:12px;height:450px">
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
 </body>
 </html>
 
 <script type="text/javascript">
-var currentDSDCode;//当前的结构编码
-var currentDSDRule;
-var currentDSNCode;//当前的节点编码
-var currentNodeId;
-var currentExpandNodeArr;
-var currentrule_prefix;
-$(".btn").addClass("btn-"+bootstrapSkin);
-$(document).ready(function() {
-	$("#dsdTable").on('click-row.bs.table', function (e, row, $element) {
-        $('.warning').removeClass('warning');
-        $($element).addClass('warning');
-        
-        currentDSDCode = row.struct_code;
-        currentDSDRule = row.node_code_rule;
-        
-        currentDSNCode = '';
-        currentNodeId = '';
-        currentExpandNodeArr = null;
-        currentrule_prefix=row.rule_prefix;
-        initDSNTree();
+    var currentDSDCode;//当前的结构编码
+    var currentDSDRule;
+    var currentDSNCode;//当前的节点编码
+    var currentNodeId;
+    var currentExpandNodeArr;
+    var currentrulePrefix;
+    $(document).ready(function () {
+        $("#dsdTable").on('click-row.bs.table', function (e, row, $element) {
+            $('.warning').removeClass('warning');
+            $($element).addClass('warning');
+
+            currentDSDCode = row.structCode;
+            currentDSDRule = row.nodeCodeRule;
+
+            currentDSNCode = '';
+            currentNodeId = '';
+            currentExpandNodeArr = null;
+            currentrulePrefix = row.rulePrefix;
+            initDSNTree();
+        });
+
+        $("#dsdTable").on('dbl-click-row.bs.table', function (e, row, $element) {
+            $('.warning').removeClass('warning');
+            $($element).addClass('warning');
+
+            currentDSDCode = row.structCode;
+            currentDSDRule = row.nodeCodeRule;
+
+            editDSD();
+        });
+
+        queryDSDList();
     });
-	
-	$("#dsdTable").on('dbl-click-row.bs.table', function (e, row, $element) {
-        $('.warning').removeClass('warning');
-        $($element).addClass('warning');
-        
-        currentDSDCode = row.struct_code;
-        currentDSDRule = row.node_code_rule;
-        
-        editDSD();
-    });
-	
-	queryDSDList();
-});
 
 
-// 获取数据结构类型列表
-function queryDSDList() {
-	$("#dsdTable").bootstrapTable('removeAll');
-	
-	var url = path+"api/sys/datastruct/getDataStructDefineList";
-    url += "?currentTime=" + new Date();
-    
-    $.ajax({
-		type: "get",
-		url: url,
-		async:false,
-		headers:{"token":securityContext.token},
-		success: function(data) {
-			
-			if (data.result_code == "Y") {
-				$("#dsdTable").bootstrapTable("load", JSON.parse(data.result_info));
-				
-				currentDSDCode = null;
-				currentDSDRule = null;
-			} else if (data.result_code == "N") {
-				window.top.bootbox.dialog({
-					title: "错误信息",
-					message: "数据加载失败！" + "<br><br>" + data.result_info,
-					size: "middle",
-					buttons: {
-						cancelType: {
-				      		label: "确定",
-				      		className: "btn-"+bootstrapSkin,
-				      		callback: function() {
-				      			return true;
-				      		}
-						}
-					}
-				});
-			}
-		}
-	});
-}
+    // 获取数据结构类型列表
+    function queryDSDList() {
+        $("#dsdTable").bootstrapTable('removeAll');
 
-// 新建数据结构
-function addDSD() {
-	var url = "/APPLETPC/html/modules/system/datastruct/DataStructDefineAdd.html";
-	
-	var structDefineAddFrame = '<iframe id="structDefineAddFrame" class="my-modal-iframe" width="100%" height="250px" src="' + url + '"></iframe>';
-	window.top.bootbox.dialog({
-		title: "数据结构-新建",
-		message: structDefineAddFrame,
-		size: "small",
-		buttons: {
-			saveType: {
-	      		label: "保存",
-	      		className: "btn-"+bootstrapSkin,
-	      		callback: function() {
-	      			var result = window.top.document.getElementById("structDefineAddFrame").contentWindow.doAddDataStructDefine();
-	      			if (result) {
-	      				queryDSDList();
-	      			}
-	      			return result;
-	      		}
-			},
-			cancelType: {
-	      		label: "取消",
-	      		className: "btn-default",
-	      		callback: function() {
-	      			return true;
-	      		}
-			}
-		}
-	});
-}
+        var url = path + "app/system/datastruct/getDataStructDefineList";
+        url += "?currentTime=" + new Date();
 
-// 编辑数据结构
-function editDSD() {
-	if (!currentDSDCode) {
-		window.top.bootbox.dialog({ 
-		    size: 'small',
-		    message: "请先选择数据结构！"
-		});
-		return;
-	}
-	
-	var url = "/APPLETPC/html/modules/system/datastruct/DataStructDefineEdit.html";
-	sessionStorage.setItem('structCode', currentDSDCode);
-	var structDefineEditFrame = '<iframe id="structDefineEditFrame" class="my-modal-iframe" width="100%" height="250px" src="' + url + '"></iframe>';
-	window.top.bootbox.dialog({
-		title: "数据结构-编辑",
-		message: structDefineEditFrame,
-		size: "small",
-		buttons: {
-			saveType: {
-	      		label: "保存",
-	      		className: "btn-"+bootstrapSkin,
-	      		callback: function() {
-	      			var result = window.top.document.getElementById("structDefineEditFrame").contentWindow.doEditDataStructDefine();
-	      			if (result) {
-	      				queryDSDList();
-	      			}
-	      			return result;
-	      		}
-			},
-			cancelType: {
-	      		label: "取消",
-	      		className: "btn-default",
-	      		callback: function() {
-	      			return true;
-	      		}
-			}
-		}
-	});
-}
+        $.ajax({
+            type: "get",
+            url: url,
+            async: false,
+            headers: {"Authorization":securityContext.Authorization},
+            success: function (data) {
 
-// 配置数据结构属性
-function configStructAttribute() {
-	if (!currentDSDCode) {
-		window.top.bootbox.dialog({ 
-		    size: 'small',
-		    message: "请先选择数据结构！",
-		    buttons: {
-			saveType: {
-	      		label: "确定",
-	      		className: "btn-"+bootstrapSkin,
-	      		callback: function() {
-	      		return true;
-	      		}
-	      		  }
-	      		}
-		});
-		return;
-	}
-	
-	var url = "/APPLETPC/html/modules/system/datastruct/DataStructAttributeConfig.html";
-	sessionStorage.setItem('structCode', currentDSDCode);
-	
-	var structAttributeConfigFrame = '<iframe id="structAttributeConfigFrame" class="my-modal-iframe" width="100%" height="375px" src="' + url + '"></iframe>';
-	
-	window.top.bootbox.dialog({
-		title: "数据结构-扩展属性",
-		message: structAttributeConfigFrame,
-		size: "large"
-	});
-}
+                if (data.code == "S") {
+                    $("#dsdTable").bootstrapTable("load", data.data);
 
-// 获取数据结构节点树
-function initDSNTree(){
-	if (!currentDSDCode) {
-		window.top.bootbox.dialog({ 
-		    size: 'small',
-		    message: "请先选择数据结构！",
-		    buttons: {
-			saveType: {
-	      		label: "确定",
-	      		className: "btn-"+bootstrapSkin,
-	      		callback: function() {
-	      		return true;
-	      		}
-	      		  }
-	      		}
-		});
-		return;
-	}
-	
-	var url = path+"api/sys/datastruct/getDataStructNodeTree";
-	url += "?currentTime=" + new Date();
-	url += "&structCode=" + currentDSDCode;
-    $.ajax({
-		type: "get",
-		url: url,
-		async:false,
-		headers:{"token":securityContext.token},
-		success: function(data) {
-			if (data.result_code == "Y") {
-				$('#dsnTree').treeview({
-					data: JSON.parse(data.result_info).nodes,
-					onNodeSelected: onTreeNodeSelectedHandler,
-					levels: 2,
-				});
-				
-				if (currentNodeId) {
-					$('#dsnTree').treeview('selectNode', [currentNodeId, {silent: true}]);
-				}
-				
-				if (currentExpandNodeArr) {
-					$.each(currentExpandNodeArr, function(index, d){
-						$('#dsnTree').treeview('expandNode', [d.nodeId, {silent: true}]);
-					});
-				}
-			} else if (data.result_code == "N") {
-				window.top.bootbox.dialog({
-					title: "错误信息",
-					message: "数据加载失败！" + "<br><br>" + data.result_info,
-					size: "middle",
-					buttons: {
-						cancelType: {
-				      		label: "确定",
-				      		className: "btn-"+bootstrapSkin,
-				      		callback: function() {
-				      			return true;
-				      		}
-						}
-					}
-				});
-			}
-		}
-	});
-}
+                    currentDSDCode = null;
+                    currentDSDRule = null;
+                } else {
+                    $.growl.error({title: "提示信息", message:"数据加载失败！" + "<br><br>" + data.data});
+                }
+            }
+        });
+    }
 
-// 树节点单击事件
-function onTreeNodeSelectedHandler(event, data) {
-	currentDSNCode = data.data.node_code;
-	currentNodeId = data.nodeId;
-}
+    // 新建数据结构
+    function addDSD() {
+        var url = "/APPLETPC/html/modules/system/datastruct/DataStructDefineAdd.html";
 
-function expandAllParentNode(nodeId) {
-	if (nodeId) {
-		$('#dsnTree').treeview('expandNode', [nodeId, {silent: true}]);
-		
-		var parentNode = $('#dsnTree').treeview('getParent', nodeId);
-		if (parentNode) {
-			expandAllParentNode(parentNode.nodeId);
-		}
-	}
-}
+        var structDefineAddFrame = '<iframe id="structDefineAddFrame" class="my-modal-iframe" width="100%" height="400px" src="' + url + '"></iframe>';
+        window.top.bootbox.dialog({
+            title: "数据结构-新建",
+            message: structDefineAddFrame,
+            size: "small",
+            buttons: {
+                saveType: {
+                    label: "保存",
+                    className: "btn-success" ,
+                    callback: function () {
+                        var result = window.top.document.getElementById("structDefineAddFrame").contentWindow.doAddDataStructDefine();
+                        if (result) {
+                            $.growl.notice({title: "提示信息", message: "保存成功" });
+                            queryDSDList();
+                        }
+                        return result;
+                    }
+                },
+                cancelType: {
+                    label: "取消",
+                    className: "btn-default",
+                    callback: function () {
+                        return true;
+                    }
+                }
+            }
+        });
+    }
 
-// 新建数据结构节点
-function addDSN() {
-	if (!currentDSDCode) {
-		window.top.bootbox.dialog({ 
-		    size: 'small',
-		    message: "请先选择数据结构！",
-		    buttons: {
-			saveType: {
-	      		label: "确定",
-	      		className: "btn-"+bootstrapSkin,
-	      		callback: function() {
-	      		return true;
-	      		}
-	      		  }
-	      		}
-		});
-		return;
-	}
-	
-	if (!currentDSNCode) {
-		window.top.bootbox.dialog({ 
-		    size: 'small',
-		    message: "请先选择数据结构节点！",
-		    buttons: {
-			saveType: {
-	      		label: "确定",
-	      		className: "btn-"+bootstrapSkin,
-	      		callback: function() {
-	      		return true;
-	      		}
-	      		  }
-	      		}
-		});
-		return;
-	}
-	
-	var url = "/APPLETPC/html/modules/system/datastruct/DataStructNodeAdd.html";
-	sessionStorage.setItem('structCode', currentDSDCode);
-	sessionStorage.setItem('parentNodeCode', currentDSNCode);
-	sessionStorage.setItem('nodeCodeRule', currentDSDRule);
-	
-	var structNodeAddFrame = '<iframe id="structNodeAddFrame" class="my-modal-iframe" width="100%" height="200px" src="' + url + '"></iframe>';
-	window.top.bootbox.dialog({
-		title: "数据结构节点-新建",
-		message: structNodeAddFrame,
-		size: "small",
-		buttons: {
-			saveType: {
-	      		label: "保存",
-	      		className: "btn-"+bootstrapSkin,
-	      		callback: function() {
-	      			var result = window.top.document.getElementById("structNodeAddFrame").contentWindow.doAddDataStructNode();
-	      			if (result) {
-	      				currentExpandNodeArr = $('#dsnTree').treeview('getExpanded');
-	      				initDSNTree();
-	      			}
-	      			return result;
-	      		}
-			},
-			cancelType: {
-	      		label: "取消",
-	      		className: "btn-default",
-	      		callback: function() {
-	      			return true;
-	      		}
-			}
-		}
-	});
-}
+    // 编辑数据结构
+    function editDSD() {
+        if (!currentDSDCode) {
+            $.growl.warning({title: "警告标题", message: "请先选择数据结构！" });
+            return;
+        }
 
-// 编辑数据结构节点
-function editDSN() {
-	if (!currentDSDCode) {
-		window.top.bootbox.dialog({ 
-		    size: 'small',
-		    message: "请先选择数据结构！",
-		    buttons: {
-			saveType: {
-	      		label: "确定",
-	      		className: "btn-"+bootstrapSkin,
-	      		callback: function() {
-	      		return true;
-	      		}
-	      		  }
-	      		}
-		});
-		return;
-	}
-	
-	if (!currentDSNCode) {
-		window.top.bootbox.dialog({ 
-		    size: 'small',
-		    message: "请先选择数据结构节点！",
-		    buttons: {
-			saveType: {
-	      		label: "确定",
-	      		className: "btn-"+bootstrapSkin,
-	      		callback: function() {
-	      		return true;
-	      		}
-	      		  }
-	      		}
-		});
-		return;
-	}
-	
-	var url = "/APPLETPC/html/modules/system/datastruct/DataStructNodeEdit.html";
-	sessionStorage.setItem('structCode', currentDSDCode);
-	sessionStorage.setItem('nodeCode', currentDSNCode);
-	
-	var structNodeEditFrame = '<iframe id="structNodeEditFrame" class="my-modal-iframe" width="100%" height="200px" src="' + url + '"></iframe>';
-	window.top.bootbox.dialog({
-		title: "数据结构节点-编辑",
-		message: structNodeEditFrame,
-		size: "small",
-		buttons: {
-			saveType: {
-	      		label: "保存",
-	      		className: "btn-"+bootstrapSkin,
-	      		callback: function() {
-	      			var result = window.top.document.getElementById("structNodeEditFrame").contentWindow.doEditDataStructNode();
-	      			if (result) {
-	      				currentExpandNodeArr = $('#dsnTree').treeview('getExpanded');
-	      				initDSNTree();
-	      			}
-	      			return result;
-	      		}
-			},
-			cancelType: {
-	      		label: "取消",
-	      		className: "btn-default",
-	      		callback: function() {
-	      			return true;
-	      		}
-			}
-		}
-	});
-}
+        var url = "/APPLETPC/html/modules/system/datastruct/DataStructDefineEdit.html";
+        sessionStorage.setItem('structCode', currentDSDCode);
+        var structDefineEditFrame = '<iframe id="structDefineEditFrame" class="my-modal-iframe" width="100%" height="400px" src="' + url + '"></iframe>';
+        window.top.bootbox.dialog({
+            title: "数据结构-编辑",
+            message: structDefineEditFrame,
+            size: "small",
+            buttons: {
+                saveType: {
+                    label: "保存",
+                    className: "btn-success" ,
+                    callback: function () {
+                        var result = window.top.document.getElementById("structDefineEditFrame").contentWindow.doEditDataStructDefine();
+                        if (result) {
+                            $.growl.notice({title: "提示信息", message: "保存成功" });
+                            queryDSDList();
+                        }
+                        return result;
+                    }
+                },
+                cancelType: {
+                    label: "取消",
+                    className: "btn-default",
+                    callback: function () {
+                        return true;
+                    }
+                }
+            }
+        });
+    }
 
-// 配置数据结构节点属性
-function configNodeAttribute() {
-	if (!currentDSDCode) {
-		window.top.bootbox.dialog({ 
-		    size: 'small',
-		    message: "请先选择数据结构！",
-		    buttons: {
-			saveType: {
-	      		label: "确定",
-	      		className: "btn-"+bootstrapSkin,
-	      		callback: function() {
-	      		return true;
-	      		}
-	      		  }
-	      		}
-		});
-		return;
-	}
-	
-	if (!currentDSNCode) {
-		window.top.bootbox.dialog({ 
-		    size: 'small',
-		    message: "请先选择数据结构节点！",
-		    buttons: {
-			saveType: {
-	      		label: "确定",
-	      		className: "btn-"+bootstrapSkin,
-	      		callback: function() {
-	      		return true;
-	      		}
-	      		  }
-	      		}
-		});
-		return;
-	}
-	
-	var url = "/APPLETPC/html/modules/system/datastruct/DataStructNodeAttributeConfig.html";
-	sessionStorage.setItem('structCode', currentDSDCode);
-	sessionStorage.setItem('nodeCode', currentDSNCode);
-	
-	var nodeAttributeConfigFrame = '<iframe id="nodeAttributeConfigFrame" class="my-modal-iframe" width="100%" height="300px" src="' + url + '"></iframe>';
-	
-	window.top.bootbox.dialog({
-		title: "数据结构节点-扩展属性",
-		message: nodeAttributeConfigFrame,
-		size: "small",
-		buttons: {
-			saveType: {
-	      		label: "保存",
-	      		className: "btn-"+bootstrapSkin,
-	      		callback: function() {
-	      			return window.top.document.getElementById("nodeAttributeConfigFrame").contentWindow.saveDataStrucNodeAttributes();
-	      		}
-			},
-			cancelType: {
-	      		label: "取消",
-	      		className: "btn-default",
-	      		callback: function() {
-	      			return true;
-	      		}
-			}
-		}
-	});
-}
-//删除数据结构节点
- function delDSN(){
-     if(currentDSNCode==currentrule_prefix){
-     return ;
-     }
-        if(currentDSNCode){
-		 window.top.bootbox.dialog({
-				title: "提示信息",
-				message: "请确认是否删除",
-				size: "middle",
-				buttons: {
-					OkType: {
-			      		label: "确定",
-			      		className: "btn-"+bootstrapSkin,
-			      		callback: function() {
-	    var url = path+"api/sys/datastruct/delSysDataStructureNode";
-	    url += "?t=" + new Date();
-		url += "&node_code="  + currentDSNCode;
-		url += "&structure_code=" + currentDSDCode;
-		$.ajax({
-			type: "get",
-		    url: url,
-		    async: false,
-		    headers:{"token":securityContext.token},
-		    success: function(data){
-				
-				if (data.result_code == "Y") {
-				recordLog("O","APPLETPC","数据结构"+currentDSDCode+",节点编码:"+currentDSNCode+"删除成功",securityContext.user_id);
-				currentDSNCode==null;
-// 				var source= "系统管理>数据结构>删除数据结构节点";
-// 				var content="数据结构节点:"+node_name+"删除成功";
-// 				var id = <%=securityContext.getUser_id()%>;		
-// 				var con ="<%=context%>";
-// 		         createOperationLog(source,content,id,con);
-					result = true;
-					window.top.bootbox.dialog({
-						title: "提示信息",
-						message: "删除成功！",
-						size: "middle",
-						buttons: {
-							cancelType: {
-					      		label: "确定",
-					      		className: "btn-"+bootstrapSkin,
-					      		callback: function() {
-					      		}
-							}
-						}
-					});
-					initDSNTree();
-					      		
-				} else if (data.result_code == "N") {
-				recordLog("O","APPLETPC","数据结构"+currentDSDCode+",节点编码:"+currentDSNCode+"删除失败"+ data.result_info,securityContext.user_id);
-					result = false;
-// 					var source= "系统管理>数据结构>删除数据结构节点";
-// 				var content="数据结构节点:"+node_name+"删除失败";
-// 				var id = <%=securityContext.getUser_id()%>;		
-// 				var con ="<%=context%>";
-					window.top.bootbox.dialog({
-						title: "错误信息",
-						message: "保存失败！" + "<br><br>" + data.result_info,
-						size: "middle",
-						buttons: {
-							cancelType: {
-					      		label: "确定",
-					      		className: "btn-"+bootstrapSkin,
-					      		callback: function() {
-					      			return true;
-					      		}
-							}
-						}
-					});
-				}
-		    }
-		});
-			      		}
-					},
-					cancelType: {
-			      		label: "取消",
-			      		className: "btn-"+bootstrapSkin,
-			      		callback: function() {
-			      			return true;
-			      		}
-					}
-				}
-			});
-			}else{
-					window.top.bootbox.dialog({ 
-				    size: 'small',
-				    message: "请先选泽数据结构属性！",
-				    buttons: {
-			saveType: {
-	      		label: "确定",
-	      		className: "btn-"+bootstrapSkin,
-	      		callback: function() {
-	      		return true;
-	      		}
-	      		  }
-	      		}
-				});
-			}
+    // 配置数据结构属性
+    function configStructAttribute() {
+        if (!currentDSDCode) {
+            $.growl.warning({title: "警告标题", message: "请先选择数据结构！" });
+            return;
+        }
 
-}
+        var url = "/APPLETPC/html/modules/system/datastruct/DataStructAttributeConfig.html";
+        sessionStorage.setItem('structCode', currentDSDCode);
+
+        var structAttributeConfigFrame = '<iframe id="structAttributeConfigFrame" class="my-modal-iframe" width="100%" height="375px" src="' + url + '"></iframe>';
+
+        window.top.bootbox.dialog({
+            title: "数据结构-扩展属性",
+            message: structAttributeConfigFrame,
+            size: "large"
+        });
+    }
+
+    // 获取数据结构节点树
+    function initDSNTree() {
+        if (!currentDSDCode) {
+            $.growl.warning({title: "警告标题", message: "请先选择数据结构！" });
+            return;
+        }
+
+        var url = path + "app/system/datastruct/getDataStructNodeTree";
+        url += "?currentTime=" + new Date();
+        url += "&structCode=" + currentDSDCode;
+        $.ajax({
+            type: "get",
+            url: url,
+            async: false,
+            headers: {"Authorization":securityContext.Authorization},
+            success: function (data) {
+                if (data.code == "S") {
+                    $('#dsnTree').treeview({
+                        data: JSON.parse(data.data).nodes,
+                        onNodeSelected: onTreeNodeSelectedHandler,
+                        levels: 2,
+                    });
+
+                    // if (currentNodeId) {
+                    //     $('#dsnTree').treeview('selectNode', [currentNodeId, {silent: true}]);
+                    // }
+                    //
+                    // if (currentExpandNodeArr) {
+                    //     $.each(currentExpandNodeArr, function (index, d) {
+                    //         $('#dsnTree').treeview('expandNode', [d.nodeId, {silent: true}]);
+                    //     });
+                    // }
+                } else {
+                    $.growl.error({title: "提示信息", message:"数据加载失败！" + "<br><br>" + data.data});
+                }
+            }
+        });
+    }
+
+    // 树节点单击事件
+    function onTreeNodeSelectedHandler(event, data) {
+        currentDSNCode = data.data.nodeCode;
+        currentNodeId = data.nodeId;
+    }
+
+    function expandAllParentNode(nodeId) {
+        if (nodeId) {
+            $('#dsnTree').treeview('expandNode', [nodeId, {silent: true}]);
+
+            var parentNode = $('#dsnTree').treeview('getParent', nodeId);
+            if (parentNode) {
+                expandAllParentNode(parentNode.nodeId);
+            }
+        }
+    }
+
+    // 新建数据结构节点
+    function addDSN() {
+        if (!currentDSDCode) {
+            $.growl.warning({title: "警告标题", message: "请先选择数据结构！" });
+            return;
+        }
+
+        if (!currentDSNCode) {
+            $.growl.warning({title: "警告标题", message: "请先选择数据结构节点！" });
+            return;
+        }
+
+        var url = "/APPLETPC/html/modules/system/datastruct/DataStructNodeAdd.html";
+        sessionStorage.setItem('structCode', currentDSDCode);
+        sessionStorage.setItem('parentNodeCode', currentDSNCode);
+        sessionStorage.setItem('nodeCodeRule', currentDSDRule);
+
+        var structNodeAddFrame = '<iframe id="structNodeAddFrame" class="my-modal-iframe" width="100%" height="400px" src="' + url + '"></iframe>';
+        window.top.bootbox.dialog({
+            title: "数据结构节点-新建",
+            message: structNodeAddFrame,
+            size: "small",
+            buttons: {
+                saveType: {
+                    label: "保存",
+                    className: "btn-success" ,
+                    callback: function () {
+                        var result = window.top.document.getElementById("structNodeAddFrame").contentWindow.doAddDataStructNode();
+                        if (result) {
+                            $.growl.notice({title: "提示信息", message: "保存成功" });
+                            currentExpandNodeArr = $('#dsnTree').treeview('getExpanded');
+                            initDSNTree();
+                        }
+                        return result;
+                    }
+                },
+                cancelType: {
+                    label: "取消",
+                    className: "btn-default",
+                    callback: function () {
+                        return true;
+                    }
+                }
+            }
+        });
+    }
+
+    // 编辑数据结构节点
+    function editDSN() {
+        if (!currentDSDCode) {
+            $.growl.warning({title: "警告标题", message: "请先选择数据结构！" });
+            return;
+        }
+
+        if (!currentDSNCode) {
+            $.growl.warning({title: "警告标题", message: "请先选择数据结构节点！" });
+            return;
+        }
+
+        var url = "/APPLETPC/html/modules/system/datastruct/DataStructNodeEdit.html";
+        sessionStorage.setItem('structCode', currentDSDCode);
+        sessionStorage.setItem('nodeCode', currentDSNCode);
+
+        var structNodeEditFrame = '<iframe id="structNodeEditFrame" class="my-modal-iframe" width="100%" height="400px" src="' + url + '"></iframe>';
+        window.top.bootbox.dialog({
+            title: "数据结构节点-编辑",
+            message: structNodeEditFrame,
+            size: "small",
+            buttons: {
+                saveType: {
+                    label: "保存",
+                    className: "btn-success" ,
+                    callback: function () {
+                        var result = window.top.document.getElementById("structNodeEditFrame").contentWindow.doEditDataStructNode();
+                        if (result) {
+                            currentExpandNodeArr = $('#dsnTree').treeview('getExpanded');
+                            $.growl.notice({title: "提示信息", message: "保存成功" });
+                            initDSNTree();
+                        }
+                        return result;
+                    }
+                },
+                cancelType: {
+                    label: "取消",
+                    className: "btn-default",
+                    callback: function () {
+                        return true;
+                    }
+                }
+            }
+        });
+    }
+
+    // 配置数据结构节点属性
+    function configNodeAttribute() {
+        if (!currentDSDCode) {
+            $.growl.warning({title: "警告标题", message: "请先选择数据结构！" });
+            return;
+        }
+
+        if (!currentDSNCode) {
+            $.growl.warning({title: "警告标题", message: "请先选择数据结构节点！" });
+            return;
+        }
+
+        var url = "/APPLETPC/html/modules/system/datastruct/DataStructNodeAttributeConfig.html";
+        sessionStorage.setItem('structCode', currentDSDCode);
+        sessionStorage.setItem('nodeCode', currentDSNCode);
+
+        var nodeAttributeConfigFrame = '<iframe id="nodeAttributeConfigFrame" class="my-modal-iframe" width="100%" height="300px" src="' + url + '"></iframe>';
+
+        window.top.bootbox.dialog({
+            title: "数据结构节点-扩展属性",
+            message: nodeAttributeConfigFrame,
+            size: "small",
+            buttons: {
+                saveType: {
+                    label: "保存",
+                    className: "btn-success" ,
+                    callback: function () {
+                       var result= window.top.document.getElementById("nodeAttributeConfigFrame").contentWindow.saveDataStrucNodeAttributes();
+
+                        if (result) {
+                            $.growl.notice({title: "提示信息", message: "保存成功" });
+                        }
+                        return result
+                    }
+                },
+                cancelType: {
+                    label: "取消",
+                    className: "btn-default",
+                    callback: function () {
+                        return true;
+                    }
+                }
+            }
+        });
+    }
+
+    //删除数据结构节点
+    function delDSN() {
+        if (currentDSNCode == currentrulePrefix) {
+            return;
+        }
+        if (currentDSNCode) {
+            window.top.bootbox.dialog({
+                title: "提示信息",
+                message: "请确认是否删除",
+                size: "middle",
+                buttons: {
+                    OkType: {
+                        label: "确定",
+                        className: "btn-success" ,
+                        callback: function () {
+                            var url = path + "app/system/datastruct/removeDataStructNode";
+                            url += "?t=" + new Date();
+                            url += "&nodeCode=" + currentDSNCode;
+                            url += "&structCode=" + currentDSDCode;
+                            $.ajax({
+                                type: "post",
+                                url: url,
+                                async: false,
+                                headers: {"Authorization": securityContext.Authorization},
+                                success: function (data) {
+
+                                    if (data.code == "S") {
+                                        currentDSNCode == null;
+
+                                        $.growl.notice({title: "提示信息", message: "删除成功" });
+                                        initDSNTree();
+                                        return  true;
+                                    } else {
+
+                                        $.growl.error({title: "提示信息", message:"数据加载失败！" + "<br><br>" + data.data});
+                                        return false;
+                                    }
+                                }
+                            });
+                        }
+                    },
+                    cancelType: {
+                        label: "取消",
+                        className: "btn-default" ,
+                        callback: function () {
+                            return true;
+                        }
+                    }
+                }
+            });
+        } else {
+
+            $.growl.warning({title: "警告标题", message: "请先选泽数据结构属性！" });
+            return true;
+        }
+
+    }
 </script>
