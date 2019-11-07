@@ -5,7 +5,6 @@
         var securityContext = JSON.parse(sessionStorage.getItem('securityContext'));
 
         var path = sessionStorage.getItem('path');
-        var redPath = sessionStorage.getItem('redPath');
 </script>
 <!DOCTYPE html>
 <html>
@@ -248,7 +247,7 @@ validator = $("#ClerkAddForm").validate({
 				maxlength: 12,
 				isCode: true,
 				remote: {
-					url:path+"api/appClerk/checkClerkCode?t=" + new Date(),
+					url:path+"app/appClerk/checkClerkCode?t=" + new Date(),
 					type: "get",
 					data: {
 						"store_code": function(){return $('#store_code').val()},
@@ -316,7 +315,7 @@ function doAddClerk(clerk_image) {
 		dwr.util.getValues(ac);
 		ac.clerk_city=$("#MeasureProvince").val()+" "+($("#MeasureCity").val()==null?"":$("#MeasureCity").val())+" "+($("#MeasureCounty").val()==null?"":$("#MeasureCounty").val());
 		ac.clerk_image=clerk_image;
-		var url = path+"api/appClerk/insertAppClerk";
+		var url = path+"app/appClerk/insertAppClerk";
 		url += "?t=" + new Date();
 		url+="&token="+securityContext.token;
 
@@ -342,7 +341,7 @@ function doAddClerk(clerk_image) {
 function  uploadImage(){
 	var result = false;	
 			if (validator.form()) {
-		var url = redPath+"uploadingRedImages/clerk";
+		var url = path+"uploadingImages/clerk";
 		url += "?t=" + new Date();
 
         var pic = new FormData();

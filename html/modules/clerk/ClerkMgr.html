@@ -42,7 +42,7 @@
 <div id="view">
 	<div id="clerk">
 					<button id="refreshTypeBtn" class="btn  btn-sm btn-success" onclick="addClerk();">
-			            <i class="glyphicon glyphicon-add"></i>&nbsp;新建
+			            <i class="glyphicon glyphicon-plus"></i>&nbsp;新建
 			        </button>
             		<button id="refreshTypeBtn" class="btn  btn-sm btn-info" onclick="redresh();">
 			            <i class="glyphicon glyphicon-refresh"></i>&nbsp;刷新
@@ -83,7 +83,7 @@
 					<th data-field="clerk_city" data-halign="center" data-align="center" >量体城市</th>
 					<th data-field="instruction"data-halign="center" data-align="center" data-visible="false">个性签名</th>
 					<th data-field="is_dimission"data-halign="center" data-align="center" data-formatter="isDimission">是否离职</th>
-					<th data-field="create_date"data-halign="center" data-align="center">创建时间</th>
+					<th data-field="createDate"data-halign="center" data-align="center">创建时间</th>
 					<th data-field="wx_number" 	data-halign="center" data-align="center" >微信号</th>
 					<th data-field="dimission_date"data-halign="center" data-align="center" data-visible="false">离职日期</th>
 					<th data-halign="center" 		 data-align="center" data-events="operateEvents" data-formatter="operateFormatter">操作</th>
@@ -246,7 +246,7 @@ function editClerk(store_code,clerk_id) {
 			      		label: "确定",
 			      		className: "btn-info",
 			      		callback: function() {
-						    var url = path+"api/appClerk/updateClerkDimission";
+						    var url = path+"app/appClerk/updateClerkDimission";
 						   	    url += "?t=" + new Date();
 								$.ajax({
 									type: "POST",

@@ -1,425 +1,349 @@
 <script type="text/javascript">
-         if(sessionStorage.getItem('securityContext')==null){
-         window.location.href="../../../modules/security/login.html";
-        }
-        var securityContext = JSON.parse(sessionStorage.getItem('securityContext'));
+    if (sessionStorage.getItem('securityContext') == null) {
+        window.location.href = "../../../modules/security/login.html";
+    }
+    var securityContext = JSON.parse(sessionStorage.getItem('securityContext'));
 
-        var path = sessionStorage.getItem('path');
-        var operationType = sessionStorage.getItem('operationType');
-        var lovCode = sessionStorage.getItem('lovCode')== null ? "" :sessionStorage.getItem('lovCode');
-        if("add"==operationType){
-          sessionStorage.removeItem('lovCode');
-        }
+    var path = sessionStorage.getItem('path');
+    var operationType = sessionStorage.getItem('operationType');
+    var lovCode = sessionStorage.getItem('lovCode') == null ? "" : sessionStorage.getItem('lovCode');
+    if ("add" == operationType) {
+        sessionStorage.removeItem('lovCode');
+    }
 </script>
 <!DOCTYPE html>
 <html>
 <head>
-	<meta charset="utf-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
-	<title>值列表</title>
+    <title>值列表</title>
+    <script src="/APPLETPC/js/jquery/jquery-3.4.1.min.js"></script>
 
-	<link type="text/css" rel="stylesheet" href="/APPLETPC/css/common/common.css">
-    <link type="text/css" rel="stylesheet" href="/APPLETPC/js/bootstrap/css/bootstrap.css">
-	<script type="text/javascript" src="/APPLETPC/js/common/common.js"></script>
-	<script type="text/javascript" src="/APPLETPC/js/common/util.js"></script>
-	<script type="text/javascript"src="/APPLETPC/js/jquery/jquery-2.2.3.min.js"></script>
-    <script type="text/javascript" src="/APPLETPC/js/json/json2.js"></script>
-    <script type="text/javascript" src="/APPLETPC/js/bootstrap/js/bootstrap.js"></script>
-	
-    <script type='text/javascript' src='/APPLETPC/js/json/model/LovVO.js'></script>
-	<script type='text/javascript' src='/APPLETPC/js/json/model/SysLovDefine.js'></script>
-	<script type='text/javascript' src='/APPLETPC/js/json/model/SysLovColumn.js'></script>
-	
-	<!-- bootstrap-table -->
-	<link type="text/css" rel="stylesheet"
-		href="/APPLETPC/js/plugins/bootstrap-table/css/bootstrap-table.css">
-		
-	<script type="text/javascript"
-		src="/APPLETPC/js/plugins/bootstrap-table/js/bootstrap-table.js"></script>
-	
-	<script type="text/javascript"
-		src="/APPLETPC/js/plugins/bootstrap-table/local/bootstrap-table-zh-CN.js"></script>
-		
-	<script type="text/javascript"
-		src="/APPLETPC/js/plugins/bootstrap-table/extensions/editable/bootstrap-table-editable.js"></script>
-	
-	<link type="text/css" rel="stylesheet"
-		href="/APPLETPC/js/plugins/bootstrap-table/extensions/editable/bootstrap-editable.css">
-		
-	<script type="text/javascript"
-		src="/APPLETPC/js/plugins/bootstrap-table/extensions/editable/bootstrap-editable.js"></script>
-		
-	<!-- jquery-validator -->
-	<script type="text/javascript"
-		src="/APPLETPC/js/plugins/jquery-validate/jquery.validate.min.js"></script>
-	<script type="text/javascript"
-		src="/APPLETPC/js/plugins/jquery-validate/jquery.validate.plu.js"></script>
+    <script type="text/javascript"  src="/APPLETPC//js/plugins/bootstrap-table/extensions/editable/bootstrap-table-editable.js"></script>
+    <link type="text/css" rel="stylesheet" href="/APPLETPC/js/plugins/bootstrap-table/extensions/editable/bootstrap-editable.css">
+    <script type="text/javascript" src="/APPLETPC/js/plugins/bootstrap-table/extensions/editable/bootstrap-editable.js"></script>
+    <script src="/APPLETPC/js/json/model/SysLovDefine.js"></script>
+    <script src="/APPLETPC/js/json/model/LovVO.js"></script>
+
+
 </head>
 <body class="my-body-content">
-	<form id="lovConfigForm" name="lovConfigForm" class="my-form-content">
-		<table class="my-form-table-content">
-			<tr>
-				<td class="my-form-table-td-label" style="width:80px;">
-					<label class="control-label" style="margin:5px;padding:0px;">值列表编码</label>
-				</td>
-				<td class="my-form-table-td-content" style="width:200px;">
-					<input id="lovCode" name="lovCode" type="text" class="form-control input-sm" style="width:180px;padding:5px;float:left;">
-				</td>
-				
-				<td class="my-form-table-td-label" style="width:60px;">
-					<label class="control-label" style="margin:5px;padding:0px;">视图</label>
-				</td>
-				<td class="my-form-table-td-content">
-					<select id="view_name" name="view_name" class="form-control input-sm" style="width:180px;padding:5px;float:left;" onchange="getLovColumnList();"></select>
-				</td>
-			</tr>
-			
-			<tr>
-				<td class="my-form-table-td-label" style="width:80px;">
-					<label class="control-label" style="margin:5px;padding:0px;">值列表名称</label>
-				</td>
-				<td class="my-form-table-td-content">
-					<input id="lov_name" name="lov_name" type="text" class="form-control input-sm" style="width:180px;padding:5px;float:left;">
-				</td>
-				
-				<td class="my-form-table-td-label" style="width:60px;">
-					<label class="control-label" style="margin:5px;padding:0px;">说明</label>
-				</td>
-				<td class="my-form-table-td-content">
-					<input id="description" name="description" type="text" class="form-control input-sm" style="width:180px;padding:5px;float:left;">
-				</td>
-			</tr>
-			<tr>
-			    <td class="my-form-table-td-label" style="width:80px;">
-					<label class="control-label" style="margin:5px;padding:0px;">sql条件</label>
-				</td>
-				<td class="my-form-table-td-content" colspan="3">
-					<textarea name="sql_condition"  id ="sql_condition"class="form-control input-sm" style="width:440px;height:80px;"></textarea>
-			   </td>
-			
-			</tr>
-		</table>
-	</form>
 
-	<div class="container-fluid" style="margin:0px;padding:0px;">
-		<div class="row" style="margin:0px;padding:0px;">
-			<div class="col-md-12" style="padding-left:5px;padding-right:5px;">
-			    <table id="lovColumnTable"
-			    	   class="table table-condensed"
-			           data-toggle="table"
-			           data-striped="true"
-			           data-height="200">
-			        <thead>
-			           	<tr>
-			                <th data-field="column_name" data-halign="center" data-align="left">列名称</th>
-			                <th data-field="column_title" data-halign="center" data-align="left" data-editable="true">列标题</th>
-			                <th data-field="display_flag" data-halign="center" data-align="center">是否显示</th>
-			                <th data-field="return_value_flag" data-halign="center" data-align="center">返回值列</th>
-			                <th data-field="return_text_flag" data-halign="center" data-align="center">返回文本列</th>
-			            </tr>
-			        </thead>
-				</table>
-			</div>
-		</div>
-	</div>
+<div class="content-wrap">
+    <div class="main">
+        <!-- /# row -->
+        <section class="subSection">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="card" style="height:auto">
+                        <form id="lovConfigForm" name="lovConfigForm" class="my-form-content">
+                            <table class="my-form-table-content">
+                                <tr>
+                                    <td class="my-form-table-td-label" style="width:100px;">
+                                        <label class="control-label" style="margin:5px;padding:0px;">值列表编码</label>
+                                    </td>
+                                    <td class="my-form-table-td-content" style="width:200px;;">
+                                        <input id="lovCode" name="lovCode" type="text" class="form-control input-sm"
+                                               style="width:180px;;padding:5px;float:left;" readonly>
+                                    </td>
+
+                                    <td class="my-form-table-td-label" style="width:100px;">
+                                        <label class="control-label" style="margin:5px;padding:0px;">视图</label>
+                                    </td>
+                                    <td class="my-form-table-td-content">
+                                        <select id="viewName" name="viewName" class="form-control input-sm"
+                                                style="width:180px;;padding:5px;float:left;"
+                                                onchange="getLovColumnList();"></select>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td class="my-form-table-td-label" style="width:100px;">
+                                        <label class="control-label" style="margin:5px;padding:0px;">值列表名称</label>
+                                    </td>
+                                    <td class="my-form-table-td-content">
+                                        <input id="lovName" name="lovName" type="text" class="form-control input-sm"
+                                               style="width:180px;;padding:5px;float:left;">
+                                    </td>
+
+                                    <td class="my-form-table-td-label" style="width:100px;">
+                                        <label class="control-label" style="margin:5px;padding:0px;">说明</label>
+                                    </td>
+                                    <td class="my-form-table-td-content">
+                                        <input id="description" name="description" type="text"
+                                               class="form-control input-sm"
+                                               style="width:180px;;padding:5px;float:left;">
+                                    </td>
+                                </tr>
+                                <!--<tr>-->
+                                    <!--<td class="my-form-table-td-label" style="width:100px;">-->
+                                        <!--<label class="control-label" style="margin:5px;padding:0px;">sql条件</label>-->
+                                    <!--</td>-->
+                                    <!--<td class="my-form-table-td-content" colspan="3">-->
+                                        <!--<textarea name="sqlCondition" id="sqlCondition" class="form-control input-sm"-->
+                                                  <!--style="width:440px;height:80px;"></textarea>-->
+                                    <!--</td>-->
+
+                                <!--</tr>-->
+                            </table>
+                        </form>
+
+                        <div class="container-fluid" style="margin:0px;padding:0px;">
+                            <div class="row" style="margin:0px;padding:0px;">
+                                <div class="col-md-12" style="padding-left:5px;padding-right:5px;">
+                                    <table id="lovColumnTable"
+                                           class="table table-condensed"
+                                           data-toggle="table"
+                                           data-striped="true">
+                                        <thead>
+                                        <tr>
+                                            <th data-field="columnName" data-halign="center" data-align="left">列名称</th>
+                                            <th data-field="columnTitle" data-halign="center" data-align="left"  data-editable="true">列标题
+                                            </th>
+                                            <th data-field="displayFlag" data-halign="center" data-align="center">
+                                                是否显示
+                                            </th>
+                                            <th data-field="returnValueFlag" data-halign="center" data-align="center">
+                                                返回值列
+                                            </th>
+                                            <th data-field="returnTextFlag" data-halign="center" data-align="center">
+                                                返回文本列
+                                            </th>
+                                        </tr>
+                                        </thead>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
 </body>
 </html>
 
 <script type="text/javascript">
 
-var validator;
+    var validator;
 
-$(document).ready(function() {
-	validator = $("#lovConfigForm").validate({
-		debug: true,
-		showErrors: showErrors,
-		rules: {
-			lovCode: {
-				required: true,
-				maxlength: 50,
-				isCode: true,
-				remote: {
-					url:path+"app/system/lov/checkLovCode?t=" + new Date(),
-					type: "get",
-					data: {
-						Authorization:function(){return securityContext.Authorization},
-						lovCode: function(){return $('#lovCode').val()},
-						operationType: operationType
-					}
-				}
-			},
-			lov_name: {
-				required: true,
-				maxlength: 100
-			},
-			'description':{
-				maxlength: 200
-			}
-		},
-		messages: {
-			lovCode: {
-				required: "[值列表编码]不能为空！",
-				maxlength: "[值列表编码]最大长度为50！",
-				remote: "当前值列表编码已经存在！"
-			},
-			lov_name: {
-				required: "[值列表名称]不能为空！",
-				maxlength: "[值列表名称]最大长度为100！"
-			},
-			'description':{
-				maxlength: "[说明]最大值为200！"
-			}
-		}
-	});
-	
-	$("#lovColumnTable").on('click-row.bs.table', function (e, row, $element) {
-        $('.warning').removeClass('warning');
-        $($element).addClass('warning');
+    $(document).ready(function () {
+        validator = $("#lovConfigForm").validate({
+            debug: true,
+            showErrors: showErrors,
+            rules: {
+                lovCode: {
+                    required: true,
+                    maxlength: 50,
+                },
+                lovName: {
+                    required: true,
+                    maxlength: 100
+                },
+                'description': {
+                    maxlength: 200
+                }
+            },
+            messages: {
+                lovCode: {
+                    required: "[值列表编码]不能为空！",
+                    maxlength: "[值列表编码]最大长度为50！",
+                    remote: "当前值列表编码已经存在！"
+                },
+                lovName: {
+                    required: "[值列表名称]不能为空！",
+                    maxlength: "[值列表名称]最大长度为100！"
+                },
+                'description': {
+                    maxlength: "[说明]最大值为200！"
+                }
+            }
+        });
+
+        $("#lovColumnTable").on('click-row.bs.table', function (e, row, $element) {
+            $('.warning').removeClass('warning');
+            $($element).addClass('warning');
+        });
+
+        if (operationType == "edit") {
+            $("#lovCode").attr("readonly", "readonly");
+            $("#viewName").attr("disabled", true);
+        }
+
+        getLovViewList();
+        getLovDefineInfo();
+        getLovColumnList();
     });
-	
-	if (operationType == "edit") {
-		$("#lovCode").attr("readonly","readonly");
-		$("#view_name").attr("disabled",true);
-	}
-	
-	getLovViewList();
-	
-	getLovDefineInfo();
-	
-	getLovColumnList();
-});
 
 
-// 获取值列表视图列表
-function getLovViewList() {
-	$("#lovColumnTable").bootstrapTable('removeAll');
-	
-	var url = path+"app/system/lov/getLovViewList";
-    url += "?currentTime=" + new Date();
-    
-    $.ajax({
-		type: "get",
-		url: url,
-		async: false,
-		headers:{"Authorization":securityContext.Authorization},
-		success: function(data) {
-			if (data.code == "S") {
-				$("#view_name").html("");
-			    $.each(data.data, function(index, d){
-			        $("#view_name").append('<option value="' + d + '">' + d + '</option>')
-			    });
-			} else {
-				window.top.bootbox.dialog({
-					title: "错误信息",
-					message: "数据加载失败！" + "<br><br>" + data.data,
-					size: "middle",
-					buttons: {
-						cancelType: {
-				      		label: "确定",
-				      		className: "btn-success",
-				      		callback: function() {
-				      			return true;
-				      		}
-						}
-					}
-				});
-			}
-		}
-	});
-}
+    // 获取值列表视图列表
+    function getLovViewList() {
+        $("#lovColumnTable").bootstrapTable('removeAll');
 
-function getLovDefineInfo() {
-	if (lovCode) {
-		var url = path+"app/system/lov/getLovDefineInfo";
-	    url += "?currentTime=" + new Date();
-	    url += "&lovCode=" + lovCode;
-	    
-	    $.ajax({
-			type: "get",
-			url: url,
-			async: false,
-			headers:{"Authorization":securityContext.Authorization},
-					success: function(data) {
-				
-				if (data.code == "S") {
-					var sld = data.data;
-					dwr.util.setValues(sld);
-					
-				} else {
-					window.top.bootbox.dialog({
-						title: "错误信息",
-						message: "数据加载失败！" + "<br><br>" + data.data,
-						size: "middle",
-						buttons: {
-							cancelType: {
-					      		label: "确定",
-					      		className: "btn-success",
-					      		callback: function() {
-					      			return true;
-					      		}
-							}
-						}
-					});
-				}
-			}
-		});
-	}
-}
+        var url = path + "app/system/lov/getLovViewList";
+        url += "?currentTime=" + new Date();
 
-function getLovColumnList() {
-	$("#lovColumnTable").bootstrapTable('removeAll');
-	
-	var url = path+"app/system/lov/getLovColumnList";
-    url += "?currentTime=" + new Date();
-    url += "&lovCode=" + lovCode;
-    url += "&viewName=" + $("#view_name").val();
-    
-    $.ajax({
-		type: "get",
-		url: url,
-		async: false,
-		headers:{"Authorization":securityContext.Authorization},
-		success: function(data) {
-			if (data.code == "S") {
-				var lovData = data.data;
-				
-				$.each(lovData, function(index, d){
-					if (d.display_flag == 'Y') {
-						d.display_flag = '<input type="checkbox" id="display_flag_checkbox_' + index + '" checked="checked">';
-					} else if (d.display_flag == 'N') {
-						d.display_flag = '<input type="checkbox" id="display_flag_checkbox_' + index + '">';
-					}
-					
-					if (d.return_value_flag == 'Y') {
-						d.return_value_flag = '<input type="radio" name="return_value_flag_radio" value="' + index + '" checked="checked">';
-					} else if (d.return_value_flag == 'N') {
-						d.return_value_flag = '<input type="radio" name="return_value_flag_radio" value="' + index + '">';
-					}
-					
-					if (d.return_text_flag == 'Y') {
-						d.return_text_flag = '<input type="radio" name="return_text_flag_radio" value="' + index + '" checked="checked">';
-					} else if (d.return_text_flag == 'N') {
-						d.return_text_flag = '<input type="radio" name="return_text_flag_radio" value="' + index + '">';
-					}
-			    });
-				
-				$("#lovColumnTable").bootstrapTable("load", lovData);
-			} else {
-				window.top.bootbox.dialog({
-					title: "错误信息",
-					message: "数据加载失败！" + "<br><br>" + data.data,
-					size: "middle",
-					buttons: {
-						cancelType: {
-				      		label: "确定",
-				      		className: "btn-success",
-				      		callback: function() {
-				      			return true;
-				      		}
-						}
-					}
-				});
-			}
-		}
-	});
-}
+        $.ajax({
+            type: "get",
+            url: url,
+            async: false,
+            headers: {"Authorization": securityContext.Authorization},
+            success: function (data) {
+                if (data.code == "S") {
+                    $("#viewName").html("<option value=''>请选择</option>");
+                    $.each(data.data, function (index, d) {
+                        $("#viewName").append('<option value="' + d + '">' + d + '</option>')
+                    });
+                } else {
+                    $.growl.error({title: "提示信息", message:"数据加载失败！" + "<br><br>" + data.data});
+                }
+            }
+        });
+    }
 
-function doSaveLov() {
-	var result = false;
-	if (validator.form()) {
-		var sld = new SysLovDefine();
-		sld.lovCode = $("#lovCode").val();
-		sld.lov_name = $("#lov_name").val();
-		sld.view_name = $("#view_name").val();
-		sld.description = $("#description").val();
-		sld.sql_condition=$("#sql_condition").val();
+    function getLovDefineInfo() {
+        if (lovCode) {
+            var url = path + "app/system/lov/getLovDefineInfo";
+            url += "?currentTime=" + new Date();
+            url += "&lovCode=" + lovCode;
+
+            $.ajax({
+                type: "get",
+                url: url,
+                async: false,
+                headers: {"Authorization": securityContext.Authorization},
+                success: function (data) {
+
+                    if (data.code == "S") {
+                        var sld = data.data;
+                        dwr.util.setValues(sld);
+
+                    } else {
+                        $.growl.error({title: "提示信息", message:"数据加载失败！" + "<br><br>" + data.data});
+                    }
+                }
+            });
+        }
+    }
+
+    function getLovColumnList() {
+        if(!$("#viewName").val()){
+            $("#lovColumnTable").bootstrapTable('removeAll');
+            $("#lovCode").val("");
+            return ;
+        }
+
+        $("#lovCode").val($("#viewName").val());
+
+        var url = path + "app/system/lov/getLovColumnList";
+        url += "?currentTime=" + new Date();
+        url += "&lovCode=" + lovCode;
+        url += "&viewName=" + $("#viewName").val();
+
+        $.ajax({
+            type: "get",
+            url: url,
+            async: false,
+            headers: {"Authorization": securityContext.Authorization},
+            success: function (data) {
+                if (data.code == "S") {
+                    var lovData = data.data;
+
+                    $.each(lovData, function (index, d) {
+                        if (d.displayFlag == 'Y') {
+                            d.displayFlag = '<input type="checkbox" id="displayFlagCheckbox' + index + '" checked="checked">';
+                        } else if (d.displayFlag == 'N') {
+                            d.displayFlag = '<input type="checkbox" id="displayFlagCheckbox' + index + '">';
+                        }
+
+                        if (d.returnValueFlag == 'Y') {
+                            d.returnValueFlag = '<input type="radio" name="returnValueFlagRadio" value="' + index + '" checked="checked">';
+                        } else if (d.returnValueFlag == 'N') {
+                            d.returnValueFlag = '<input type="radio" name="returnValueFlagRadio" value="' + index + '">';
+                        }
+
+                        if (d.returnTextFlag == 'Y') {
+                            d.returnTextFlag = '<input type="radio" name="returnTextFlagRadio" value="' + index + '" checked="checked">';
+                        } else if (d.returnTextFlag == 'N') {
+                            d.returnTextFlag = '<input type="radio" name="returnTextFlagRadio" value="' + index + '">';
+                        }
+                    });
+
+                    $("#lovColumnTable").bootstrapTable("load", lovData);
+                } else {
+                    $.growl.error({title: "提示信息", message:"数据加载失败！" + "<br><br>" + data.data});
+                }
+            }
+        });
+    }
+
+    function doSaveLov() {
+        var result = false;
+        if (validator.form()) {
+            var sld = new SysLovDefine();
+            sld.lovCode = $("#lovCode").val();
+            sld.lovName = $("#lovName").val();
+            sld.viewName = $("#viewName").val();
+            sld.description = $("#description").val();
+            sld.sqlCondition = $("#sqlCondition").val();
 // 		var sldJson = JSON.stringify(sld);
-		
-		var slc = $("#lovColumnTable").bootstrapTable("getData");
-		
-		var selectedReturnValueIndex = $("input[name='return_value_flag_radio']:checked").val();
-		var selectedReturnTextIndex = $("input[name='return_text_flag_radio']:checked").val();
-		
-		$.each(slc, function(index, d){
-			slc[index].lovCode = sld.lovCode;
-			
-			if ($('#display_flag_checkbox_' + index).is(':checked')) {
-				slc[index].display_flag = "Y";
-			} else {
-				slc[index].display_flag = "N";
-			}
-			
-			if (index == selectedReturnValueIndex) {
-				slc[index].return_value_flag = "Y";
-			} else {
-				slc[index].return_value_flag = "N";
-			}
-			
-			if (index == selectedReturnTextIndex) {
-				slc[index].return_text_flag = "Y";
-			} else {
-				slc[index].return_text_flag = "N";
-			}
-		});
-		
+
+            var slc = $("#lovColumnTable").bootstrapTable("getData");
+
+            var selectedReturnValueIndex = $("input[name='returnValueFlagRadio']:checked").val();
+            var selectedReturnTextIndex = $("input[name='returnTextFlagRadio']:checked").val();
+
+            $.each(slc, function (index, d) {
+                slc[index].lovCode = sld.lovCode;
+
+                if ($('#displayFlagCheckbox' + index).is(':checked')) {
+                    slc[index].displayFlag = "Y";
+                } else {
+                    slc[index].displayFlag = "N";
+                }
+
+                if (index == selectedReturnValueIndex) {
+                    slc[index].returnValueFlag = "Y";
+                } else {
+                    slc[index].returnValueFlag = "N";
+                }
+
+                if (index == selectedReturnTextIndex) {
+                    slc[index].returnTextFlag = "Y";
+                } else {
+                    slc[index].returnTextFlag = "N";
+                }
+            });
+
 // 		var slcJson = JSON.stringify(slc);
-		
-		var url = path+"app/system/lov/saveLovInfo";
-		url += "?t=" + new Date();
-		url+="&Authorization="+securityContext.Authorization;
-// 		var postData = "SysLovDefine=" + converSpecialCharOfUrl(encodeURI(sldJson));
-// 		postData += "&SysLovColumn=" + converSpecialCharOfUrl(encodeURI(slcJson));
-		
-		var lov=new LovVO();
-		lov.sld=sld;
-		lov.slcList=slc;
-		$.ajax({
-			type: "POST",
-		    url: url,
-		    contentType: 'application/json',
- 		    data:JSON.stringify(lov),
-		    async: false,
-		    success: function(data){
-				
-				if (data.code == "S") {
-					result = true;
-					window.top.bootbox.dialog({
-						title: "提示信息",
-						message: "保存成功！",
-						size: "small",
-						buttons: {
-							cancelType: {
-					      		label: "确定",
-					      		className: "btn-success",
-					      		callback: function() {
-					      			return true;
-					      		}
-							}
-						}
-					});
-				} else {
-					result = false;
-					
-					window.top.bootbox.dialog({
-						title: "错误信息",
-						message: "保存失败！" + "<br><br>" + data.data,
-						size: "middle",
-						buttons: {
-							cancelType: {
-					      		label: "确定",
-					      		className: "btn-success",
-					      		callback: function() {
-					      			return true;
-					      		}
-							}
-						}
-					});
-				}
-		    }
-		});
-	}
-	return result;
-}
+            var url = path + "app/system/lov/saveLovInfo";
+
+
+            var lov = new LovVO();
+            lov.sld = sld;
+            lov.slcList = slc;
+
+            $.ajax({
+                type: "POST",
+                url: url,
+                contentType: 'application/json',
+                headers: {"Authorization":securityContext.Authorization},
+                data: JSON.stringify(lov),
+                async: false,
+                success: function (data) {
+
+                    if (data.code == "S") {
+                        result = true;
+                    } else {
+                        result = false;
+                        $.growl.error({title: "提示信息", message:"数据加载失败！" + "<br><br>" + data.data});
+                    }
+                }
+            });
+        }
+        return result;
+    }
 </script>

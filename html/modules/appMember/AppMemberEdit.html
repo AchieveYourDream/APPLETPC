@@ -132,7 +132,7 @@ $(document).ready(function() {
 		}
 	});
 	
-	var url = path+"api/appmember/selectAppMemberByPk";
+	var url = path+"app/appmember/selectAppMemberByPk";
 	url += "?t=" + new Date();
 	$.ajax({
 			type: "POST",
@@ -159,7 +159,7 @@ function doEditAppMember() {
 		var am = new AppMember();
 		dwr.util.getValues(am);
 		
-		var url = path+"api/appmember/updateAppMember";
+		var url = path+"app/appmember/updateAppMember";
 		url += "?t=" + new Date();
 		url+="&Authorization="+securityContext.Authorization;
 

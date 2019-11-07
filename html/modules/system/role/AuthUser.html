@@ -148,6 +148,7 @@
                     className: "btn-success",
                     callback: function () {
                         var result = window.top.document.getElementById("typeAddFrame").contentWindow.getLovData();
+                        console.log(result);
                         if (result) {
                             var res = $("#typeTable").bootstrapTable("getData");
 
@@ -175,7 +176,7 @@
 
                             var url = path + "app/system/role/addRoleUserRelation";
                             url += "?roleId=" + roleId;
-                            url += "&username=" + arr;
+                            url += "&userList=" + arr.join(",");
                             $.ajax({
                                 type: "get",
                                 url: url,

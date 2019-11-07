@@ -55,7 +55,7 @@
 			<input type="hidden" id="member_source" name="member_source">
 			<input type="hidden" id="member_source_id" name="member_source_id">
 			<input type="hidden" id="delete_status" name="delete_status">
-			<input type="hidden" id="create_date" name="create_date">
+			<input type="hidden" id="createDate" name="createDate">
 			<table class="my-form-table-content">
 				<tr>
 					<td class="my-form-table-td-content" style="width:480px;">
@@ -449,7 +449,7 @@
                             <th data-field="order_header_id" data-halign="center" data-align="center">总单号</th>
                             <th data-field="customer_name" data-halign="center" data-align="center">姓名</th>
                             <th data-field="customer_tel" data-halign="center" data-align="center">手机号</th>
-                            <th data-field="create_date" data-halign="center" data-align="center">下单时间</th>
+                            <th data-field="createDate" data-halign="center" data-align="center">下单时间</th>
                             <th data-field="sale_amount" data-halign="center" data-align="center">订单价格</th>
                             <th data-field="sto_performance" data-halign="center" data-align="center" data-order="desc">支付价格</th>
                             <th data-field="clerk_name" data-halign="center" data-align="center" data-order="desc">门店/量体师</th>
@@ -1110,7 +1110,6 @@
                 	}
                     $("#orderTable").bootstrapTable("load", json);
                 } else {
-                    recordLog("OF","SPMTMWEB","会员消费记录初始化失败",securityContext.member_id);
                     layer.msg("初始化会员消费记录失败："+data.data);
                 }
             }        });

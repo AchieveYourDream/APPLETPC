@@ -234,7 +234,7 @@ function doEditUser() {
 		var su = new AdminUser();
 		dwr.util.getValues(su);
 		
-		var url = path+"api/updateAdminUserOneself";
+		var url = path+"app/updateAdminUserOneself";
 		url += "?t=" + new Date();
 
 		$.ajax({

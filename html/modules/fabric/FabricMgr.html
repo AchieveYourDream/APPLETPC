@@ -13,7 +13,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
-    <title>用戶列表</title>
+    <title>面料列表</title>
 
     <script src="/APPLETPC/js/jquery/jquery-3.4.1.min.js"></script>
 <body style="font-size:12px;">
@@ -24,24 +24,21 @@
             <div class="row">
                 <div class="col-lg-12">
                     <div class="card">
-                        <div id="user">
-                            <button class="btn  btn-sm btn-success" onclick="addUser();">
-                                <i class="glyphicon glyphicon-plus"></i>&nbsp;新建用户
+                        <div id="fabric">
+                            <button class="btn  btn-sm btn-success" onclick="addFabric();">
+                                <i class="glyphicon glyphicon-plus"></i>&nbsp;新建面料
                             </button>
-                            <button class="btn  btn-sm btn-warning" onclick="editUser();">
-                                <i class="glyphicon glyphicon-edit"></i>&nbsp;编辑用户
+                            <button class="btn  btn-sm btn-warning" onclick="editFabric();">
+                                <i class="glyphicon glyphicon-edit"></i>&nbsp;编辑面料
                             </button>
-                            <button class="btn  btn-sm btn-danger" onclick="deleteUser();">
-                                <i class="glyphicon glyphicon-remove"></i>&nbsp;删除用户
+                            <button class="btn  btn-sm btn-danger" onclick="deleteFabric();">
+                                <i class="glyphicon glyphicon-remove"></i>&nbsp;删除面料
                             </button>
-                            <button class="btn  btn-sm btn-info" onclick="resetPassword();">
-                                <i class="glyphicon glyphicon-retweet"></i>&nbsp;重置密码
+                            <button class="btn  btn-sm btn-success" onclick="updateFabricStatus('Y');">
+                                <i class="glyphicon glyphicon-ok-circle"></i>&nbsp;启用面料
                             </button>
-                            <button class="btn  btn-sm btn-danger" onclick="updateUserStatus('N');">
-                                <i class="glyphicon glyphicon-ban-circle"></i>&nbsp;失效用户
-                            </button>
-                            <button class="btn  btn-sm btn-success" onclick="updateUserStatus('Y');">
-                                <i class="glyphicon glyphicon-ok-circle"></i>&nbsp;启用用户
+                            <button class="btn  btn-sm btn-danger" onclick="updateFabricStatus('N');">
+                                <i class="glyphicon glyphicon-ban-circle"></i>&nbsp;禁用面料
                             </button>
                             <button class="btn  btn-sm btn-primary" onclick="searchDataList();">
                                 <i class="glyphicon glyphicon-search"></i>&nbsp;高级搜索
@@ -49,9 +46,9 @@
                         </div>
 
 
-                        <table id="userTable"
+                        <table id="fabricTable"
                                class="table table-condensed "
-                               data-toolbar="#user"
+                               data-toolbar="#fabric"
                                data-icon-size="sm"
                                data-data-type="json"
                                data-query-params="queryParams"
@@ -59,23 +56,22 @@
                                data-side-pagination="server"
                                data-pagination="true"
                                data-page-size="10"
-                               data-height="650"
                                data-page-list="[10,15,20,25,30,ALL]"
                                data-undefined-text=""
                                data-show-columns="true"
                         >
                             <thead>
                             <tr>
-                                <th data-field="username" data-halign="center" data-align="center">用户名</th>
-                                <th data-field="lastname" data-halign="center" data-align="center">姓名</th>
-                                <th data-field="email" data-halign="center" data-align="center">邮箱</th>
-                                <th data-field="mobilephone" data-halign="center" data-align="center">电话</th>
-                                <th data-field="userStatus" data-halign="center" data-align="center" data-formatter="userStatus">状态</th>
-                                <th data-field="realname" data-halign="center" data-align="center">真实姓名</th>
-                                <!--<th data-field="userType" data-halign="center" data-align="center">类型</th>-->
-                                <th data-field="headPortrait" data-halign="center" data-align="center"   data-formatter="headPortrait">头像</th>
-                                <!--<th data-field="endDate" data-halign="center" data-align="center">有效日期至</th>-->
-                                <th data-field="description" data-halign="center" data-align="center">描述</th>
+                                <th data-field="code" data-halign="center" data-align="center">面料号</th>
+                                <th data-field="color" data-halign="center" data-align="center">颜色</th>
+                                <th data-field="component" data-halign="center" data-align="center">成分</th>
+                                <th data-field="brand" data-halign="center" data-align="center">品牌</th>
+                                <th data-field="yarn" data-halign="center" data-align="center">纱织</th>
+                                <th data-field="flower" data-halign="center" data-align="center">花型</th>
+                                <th data-field="status" data-halign="center" data-align="center" data-formatter="fabricStatus">状态</th>
+                                <th data-field="similar" data-halign="center" data-align="center">相似面料</th>
+                                <th data-field="repertory" data-halign="center" data-align="center">库存</th>
+                                <th data-field="imagePath" data-halign="center" data-align="center"   data-formatter="fabricImage">面料图片</th>
                             </tr>
                             </thead>
                         </table>
@@ -90,26 +86,26 @@
 
 <script type="text/javascript">
     var searchCondition;
-    var username;
+    var fabricCode;
     $(document).ready(function () {
-        $('#userTable').bootstrapTable({
-            url: path + "app/system/user/getUserList",
+        $('#fabricTable').bootstrapTable({
+            url: path + "app/system/fabric/getFabricList",
             ajaxOptions: {
                 headers: {"Authorization": securityContext.Authorization}
             }
         });
-        $("#userTable").on('click-row.bs.table', function (e, row, $element) {
+        $("#fabricTable").on('click-row.bs.table', function (e, row, $element) {
             $('.warning').removeClass('warning');
             $($element).addClass('warning');
-            username = row.username;
+            fabricCode = row.code;
 
         });
 
-        $("#userTable").on('dbl-click-row.bs.table', function (e, row, $element) {
+        $("#fabricTable").on('dbl-click-row.bs.table', function (e, row, $element) {
             $('.warning').removeClass('warning');
             $($element).addClass('warning');
-            username = row.username;
-            editUser();
+            fabricCode = row.code;
+            editfabric();
         });
 
     });
@@ -122,28 +118,28 @@
     }
 
     function redresh() {
-        $('#userTable').bootstrapTable('refresh');
+        $('#fabricTable').bootstrapTable('refresh');
     }
 
     function searchDataList() {
         var url = "/APPLETPC/html/modules/system/search/AdvanceSearch.html";
-        sessionStorage.setItem("searchCode", 'app_user');
-        var app_userSearchFrame = '<iframe id="app_userSearchFrame" class="my-modal-iframe" width="100%" height="350px" src="' + url + '"></iframe>';
+        sessionStorage.setItem("searchCode", 'app_fabric');
+        var app_fabricSearchFrame = '<iframe id="app_fabricSearchFrame" class="my-modal-iframe" width="100%" height="350px" src="' + url + '"></iframe>';
 
         window.top.bootbox.dialog({
             title: "高级搜索",
-            message: app_userSearchFrame,
+            message: app_fabricSearchFrame,
             size: "small",
             buttons: {
                 saveType: {
                     label: "确定",
                     className: "btn-success",
                     callback: function () {
-                        var sscVO = window.top.document.getElementById("app_userSearchFrame").contentWindow.getAdvanceSearchConditions();
+                        var sscVO = window.top.document.getElementById("app_fabricSearchFrame").contentWindow.getAdvanceSearchConditions();
                         searchCondition = JSON.stringify(sscVO);
-                        sessionStorage.setItem("app_userSearchCondition", searchCondition);
+                        sessionStorage.setItem("app_fabricSearchCondition", searchCondition);
                         if (sscVO) {
-                            $("#userTable").bootstrapTable('refresh');
+                            $("#fabricTable").bootstrapTable('refresh');
                         }
                         return true;
                     }
@@ -159,20 +155,20 @@
         });
     }
 
-    // 新建用户
-    function addUser() {
-        var url = "/APPLETPC/html/modules/system/user/UserAdd.html";
-        var userAddFrame = '<iframe id="userAddFrame" class="my-modal-iframe" width="100%" height="600px" src="' + url + '"></iframe>';
+    // 新建面料
+    function addFabric() {
+        var url = "/APPLETPC/html/modules/fabric/FabricAdd.html";
+        var fabricAddFrame = '<iframe id="fabricAddFrame" class="my-modal-iframe" width="100%" height="600px" src="' + url + '"></iframe>';
         window.top.bootbox.dialog({
-            title: "用户-新建",
-            message: userAddFrame,
+            title: "面料-新建",
+            message: fabricAddFrame,
             size: "large",
             buttons: {
                 saveType: {
                     label: "保存",
                     className: "btn-success",
                     callback: function () {
-                        var result = window.top.document.getElementById("userAddFrame").contentWindow.doAddUser();
+                        var result = window.top.document.getElementById("fabricAddFrame").contentWindow.uploadImage();
                         if (result) {
                             $.growl.notice({title: "提示信息", message: "保存成功"});
                             redresh();
@@ -191,26 +187,26 @@
         });
     }
 
-    // 编辑用户
-    function editUser() {
-        if (!username) {
-            $.growl.warning({title: "警告标题", message: "请先选择用户"});
+    // 编辑面料
+    function editFabric() {
+        if (!fabricCode) {
+            $.growl.warning({title: "警告标题", message: "请先选择面料"});
             return;
         }
-        var url = "/APPLETPC/html/modules/system/user/UserEdit.html";
-        sessionStorage.setItem('username', username);
-        var userEditFrame = '<iframe id="userEditFrame" class="my-modal-iframe" width="100%" height="600px" src="' + url + '"></iframe>';
+        var url = "/APPLETPC/html/modules/fabric/FabricEdit.html";
+        sessionStorage.setItem('fabricCode', fabricCode);
+        var fabricEditFrame = '<iframe id="fabricEditFrame" class="my-modal-iframe" width="100%" height="600px" src="' + url + '"></iframe>';
 
         window.top.bootbox.dialog({
-            title: "用户-编辑",
-            message: userEditFrame,
+            title: "面料-编辑",
+            message: fabricEditFrame,
             size: "large",
             buttons: {
                 saveType: {
                     label: "保存",
                     className: "btn-success",
                     callback: function () {
-                        var result = window.top.document.getElementById("userEditFrame").contentWindow.doEditUser();
+                        var result = window.top.document.getElementById("fabricEditFrame").contentWindow.doEditFabric();
                         if (result) {
                             $.growl.notice({title: "提示信息", message: "保存成功"});
                             redresh();
@@ -229,33 +225,33 @@
         });
     }
 
-    //删除用户
-    function deleteUser() {
+    //删除面料
+    function deleteFabric() {
 
-        if (!username) {
-            $.growl.warning({title: "警告标题", message: "请先选择用户"});
+        if (!fabricCode) {
+            $.growl.warning({title: "警告标题", message: "请先选择面料"});
             return;
         }
         window.top.bootbox.dialog({
             title: "提示信息",
-            message: "请确认是否删除用户",
+            message: "请确认是否删除面料",
             size: "middle",
             buttons: {
                 OkType: {
                     label: "确定",
                     className: "btn-info",
                     callback: function () {
-                        var url = path + "app/system/user/removeUser";
+                        var url = path + "app/system/fabric/removeFabric";
                         url += "?t=" + new Date();
                         $.ajax({
                             type: "POST",
                             url: url,
                             headers: {"Authorization": securityContext.Authorization},
-                            data: {"userName": username},
+                            data: {"fabricCode": fabricCode},
                             success: function (data) {
                                 if (data.code == "S") {
 
-                                    $.growl.notice({title: "错误标题", message: "删除用户成功"});
+                                    $.growl.notice({title: "错误标题", message: "删除面料成功"});
                                     redresh();
                                     return true;
                                 } else {
@@ -279,19 +275,21 @@
 
     }
 
-    //重置密码
-    function resetPassword() {
-        if (!username) {
-            $.growl.warning({title: "警告标题", message: "请先选择用户"});
+
+
+    //修改面料状态
+    function updateFabricStatus(fabricState) {
+        if (!fabricCode) {
+            $.growl.warning({title: "警告标题", message: "请先选择面料"});
             return;
         }
-        var url = path + "app/system/user/resetPassword";
+        var url = path + "app/system/fabric/updateFabricStatus";
         url += "?t=" + new Date();
         $.ajax({
             type: "POST",
             url: url,
             headers: {"Authorization": securityContext.Authorization},
-            data: {"userName": username},
+            data: {"fabricCode": fabricCode, "fabricState": fabricState},
             success: function (data) {
                 if (data.code == "S") {
                     $.growl.notice({title: "错误标题", message: "修改成功"});
@@ -305,50 +303,21 @@
         });
 
     }
-
-    //修改用户状态
-    function updateUserStatus(userState) {
-        if (!username) {
-            $.growl.warning({title: "警告标题", message: "请先选择用户"});
-            return;
-        }
-        var url = path + "app/system/user/updateUserStatus";
-        url += "?t=" + new Date();
-        $.ajax({
-            type: "POST",
-            url: url,
-            headers: {"Authorization": securityContext.Authorization},
-            data: {"userName": username, "userState": userState},
-            success: function (data) {
-                if (data.code == "S") {
-                    $.growl.notice({title: "错误标题", message: "修改成功"});
-                    redresh();
-                    return true;
-                } else {
-                    $.growl.error({title: "错误标题", message: data.data});
-                }
-                return false;
-            }
-        });
-
-    }
-function  headPortrait (value){
+function  fabricImage (value){
     var image=""
         if(value!=null){
-            image='<img src="'+path+'static/getImages/user/'+value+'" style="height:50px;width:50px">';
+            image='<img src="'+path+'static/getImages/fabric/'+value+'" style="height:50px;width:50px">';
         }
-        console.log(image)
         return image;
 }
 
-function userStatus(value){
-        var userStatus = "";
-        if(value == "有效") {
-            var userStatus = '<span style="color:#34df48;font-weight:bold;">有效</span>';
+    function fabricStatus(value){
+        var fabricStatus = "";
+        if(value == "启用") {
+            var fabricStatus = '<span style="color:#34df48;font-weight:bold;"><i class="glyphicon glyphicon-ok">启用</span>';
         }else{
-            var userStatus = '<span style="color:#f50a05;font-weight:bold;">无效</span>';
+            var fabricStatus = '<span style="color:#f50a05;font-weight:bold;"><i class="glyphicon glyphicon-remove">禁用</span>';
         }
-        return userStatus;
+        return fabricStatus;
     }
-
 </script>

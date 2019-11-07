@@ -5,21 +5,18 @@
     var securityContext = JSON.parse(sessionStorage.getItem('securityContext'));
 
     var path = sessionStorage.getItem('path');
-    var username = sessionStorage.getItem('username');
 </script>
 <!DOCTYPE html>
 <html>
 <head>
-    <title>用户编辑</title>
+    <title>面料新建</title>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <script src="/APPLETPC/js/jquery/jquery-3.4.1.min.js"></script>
     <script src="/APPLETPC/js/plugins/jquery-chosen/js/chosen.jquery.js"></script>
     <link rel="stylesheet" href="/APPLETPC/js/plugins/jquery-chosen/css/chosen.css">
-    <script src="/APPLETPC/js/json/model/SysUser.js"></script>
-
-
+    <script src="/APPLETPC/js/json/model/SysFabric.js"></script>
 </head>
 <body class="my-body-content">
 <div class="content-wrap">
@@ -29,7 +26,7 @@
             <div class="row">
                 <div class="col-lg-12">
                     <div class="card">
-                        <form id="UserAddForm" name="UserAddForm" class="my-form-content">
+                        <form id="FabricAddForm" name="FabricAddForm" class="my-form-content">
                             <div style="width:90%">
                                 <div class="item">
                                     <img class="addImg" onclick="clickImg(this);"
@@ -40,57 +37,74 @@
                                     </div>
                                     <img class="delete" onclick="deleteImg(this)"
                                          src="/APPLETPC/img/delete.png"/>
-                                    <input id="headPortrait" name="headPortrait" class="imgName" style="display: none">
                                 </div>
                             </div>
                             <table class="my-form-table-content" style="margin-top: 80px;">
                                 <tr>
                                     <td class="my-form-table-td-label">
-                                        <label class="control-label" style="margin:5px;padding:0px;">账号</label>
+                                        <label class="control-label" style="margin:5px;padding:0px;">面料号</label>
                                     </td>
                                     <td class="my-form-table-td-content" style="width:310px">
-                                        <input id="username" name="username" type="text" class="form-control input-sm"
-                                               style="width:240px;padding:5px;float:left;" readonly>
+                                        <input id="code" name="code" type="text" class="form-control input-sm"
+                                               style="width:240px;padding:5px;float:left;">
                                     </td>
                                     <td class="my-form-table-td-label">
-                                        <label class="control-label" style="margin:5px;padding:0px;">用户名</label>
+                                        <label class="control-label" style="margin:5px;padding:0px;">颜色</label>
                                     </td>
                                     <td class="my-form-table-td-content" style="width:260px">
-                                        <input id="lastname" name="lastname" type="text" class="form-control input-sm"
+                                        <input id="color" name="color" type="text" class="form-control input-sm"
                                                style="width:240px;padding:5px;float:left;">
                                     </td>
                                 </tr>
                                 <tr>
                                     <td class="my-form-table-td-label">
-                                        <label class="control-label" style="margin:5px;padding:0px;">邮箱</label>
+                                        <label class="control-label" style="margin:5px;padding:0px;">成分</label>
                                     </td>
                                     <td class="my-form-table-td-content">
-                                        <input id="email" name="email" type="text" class="form-control input-sm"
+                                        <input id="component" name="component" type="text" class="form-control input-sm"
                                                style="width:240px;padding:5px;float:left;">
                                     </td>
                                     <td class="my-form-table-td-label">
-                                        <label class="control-label" style="margin:5px;padding:0px;">手机号</label>
+                                        <label class="control-label" style="margin:5px;padding:0px;">品牌</label>
                                     </td>
                                     <td class="my-form-table-td-content">
-                                        <input id="mobilephone" name="mobilephone" type="text"
+                                        <input id="brand" name="brand" type="text"
                                                class="form-control input-sm"
                                                style="width:240px;padding:5px;float:left;">
                                     </td>
                                 </tr>
                                 <tr>
                                     <td class="my-form-table-td-label">
-                                        <label class="control-label" style="margin:5px;padding:0px;">真实姓名</label>
+                                        <label class="control-label" style="margin:5px;padding:0px;">纱织</label>
                                     </td>
                                     <td class="my-form-table-td-content">
-                                        <input id="realname" name="realname" type="text"
+                                        <input id="yarn" name="yarn" type="text"
                                                class="form-control input-sm"
                                                style="width:240px;padding:5px;float:left;">
                                     </td>
                                     <td class="my-form-table-td-label">
-                                        <label class="control-label" style="margin:5px;padding:0px;">描述</label>
+                                        <label class="control-label" style="margin:5px;padding:0px;">花型</label>
                                     </td>
                                     <td class="my-form-table-td-content">
-                                        <input id="description" name="description" type="text"
+                                        <input id="flower" name="flower" type="text"
+                                               class="form-control input-sm"
+                                               style="width:240px;padding:5px;float:left;">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="my-form-table-td-label">
+                                        <label class="control-label" style="margin:5px;padding:0px;">相似面料</label>
+                                    </td>
+                                    <td class="my-form-table-td-content">
+                                        <input id="similar" name="similar" type="text"
+                                               class="form-control input-sm"
+                                               style="width:240px;padding:5px;float:left;">
+                                    </td>
+                                    <td class="my-form-table-td-label">
+                                        <label class="control-label" style="margin:5px;padding:0px;">库存</label>
+                                    </td>
+                                    <td class="my-form-table-td-content">
+                                        <input id="repertory" name="repertory" type="text"
                                                class="form-control input-sm"
                                                style="width:240px;padding:5px;float:left;">
                                     </td>
@@ -111,161 +125,154 @@
     $(document).ready(function () {
         $(".dept_select").chosen({disable_search: true, width: "320px"});
 
-        validator = $("#UserAddForm").validate({
+        validator = $("#FabricAddForm").validate({
             debug: true,
             showErrors: showErrors,
             rules: {
-                username: {
+                code: {
                     required: true,
                     maxlength: 20,
                     isCode: true,
+                    remote: {
+                        url: path + "app/system/fabric/checkFabricCode?t=" + new Date(),
+                        type: "get",
+                        headers: {"Authorization": securityContext.Authorization},
+                        data: {
+                            fabricCode: function () {
+                                return $('#code').val()
+                            }
+                        }
+                    }
                 },
-                lastname: {
+                color: {
                     required: true,
                     maxlength: 20,
                 },
-                email: {
-                    email: true,
-                    maxlength: 100,
+                flower: {
+                    required: true,
+                    maxlength: 20,
                 },
-                mobilephone: {
-                    maxlength: 11,
-                    number: true
+                component: {
+                    maxlength: 20,
+                    required: true
                 },
-                realname: {
-                    maxlength: 50,
+                brand: {
+                    maxlength: 20,
                 },
-                description: {
-                    maxlength: 50,
+                yarn: {
+                    maxlength: 20,
+                },
+                similar: {
+                    maxlength: 20,
+                },
+                repertory: {
+                    maxlength: 20,
+                    number:true
                 }
             },
             messages: {
-                username: {
-                    required: "[账号]不能为空！",
-                    maxlength: "[账号]最大长度为50！",
+                code: {
+                    required: "面料号不能为空！",
+                    maxlength: "面料号最大长度为50！",
+                    remote: "当前面料号已经存在！",
                     isCode: "只能输入数字字母！"
                 },
-                lastname: {
-                    required: "[用户名]不能为空！",
-                    maxlength: "最大长度为20！"
+                color: {
+                    required: "颜色不能为空！",
+                    maxlength: "最大长度为20！",
                 },
-                email: {
-                    email: "请输入正确邮箱",
-                    maxlength: "最大长度为100！"
+                flower: {
+                    required: "花色不能为空！",
+                    maxlength: "最大长度为20！",
                 },
-                mobilephone: {
-                    maxlength: "最大长度为11！",
-                    number: "请输入数字！"
+                component: {
+                    required: "成分不能为空！",
+                    maxlength: "最大长度为20！",
                 },
-                realname: {
-                    maxlength: "最大长度为100！",
+                brand: {
+                    maxlength: "最大长度为20！",
                 },
-                description: {
-                    maxlength: "最大长度为100！",
+                yarn: {
+                    maxlength: "最大长度为20！",
+                },
+                similar: {
+                    maxlength: "最大长度为20！",
+                },
+                repertory: {
+                    maxlength: "最大长度为20！",
+                    number:"只能输入数字"
                 }
             }
         });
 
-
-        var url = path + "app/system/user/getUserInfoByUserId";
-        url += "?t=" + new Date();
-
-        $.ajax({
-            type: "get",
-            url: url,
-            async: false,
-            headers: {"Authorization":securityContext.Authorization},
-            data: { "userName": username},
-            success: function (data) {
-
-                if (data.code == "S") {
-                    var su = data.data;
-// 			  预览
-                    var pic = $(".preview");
-// 	 	       添加按钮
-                    var addImg = $(".addImg");
-// 	   	      删除按钮
-                    var deleteImg = $(".delete");
-alert( su.headPortrait);
-                    pic.attr("src", path + "static/getImages/user/" + su.headPortrait);
-                    addImg.hide();
-                    deleteImg.show();
-                    pic.show();
-                    pic.parent().show();
-                    dwr.util.setValues(su);
-                    $(".dept_select").trigger("chosen:updated")
-                } else {
-                    $.growl.error({title: "错误标题", message: data.data});
-                }
-            }
-        });
 
     });
 
 
-    //用户编辑
-    function doEditUser() {
+    //咨询新建
+    function doAddFabric(imagePath) {
         var result = false;
+        var sf = new SysFabric();
+        dwr.util.getValues(sf);
+        sf.imagePath = imagePath;
+        var url = path + "app/system/fabric/addFabric";
 
-        if (validator.form()) {
-            var su = new SysUser();
-            dwr.util.getValues(su);
-            var url = path + "app/system/user/editUser";
-            url += "?t=" + new Date();
-            $.ajax({
-                type: "POST",
-                url: url,
-                data: su,
-                headers: {"Authorization":securityContext.Authorization},
-                async: false,
-                success: function (data) {
-                    if (data.code == "S") {
-                        result = true;
-                    } else {
-                        result = false;
-                        $.growl.warning({title: "错误标题", message: data.data});
-                    }
+        $.ajax({
+            type: "POST",
+            url: url,
+            data: sf,
+            headers: {"Authorization": securityContext.Authorization},
+            async: false,
+            success: function (data) {
+                if (data.code == "S") {
+                    result = true;
+                } else {
+                    result = false;
+                    $.growl.warning({title: "错误标题", message: data.data});
                 }
-            });
-        }
+            }
+        });
         return result;
     }
 
     //上传图片
-    function uploadImage(file) {
+    function uploadImage() {
+        var result = false;
+        if (validator.form()) {
+            var url = path + "static/uploadingImages/fabric";
+            url += "?t=" + new Date();
 
-        var url = path + "static/uploadingImages/user";
-        url += "?t=" + new Date();
-
-        var pic = new FormData();
-        if ($(".upload_input")[0].files[0] == null) {
-            $.growl.error({title: "错误标题", message: "请选择图片"});
-            return false;
-        }
-        if ($(".upload_input")[0].files[0].size > 300000) {
-            $.growl.error({title: "错误标题", message: "图片不符合规范,为保证访问速度请图片大小在300K以下"});
-            return false;
-        }
-        pic.append("pic", $(".upload_input")[0].files[0]);
-        $.ajax({
-            url: url,
-            type: 'POST',
-            cache: false,
-            data: pic,
-            processData: false,
-            contentType: false,
-            async: false,
-            headers: {"Authorization":securityContext.Authorization},
-            success: function (data) {
-
-                if (data.code == "S") {
-                    $(file).parent().find(".imgName").val(data.data);
-                } else {
-                    result = false;
-                    $.growl.error({title: "错误标题", message: data.info});
-                }
+            var pic = new FormData();
+            if ($(".upload_input")[0].files[0] == null) {
+                $.growl.warning({title: "错误标题", message: "请上传面料图片"});
+                return false;
             }
-        });
+            if ($(".upload_input")[0].files[0].size > 300000) {
+                $.growl.warning({title: "错误标题", message: "图片不符合规范,为保证访问速度请图片大小在300K以下"});
+                return false;
+            }
+                pic.append("pic", $(".upload_input")[0].files[0]);
+                $.ajax({
+                    url: url,
+                    type: 'POST',
+                    cache: false,
+                    data: pic,
+                    processData: false,
+                    contentType: false,
+                    async: false,
+                    headers: {"Authorization": securityContext.Authorization},
+                    success: function (data) {
+
+                        if (data.code == "S") {
+                            result = doAddFabric(data.data)
+                        } else {
+                            result = false;
+                            $.growl.error({title: "错误标题", message: data.info});
+                        }
+                    }
+                });
+        }
+        return result;
     }
 
     //点击
@@ -302,7 +309,6 @@ alert( su.headPortrait);
             return;
         }
         html5Reader(file, pic, addImg, deleteImg);
-        uploadImage(file);
     }
 
     //H5渲染

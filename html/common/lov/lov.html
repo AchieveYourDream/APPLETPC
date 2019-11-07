@@ -1,178 +1,162 @@
 <script type="text/javascript">
-       if(sessionStorage.getItem('securityContext')==null){
-         window.location.href="/APPLETPC/login.html";
-        }
-        var securityContext = JSON.parse(sessionStorage.getItem('securityContext'));
+    if (sessionStorage.getItem('securityContext') == null) {
+        window.location.href = "/APPLETPC/login.html";
+    }
+    var securityContext = JSON.parse(sessionStorage.getItem('securityContext'));
 
-        var path = sessionStorage.getItem('path');
-        var lovCode = sessionStorage.getItem('lovCode')== null ? "" :sessionStorage.getItem('lovCode');
-        var lovType = sessionStorage.getItem('lovType')== null ? "single" :sessionStorage.getItem('lovType');
-        var message=sessionStorage.getItem('message');
+    var path = sessionStorage.getItem('path');
+    var lovCode = sessionStorage.getItem('lovCode') == null ? "" : sessionStorage.getItem('lovCode');
+    var lovType = sessionStorage.getItem('lovType') == null ? "single" : sessionStorage.getItem('lovType');
+    var message = sessionStorage.getItem('message');
 </script>
 <!DOCTYPE html>
 <html>
 <head>
-	<meta charset="utf-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
-	<title>值列表</title>
+    <title>值列表</title>
 
-	<link   type="text/css" rel="stylesheet" href="/APPLETPC/css/common/common.css">
-    <link   type="text/css" rel="stylesheet" href="/APPLETPC/js/bootstrap/css/bootstrap.css">
-	<script type="text/javascript" src="/APPLETPC/js/common/common.js"></script>
-	<script type="text/javascript" src="/APPLETPC/js/common/util.js"></script>
-	<script type="text/javascript" src="/APPLETPC/js/jquery/jquery-2.2.3.min.js"></script>
-    <script type="text/javascript" src="/APPLETPC/js/json/json2.js"></script>
-    <script type="text/javascript" src="/APPLETPC/js/bootstrap/js/bootstrap.js"></script>
-	
-	<script type='text/javascript' src='/APPLETPC/js/json/model/Lov.js'></script>
-	
-	<!-- bootstrap-table -->
-	<link type="text/css" rel="stylesheet"
-		href="/APPLETPC/js/plugins/bootstrap-table/css/bootstrap-table.css">
-		
-	<script type="text/javascript"
-		src="/APPLETPC/js/plugins/bootstrap-table/js/bootstrap-table-300.js"></script>
-	
-	<script type="text/javascript"
-		src="/APPLETPC/js/plugins/bootstrap-table/local/bootstrap-table-zh-CN.js"></script>
+    <script src="/APPLETPC/js/jquery/jquery-3.4.1.min.js"></script>
+    <script src="/APPLETPC/js/json/model/Lov.js"></script>
 </head>
 <body>
-	<div class="container-fluid" style="margin:0px;padding:0px;">
-		<div class="row" style="margin:0px;padding:0px;">
-			<div class="col-md-12" style="padding-left:5px;padding-right:5px;">
-			    <table id="lovTable"
-			    	   class="table table-condensed"
-			           data-toggle="table"
-			           data-icon-size="sm"
-			           data-pagination="true"
-			           data-page-size="10"
-			           data-page-list="[10,15,20,25,30]"
-			           data-striped="true"
-			           data-search="true">
-			    	<thead>
-<!-- 			       <tr><th data-field="DESCRIPTION" data-halign="center" data-align="left" data-sortable="true">角色说明</th><th data-field="roleId" data-halign="center" data-align="left" data-sortable="true">角色ID</th><th data-field="roleName" data-halign="center" data-align="left" data-sortable="true">角色名称</th></tr> -->
-			    	</thead>
-				</table>
-			</div>
-		</div>
-	</div>
+<div class="content-wrap">
+<div class="main">
+    <!-- /# row -->
+    <section class="subSection">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card">
+                    <div class="container-fluid" style="margin:0px;padding:0px;">
+                        <div class="row" style="margin:0px;padding:0px;">
+                            <div class="col-md-12" style="padding-left:5px;padding-right:5px;">
+                                <table id="lovTable"
+                                       class="table table-condensed"
+                                       data-toggle="table"
+                                       data-icon-size="sm"
+                                       data-pagination="true"
+                                       data-page-size="10"
+                                       data-page-list="[10,15,20,25,30]"
+                                       data-striped="true"
+                                       data-search="true">
+                                    <thead>
+                                    </thead>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+</div>
 </body>
 </html>
 
 <script type="text/javascript">
-// var lovCode = "<%=lovCode%>";
-// var lovType = "<%=lovType%>";
-// var returnValueColumn = "<%=returnValueColumn%>";
-// var returnTextColumn = "<%=returnTextColumn%>";
-var returnValueColumn ;
-var returnTextColumn;
-var LovRow = null;
- getLovDataCount();
-$(document).ready(function() {
-	$("#lovTable").on('click-row.bs.table', function (e, row, $element) {
-        $('.warning').removeClass('warning');
-        $($element).addClass('warning');
-        
-        LovRow = row;
+    var returnValueColumn;
+    var returnTextColumn;
+    var LovRow = null;
+    getLovDataCount();
+    $(document).ready(function () {
+
+        $("#lovTable").on('click-row.bs.table', function (e, row, $element) {
+            $('.warning').removeClass('warning');
+            $($element).addClass('warning');
+
+            LovRow = row;
+        });
+
+        getLovDataList();
+
     });
 
-	getLovDataList();
+    function getLovDataCount() {
+        var url = path + "app/system/lov/getLovDataList";
+        url += "?currentTime=" + new Date();
+        url += "&lovCode=" + lovCode;
+        $.ajax({
+            type: "get",
+            url: url,
+            async: false,
+            headers: {"Authorization": securityContext.Authorization},
+            success: function (data) {
 
-});
-function getLovDataCount(){
-var url = path+"api/common/lov/getLovCount";
-    url += "?currentTime=" + new Date();
-    url += "&lovCode=" + lovCode;
-    $.ajax({
-		type: "get",
-		url: url,
-		async:false,
-		headers:{"token":securityContext.token},
-		success: function(data) {
-		
-			if (data.code == "S") {
-			 var  slcList=JSON.parse(data.data).slcList;
-				  returnValueColumn=JSON.parse(data.data).returnValueColumn;
-				  returnTextColumn= JSON.parse(data.data).returnTextColumn;
-				  
-		     var th='<tr>';
-		       if("multi"==lovType){
-		       th+='<th data-field="state" data-checkbox="true" data-halign="center" data-align="center"></th>';
-		       }
-		      for(var i=0;i<slcList.length;i++){
-		         if("Y"==slcList[i].display_flag){
-		            th+='<th data-field="'+slcList[i].column_name+'" data-halign="center" data-align="left" data-sortable="true">'+slcList[i].column_title+'</th>';
-		         }
-		      }
-		      th+='</tr>';
-				$("thead").html(th);
-			} else {
-                $.growl.error({title: "提示信息", message:"数据加载失败！" + "<br><br>" + data.data});
-			}
-		}
-	});
-}
+                if (data.code == "S") {
+                    var slcList = data.data.slcList;
+                    returnValueColumn = data.data.returnValueColumn;
+                    returnTextColumn = data.data.returnTextColumn;
+
+                    var th = '<tr>';
+                    if ("multi" == lovType) {
+                        th += '<th data-field="state" data-checkbox="true" data-halign="center" data-align="center"></th>';
+                    }
+                    for (var i = 0; i < slcList.length; i++) {
+                        if ("Y" == slcList[i].displayFlag) {
+                            th += '<th data-field="' + slcList[i].columnName + '" data-halign="center" data-align="left" data-sortable="true">' + slcList[i].columnTitle + '</th>';
+                        }
+                    }
+                    th += '</tr>';
+                    $("thead").html(th);
+                } else {
+                    $.growl.error({title: "提示信息", message: "数据加载失败！" + "<br><br>" + data.data});
+                }
+            }
+        });
+    }
+
+    function getLovDataList() {
+        var url = path + "app/system/lov/getLovDataLists";
+        url += "?currentTime=" + new Date();
+        url += "&lovCode=" + lovCode;
+
+        $.ajax({
+            type: "get",
+            url: url,
+            async: false,
+            headers: {"Authorization": securityContext.Authorization},
+            success: function (data) {
+                if (data.code == "S") {
+                    $('#lovTable').bootstrapTable('refresh');
+                    $("#lovTable").bootstrapTable("load", data.data);
+                } else {
+                    $.growl.error({title: "提示信息", message: "数据加载失败！" + "<br><br>" + data.data});
+                }
+            }
+        });
+    }
+
+    function getLovData() {
 
 
+        if (lovType == "single") {
+            if (!LovRow) {
+                $.growl.warning({title: "提示信息", message: "请先选择" + message + "!",});
+                return false;
+            }
+            var lov = new Lov();
+            lov.lovValue = LovRow[returnValueColumn];
+            lov.lovText = LovRow[returnTextColumn];
+            return lov;
+        } else if (lovType == "multi") {
 
-function getLovDataList(){
-	var url = path+"api/common/lov/getLovDataList";
-    url += "?currentTime=" + new Date();
-    url += "&lovCode=" + lovCode;
-    
-    $.ajax({
-		type: "get",
-		url: url,
-		async:false,
-		headers:{"token":securityContext.token},
-		success: function(data) {
-			if (data.code == "S") {
-			$('#lovTable').bootstrapTable('refresh');
-				$("#lovTable").bootstrapTable("load", JSON.parse(data.data));
-			} else {
-                $.growl.error({title: "提示信息", message:"数据加载失败！" + "<br><br>" + data.data});
-			}
-		}
-	});
-}
-function getLovData() {
-	 
-	
-	if (lovType == "single") {
-	if (!LovRow) {
-		window.top.bootbox.alert({ 
-			title:"提示信息",
-		    size: 'small',
-		    message: "请先选择"+message+"!",
-		});
-		return false;
-	}
-		var lov = new Lov();
-		lov.lovValue = LovRow[returnValueColumn];
-		lov.lovText = LovRow[returnTextColumn];
-		return lov;
-	} else if (lovType == "multi") {
-	
-		var lovArr = new Array();
-		var rows = $("#lovTable").bootstrapTable("getSelections");
-		 if (rows.length==0) {
-	 
-			window.top.bootbox.alert({ 
-				title:"提示信息",
-			    size: 'small',
-			    message: "请先选择"+message+"!",
-			});
-			return false;
-		}
-		for(var i=0; i <rows.length; i++) {
-			var lov = new Lov();
-			lov.lovValue = rows[i][returnValueColumn];
-			lov.lovText = rows[i][returnTextColumn];
-			lovArr.push(lov);
-		}
-		return lovArr;
-	}
-}
+            var lovArr = new Array();
+            var rows = $("#lovTable").bootstrapTable("getSelections");
+            if (rows.length == 0) {
+                $.growl.warning({title: "提示信息", message: "请先选择" + message + "!",});
+                return false;
+            }
+            for (var i = 0; i < rows.length; i++) {
+                var lov = new Lov();
+                lov.lovValue = rows[i][returnValueColumn];
+                lov.lovText = rows[i][returnTextColumn];
+                lovArr.push(lov);
+            }
+            return lovArr;
+        }
+    }
 </script>

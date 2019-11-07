@@ -13,7 +13,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
-<title>红领小程序会员管理</title>
+<title>updateGoodsShelf小程序会员管理</title>
 
 <link type="text/css" rel="stylesheet" href="/APPLETPC/css/common/common.css">
 <script type="text/javascript" src="/APPLETPC/js/common/common.js"></script>
@@ -63,8 +63,8 @@
 					<th data-field="member_source" data-halign="center" data-align="left">来源</th>
 					<th data-field="member_type" data-halign="center" data-align="left" data-formatter="settlement">类型</th>
 					<th data-field="user_name" data-halign="center" data-align="left">姓名</th>
-					<th data-field="create_date" data-halign="center" data-align="left">创建日期</th>
-					<th data-field="last_update_date" data-halign="center" data-align="left">最后修改日期</th>
+					<th data-field="createDate" data-halign="center" data-align="left">创建日期</th>
+					<th data-field="last_updateDate" data-halign="center" data-align="left">最后修改日期</th>
 				</tr>
 			</thead>
 		</table>
@@ -204,7 +204,7 @@ function updateAppMember(){
 			      		className: "btn-success",
 			      		callback: function() {
 			      		if(member_tel){
-						    var url = path+"api/appmember/updateMemberStatus";
+						    var url = path+"app/appmember/updateMemberStatus";
 							$.ajax({
 								type: "POST",
 							    url: url,

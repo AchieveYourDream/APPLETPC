@@ -5,7 +5,6 @@
         var securityContext = JSON.parse(sessionStorage.getItem('securityContext'));
 
         var path = sessionStorage.getItem('path');
-        var redPath = sessionStorage.getItem('redPath');
         var store_code = sessionStorage.getItem('store_code');
         var clerk_id = sessionStorage.getItem('clerk_id');
 </script>
@@ -287,7 +286,7 @@ validator = $("#ClerkAddForm").validate({
 	
 	$("#MeasureProvince").trigger("chosen:updated")
 	
-	var url = path+"api/appClerk/selectAppClerkByPk";
+	var url = path+"app/appClerk/selectAppClerkByPk";
 	url += "?t=" + new Date();
 	
 	$.ajax({
@@ -307,7 +306,7 @@ validator = $("#ClerkAddForm").validate({
 // 	   	      删除按钮
 	      var deleteImg = $(".delete");
 	       
-	       pic.attr("src",redPath+"getRedImages/clerk/"+ac.clerk_image);
+	       pic.attr("src",path+"getRedImages/clerk/"+ac.clerk_image);
 	       addImg.hide();
 	       deleteImg.show();
 		   pic.show();
@@ -350,7 +349,7 @@ function doEditClerk() {
 		var ac = new AppClerk();
 		dwr.util.getValues(ac);
 		ac.clerk_city=$("#MeasureProvince").val()+" "+($("#MeasureCity").val()==null?"":$("#MeasureCity").val())+" "+($("#MeasureCounty").val()==null?"":$("#MeasureCounty").val());
-		var url = path+"api/appClerk/updateAppClerk";
+		var url = path+"app/appClerk/updateAppClerk";
 		url += "?t=" + new Date();
 		url+="&token="+securityContext.token;
 		$.ajax({
@@ -374,7 +373,7 @@ function doEditClerk() {
 //上传图片
 function  uploadImage(){
 			
-		var url = redPath+"appClerk/updateClerkImage/clerk";
+		var url = path+"appClerk/updateClerkImage/clerk";
 		url += "?t=" + new Date();
 		url+="&clerk_id="+$('#clerk_id').val();
 		url+="&store_code="+$('#store_code').val();

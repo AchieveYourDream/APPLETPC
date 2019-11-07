@@ -99,7 +99,7 @@ $(document).ready(function() {
 				minlength: 11,
 				digits:true,
 				remote: {
-					url:path+"api/appmember/checkAppMemberTel?t=" + new Date(),
+					url:path+"app/appmember/checkAppMemberTel?t=" + new Date(),
 					type: "POST",
 					data: {
 						member_tel: function(){return $('#member_tel').val()},
@@ -148,7 +148,7 @@ function doAddAppMember() {
 		dwr.util.getValues(am);
 		am.attribute2=securityContext.user_id;
 		
-		var url = path+"api/appmember/insertAppMember";
+		var url = path+"app/appmember/insertAppMember";
 		url += "?t=" + new Date();
 		url+="&token="+securityContext.token;
 		

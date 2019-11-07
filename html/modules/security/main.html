@@ -251,7 +251,7 @@
             menuTreeJson,
             function (index, data) {
                 if (data.data.isLeafNode == "Y") {
-                    menuTreeHtml += '    <li><a href="javascript:openPath(\'\'+data.data.nodeUrl+\'\')"><i class="' + data.data.nodeIcon + '"></i> ' + data.data.nodeName + ' </a></li>';
+                    menuTreeHtml += '    <li><a href="javascript:openPath(\''+data.data.nodeUrl+'\')"><i class="' + data.data.nodeIcon + '"></i> ' + data.data.nodeName + ' </a></li>';
                 } else {
                     menuTreeHtml += '	<li><a class="sidebar-sub-toggle"><i class="' + data.data.nodeIcon + '"></i>  ' + data.data.nodeName + '  <span class="sidebar-collapse-icon ti-angle-down"></span></a>';
                     menuTreeHtml += '	<ul>';
