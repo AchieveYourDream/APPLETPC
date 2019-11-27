@@ -1,0 +1,526 @@
+<script type="text/javascript">
+
+    var securityContext = JSON.parse(sessionStorage.getItem('securityContext'));
+    var path = sessionStorage.getItem('path');
+</script>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+    <title>工艺管理</title>
+
+    <script src="/APPLETPC/js/jquery/jquery-3.4.1.min.js"></script>
+    <script src="/APPLETPC/js/common/common.js"></script>
+    <!-- bootstrap-treeview 多级列表树 插件-->
+    <link type="text/css" rel="stylesheet" href="/APPLETPC/js/plugins/bootstrap-treeview/css/bootstrap-treeview.css">
+    <script type="text/javascript" src="/APPLETPC/js/plugins/bootstrap-treeview/js/bootstrap-treeview.js"></script>
+</head>
+<body>
+<div class="content-wrap">
+    <div class="main">
+        <!-- /# row -->
+        <section class="mainSection">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="card">
+                                <div class="col-md-4" style="padding-left:5px;padding-right:5px;">
+                                    <div class="bootstrap-table">
+                                        <div class="fixed-table-toolbar">
+                                            <div class="bars pull-left">
+                                                <div >
+                                                    <button  class="btn btn-sm btn-primary"
+                                                             onclick="getTechnologyNodeTree();">
+                                                        <i class="glyphicon glyphicon-refresh"></i>&nbsp;刷新
+                                                    </button>
+                                                    <button  class="btn btn-sm btn-success" onclick="addTechnologyNode();">
+                                                        <i class="glyphicon glyphicon-plus"></i>&nbsp;新建
+                                                    </button>
+                                                    <button  class="btn btn-sm btn-warning" onclick="editTechnologyNode();">
+                                                        <i class="glyphicon glyphicon-pencil"></i>&nbsp;编辑
+                                                    </button>
+                                                    <button class="btn btn-sm btn-danger" onclick="removeTechnologyNode();">
+                                                        <i class="glyphicon glyphicon-remove"></i>&nbsp;删除
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="fixed-table-container"
+                                             style="padding-top:5px;padding-bottom:0px;border:0px;">
+                                            <div class="fixed-table-body">
+                                                <div id="technologyTree" style="font-size:12px;height:450px">
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                        <div class="container-fluid" style="margin:0px;padding:0px;">
+                            <div class="row" style="margin:0px;padding:0px;">
+                                <div class="col-md-8" style="padding-left:5px;padding-right:5px;">
+                                    <div id="technology">
+                                        <button i class="btn btn-sm btn-primary" onclick="redresh();">
+                                            <i class="glyphicon glyphicon-refresh"></i>&nbsp;刷新
+                                        </button>
+                                        <button  class="btn btn-sm btn-success" onclick="addTechnology();">
+                                            <i class="glyphicon glyphicon-plus"></i>&nbsp;新建
+                                        </button>
+                                        <button class="btn btn-sm btn-warning" onclick="editTechnology();">
+                                            <i class="glyphicon glyphicon-pencil"></i>&nbsp;编辑
+                                        </button>
+                                        <button class="btn btn-sm btn-danger" onclick="removeTechnology();">
+                                            <i class="glyphicon glyphicon-remove"></i>&nbsp;删除
+                                        </button>
+                                        <button class="btn btn-sm btn-info" onclick="updateTechnologyDefault();">
+                                            <i class="glyphicon glyphicon-cog"></i>&nbsp;设置默认工艺
+                                        </button>
+                                    </div>
+
+                                    <table id="technologyTable"
+                                           class="table table-condensed "
+                                           data-toolbar="#technology"
+                                           data-icon-size="sm"
+                                           data-data-type="json"
+                                           data-query-params="queryParams"
+                                           data-pagination="true"
+                                           data-side-pagination="server"
+                                           data-pagination="true"
+                                           data-page-size="8"
+                                           data-page-list="[15,20,25,30,ALL]"
+                                           data-undefined-text=""
+                                           data-show-columns="true"
+                                    >
+                                        <thead>
+                                        <tr>
+                                            <!--<th data-field="nodeCode" data-halign="center" data-align="left" >工艺编码</th>-->
+                                            <th data-field="technologyName" data-halign="center" data-align="left" >工艺名称</th>
+                                            <th data-field="factoryCode" data-halign="center" data-align="left" >工厂编码</th>
+                                            <th data-field="isDefault" data-halign="center" data-align="left" data-formatter="yes_or_no">是否默认</th>
+                                            <th data-field="technologyPrice" data-halign="center" data-align="left" >工艺价格</th>
+                                            <th data-field="technologyStyle" data-halign="center" data-align="left" >工艺款式</th>
+                                            <th data-field="technologyImg" data-halign="center" data-align="center" data-formatter="technologyImage">图片</th>
+                                            <th data-field="description" data-halign="center" data-align="left" >描述</th>
+                                        </tr>
+                                        </thead>
+                                    </table>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+</body>
+</html>
+
+<script type="text/javascript">
+    var technologyId;//当前的结构编码
+    var nodeCode;//当前的节点编码
+    var currentExpandNodeArr;
+    var  parentNodeCode;
+    $(document).ready(function () {
+        $("#technologyTable").on('click-row.bs.table', function (e, row, $element) {
+            $('.warning').removeClass('warning');
+            $($element).addClass('warning');
+
+            technologyId = row.id;
+            currentExpandNodeArr = null;
+        });
+
+        $("#technologyTable").on('dbl-click-row.bs.table', function (e, row, $element) {
+            $('.warning').removeClass('warning');
+            $($element).addClass('warning');
+
+            technologyId = row.id;
+            editTechnology();
+        });
+
+        $('#technologyTable').bootstrapTable({
+            url: path + "app/system/technology/getTechnologyList",
+            ajaxOptions: {
+                headers: {"Authorization": securityContext.Authorization}
+            }
+        });
+
+        getTechnologyNodeTree();
+    });
+
+    function queryParams(params) {
+        return {
+            "pageNum": (params.offset / params.limit) + 1,
+            "pageSize": params.limit, "nodeCode":nodeCode
+        };
+    }
+
+    function redresh() {
+        $('#technologyTable').bootstrapTable('refresh');
+    }
+
+   
+  
+
+    // 获取工艺节点树
+    function getTechnologyNodeTree() {
+        var url = path + "app/system/technology/getTechnologyNodeTree";
+        url += "?currentTime=" + new Date();
+        $.ajax({
+            type: "get",
+            url: url,
+            async: false,
+            headers: {"Authorization":securityContext.Authorization},
+            success: function (data) {
+                if (data.code == "S") {
+                    $('#technologyTree').treeview({
+                        data: JSON.parse(data.data),
+                        onNodeSelected: onTreeNodeSelectedHandler,
+                        levels: 2,
+                    });
+                } else {
+                    $.growl.error({title: "提示信息", message:"数据加载失败！" + "<br><br>" + data.data});
+                }
+            }
+        });
+    }
+
+    // 树节点单击事件
+    function onTreeNodeSelectedHandler(event, data) {
+        nodeCode = data.data.nodeCode;
+        parentNodeCode=data.data.parentNodeCode;
+        if (parentNodeCode != "G") {
+            redresh();
+        }
+    }
+
+    // 新建工艺节点
+    function addTechnologyNode() {
+        if (!nodeCode) {
+            $.growl.warning({title: "警告标题", message: "请先选择工艺节点！" });
+            return;
+        }
+
+        var url = "/APPLETPC/html/modules/technology/TechnologyNodeAdd.html";
+        sessionStorage.setItem('parentNodeCode', nodeCode);
+
+        var technologyNodeAddFrame = '<iframe id="technologyNodeAddFrame" class="my-modal-iframe" width="100%" height="400px" src="' + url + '"></iframe>';
+        window.top.bootbox.dialog({
+            title: "工艺节点-新建",
+            message: technologyNodeAddFrame,
+            size: "small",
+            buttons: {
+                saveType: {
+                    label: "保存",
+                    className: "btn-success" ,
+                    callback: function () {
+                        var result = window.top.document.getElementById("technologyNodeAddFrame").contentWindow.addTechnologyNode();
+                        if (result) {
+                            $.growl.notice({title: "提示信息", message: "保存成功" });
+                            currentExpandNodeArr = $('#technologyTree').treeview('getExpanded');
+                            getTechnologyNodeTree();
+                        }
+                        return result;
+                    }
+                },
+                cancelType: {
+                    label: "取消",
+                    className: "btn-default",
+                    callback: function () {
+                        return true;
+                    }
+                }
+            }
+        });
+    }
+
+    // 编辑工艺节点
+    function editTechnologyNode() {
+        if (parentNodeCode == "G") {
+            $.growl.warning ({title: "提示信息", message: "主菜单无法编辑,请在数据结构节点编辑" });
+            return;
+        }
+
+        if (!nodeCode) {
+            $.growl.warning({title: "警告标题", message: "请先选择工艺节点！" });
+            return;
+        }
+
+        var url = "/APPLETPC/html/modules/technology/TechnologyNodeEdit.html";
+        sessionStorage.setItem('technologyCode', technologyId);
+        sessionStorage.setItem('nodeCode', nodeCode);
+
+        var technologyNodeEditFrame = '<iframe id="technologyNodeEditFrame" class="my-modal-iframe" width="100%" height="400px" src="' + url + '"></iframe>';
+        window.top.bootbox.dialog({
+            title: "工艺节点-编辑",
+            message: technologyNodeEditFrame,
+            size: "small",
+            buttons: {
+                saveType: {
+                    label: "保存",
+                    className: "btn-success" ,
+                    callback: function () {
+                        var result = window.top.document.getElementById("technologyNodeEditFrame").contentWindow.editDataStructNode();
+                        if (result) {
+                            currentExpandNodeArr = $('#technologyTree').treeview('getExpanded');
+                            $.growl.notice({title: "提示信息", message: "保存成功" });
+                            getTechnologyNodeTree();
+                        }
+                        return result;
+                    }
+                },
+                cancelType: {
+                    label: "取消",
+                    className: "btn-default",
+                    callback: function () {
+                        return true;
+                    }
+                }
+            }
+        });
+    }
+
+   
+
+    //删除工艺节点
+    function removeTechnologyNode() {
+        if (parentNodeCode == "G") {
+            $.growl.warning ({title: "提示信息", message: "主菜单无法删除,请在数据结构节点删除" });
+            return;
+        }
+        alert(nodeCode)
+        if (nodeCode) {
+            window.top.bootbox.dialog({
+                title: "提示信息",
+                message: "请确认是否删除",
+                size: "middle",
+                buttons: {
+                    OkType: {
+                        label: "确定",
+                        className: "btn-success" ,
+                        callback: function () {
+                            var url = path + "app/system/technology/removeTechnologyNode";
+                            url += "?t=" + new Date();
+                            $.ajax({
+                                type: "post",
+                                url: url,
+                                async: false,
+                                headers: {"Authorization": securityContext.Authorization},
+                                data:{"nodeCode":nodeCode},
+                                success: function (data) {
+
+                                    if (data.code == "S") {
+                                        nodeCode == null;
+                                        $.growl.notice({title: "提示信息", message: "删除成功" });
+                                        getTechnologyNodeTree();
+                                        $('#technologyTable').bootstrapTable("removeAll");
+
+                                        return  true;
+                                    } else {
+
+                                        $.growl.error({title: "提示信息", message:"数据加载失败！" + "<br><br>" + data.data});
+                                        return false;
+                                    }
+                                }
+                            });
+                        }
+                    },
+                    cancelType: {
+                        label: "取消",
+                        className: "btn-default" ,
+                        callback: function () {
+                            return true;
+                        }
+                    }
+                }
+            });
+        } else {
+
+            $.growl.warning({title: "警告标题", message: "请先选泽工艺属性！" });
+            return true;
+        }
+
+    }
+
+
+
+    // 新建工艺
+    function addTechnology() {
+        var url = "/APPLETPC/html/modules/technology/TechnologyAdd.html";
+        sessionStorage.setItem('nodeCode', nodeCode);
+        var technologyAttributeAddFrame = '<iframe id="technologyAttributeAddFrame" class="my-modal-iframe" width="100%" height="600px" src="' + url + '"></iframe>';
+        window.top.bootbox.dialog({
+            title: "工艺-新建",
+            message: technologyAttributeAddFrame,
+            size:"large",
+            buttons: {
+                saveType: {
+                    label: "保存",
+                    className: "btn-success" ,
+                    callback: function () {
+                        var result = window.top.document.getElementById("technologyAttributeAddFrame").contentWindow.uploadImage();
+                        if (result) {
+                            $.growl.notice({title: "提示信息", message: "保存成功" });
+                            redresh();
+                        }
+                        return result;
+                    }
+                },
+                cancelType: {
+                    label: "取消",
+                    className: "btn-default",
+                    callback: function () {
+                        return true;
+                    }
+                }
+            }
+        });
+    }
+
+    // 编辑工艺
+    function editTechnology() {
+        if (!technologyId) {
+            $.growl.warning({title: "警告标题", message: "请先选择工艺！" });
+            return;
+        }
+
+        var url = "/APPLETPC/html/modules/technology/TechnologyEdit.html";
+        sessionStorage.setItem('technologyId', technologyId);
+        sessionStorage.setItem('nodeCode', nodeCode);
+
+        var technologyAttributeEditFrame = '<iframe id="technologyAttributeEditFrame" class="my-modal-iframe" width="100%" height="600px" src="' + url + '"></iframe>';
+        window.top.bootbox.dialog({
+            title: "工艺-编辑",
+            message: technologyAttributeEditFrame,
+            size: "large",
+            buttons: {
+                saveType: {
+                    label: "保存",
+                    className: "btn-success" ,
+                    callback: function () {
+                        var result = window.top.document.getElementById("technologyAttributeEditFrame").contentWindow.editTechnology();
+                        if (result) {
+                            $.growl.notice({title: "提示信息", message: "保存成功" });
+                            redresh();
+                        }
+                        return result;
+                    }
+                },
+                cancelType: {
+                    label: "取消",
+                    className: "btn-default",
+                    callback: function () {
+                        return true;
+                    }
+                }
+            }
+        });
+    }
+
+    //删除工艺
+    function removeTechnology() {
+        if (!technologyId) {
+            $.growl.warning({title: "警告标题", message: "请先选择工艺"});
+            return;
+        }
+        window.top.bootbox.dialog({
+            title: "提示信息",
+            message: "请确认是否删除工艺",
+            size: "middle",
+            buttons: {
+                OkType: {
+                    label: "确定",
+                    className: "btn-info",
+                    callback: function () {
+                        var url = path + "app/system/technology/removeTechnology";
+                        url += "?t=" + new Date();
+                        $.ajax({
+                            type: "POST",
+                            url: url,
+                            headers: {"Authorization": securityContext.Authorization},
+                            data: {"technologyId": technologyId},
+                            success: function (data) {
+                                if (data.code == "S") {
+
+                                    $.growl.notice({title: "错误标题", message: "删除工艺成功"});
+                                    redresh();
+                                    return true;
+                                } else {
+                                    result = false;
+                                    $.growl.error({title: "错误标题", message: data.data});
+                                }
+                                return false;
+                            }
+                        });
+                    }
+                },
+                cancelType: {
+                    label: "取消",
+                    className: "btn-warning",
+                    callback: function () {
+                        return true;
+                    }
+                }
+            }
+        });
+
+    }
+
+
+    //设置工艺默认值
+    function updateTechnologyDefault() {
+        if (!technologyId) {
+            $.growl.warning({title: "警告标题", message: "请先选择工艺"});
+            return;
+        }
+        window.top.bootbox.dialog({
+            title: "提示信息",
+            message: "请确认更改默认工艺",
+            size: "middle",
+            buttons: {
+                OkType: {
+                    label: "确定",
+                    className: "btn-info",
+                    callback: function () {
+                        var url = path + "app/system/technology/updateTechnologyDefault";
+                        url += "?t=" + new Date();
+                        $.ajax({
+                            type: "POST",
+                            url: url,
+                            headers: {"Authorization": securityContext.Authorization},
+                            data: {"technologyId": technologyId,"nodeCode":nodeCode},
+                            success: function (data) {
+                                if (data.code == "S") {
+
+                                    $.growl.notice({title: "错误标题", message: "修改默认工艺成功"});
+                                    redresh();
+                                    return true;
+                                } else {
+                                    $.growl.error({title: "错误标题", message: data.data});
+                                    return false;
+                                }
+                            }
+                        });
+                    }
+                },
+                cancelType: {
+                    label: "取消",
+                    className: "btn-warning",
+                    callback: function () {
+                        return true;
+                    }
+                }
+            }
+        });
+
+    }
+    function  technologyImage (value){
+        var image=""
+        if(value!=null && value!=''){
+            image='<img src="'+path+'static/getImages/technology/'+value+'" style="height:50px;width:50px">';
+        }
+        return image;
+    }
+</script>

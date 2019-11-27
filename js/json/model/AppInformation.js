@@ -1,0 +1,20 @@
+function AppInformation() {
+	this.informationId = null;
+	this.showPic = null;
+	this.title = null;
+	this.content = null;
+	this.isvisible = null;
+	this.createDate = null;
+	this.updateDate = null;
+	this.createBy = null;
+	this.detailUrl = null;
+	this.useModule = null;
+	this.shareImageUrl = null;
+	this.isBannerShow = null;
+	this.attribute1 = null;
+	this.attribute2 = null;
+	this.attribute3 = null;
+	this.attribute4 = null;
+	this.attribute5 = null;
+	this.showOrder = null;
+}

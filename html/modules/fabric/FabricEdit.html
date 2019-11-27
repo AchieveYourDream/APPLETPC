@@ -1,7 +1,5 @@
 <script type="text/javascript">
-    if (sessionStorage.getItem('securityContext') == null) {
-        window.location.href = "/APPLETPC/login.html";
-    }
+
     var securityContext = JSON.parse(sessionStorage.getItem('securityContext'));
 
     var path = sessionStorage.getItem('path');
@@ -18,7 +16,9 @@
     <script src="/APPLETPC/js/plugins/jquery-chosen/js/chosen.jquery.js"></script>
     <link rel="stylesheet" href="/APPLETPC/js/plugins/jquery-chosen/css/chosen.css">
     <script src="/APPLETPC/js/json/model/SysFabric.js"></script>
-
+    <link rel="stylesheet" href="/APPLETPC/js/plugins/bootstarp-select2/css/select2.min.css" type="text/css"></link>
+    <script type="text/javascript" src="/APPLETPC/js/plugins/bootstarp-select2/js/select2.min.js"></script>
+    <script type="text/javascript" src="/APPLETPC/js/plugins/bootstarp-select2/js/i18n/zh-CN.js"></script>
 
 </head>
 <body class="my-body-content">
@@ -44,6 +44,15 @@
                                 </div>
                             </div>
                             <table class="my-form-table-content" style="margin-top: 80px;">
+                                <tr>
+                                    <td class="my-form-table-td-label" >
+                                        <label class="control-label" style="margin:5px;padding:0px;">所属大类</label>
+                                    </td>
+                                    <td class="my-form-table-td-content" colspan="3" >
+                                        <select class=" form-control input-sm "  id="categoryId" style="width:595px;padding:5px;float:left;" multiple=”multiple”>
+                                        </select>
+                                    </td>
+                                </tr>
                                 <tr>
                                     <td class="my-form-table-td-label">
                                         <label class="control-label" style="margin:5px;padding:0px;">面料号</label>
@@ -127,6 +136,7 @@
 <script type="text/javascript">
     var validator;
     $(document).ready(function () {
+        getMainSelectInfo();
         $(".dept_select").chosen({disable_search: true, width: "320px"});
 
         validator = $("#FabricEditForm").validate({
@@ -226,7 +236,9 @@
                         pic.parent().show();
                     }
                     dwr.util.setValues(sf);
+                    $("#categoryId").val(sf.category.split(",")).trigger('change');
                     $(".dept_select").trigger("chosen:updated")
+
                 } else {
                     $.growl.error({title: "错误标题", message: data.data});
                 }
@@ -243,6 +255,7 @@
         if (validator.form()) {
             var sf = new SysFabric();
             dwr.util.getValues(sf);
+            sf.category=$("#categoryId").val().join(",");
             var url = path + "app/system/fabric/editFabric";
             url += "?t=" + new Date();
             $.ajax({
@@ -351,4 +364,30 @@
         pic.parent().show();
 
     }
+
+
+    //初始主菜单
+    function getMainSelectInfo() {
+        var url = path + "app/appGoods/getMainSelectInfo";
+        $.ajax({
+            type: "POST",
+            url: url,
+            async:false,
+            headers: {"Authorization":securityContext.Authorization},
+            success: function (data) {
+                if (data.code == "S") {
+                    $("#categoryId").html("")
+                    $.each(data.data, function (index, d) {
+                        var option = '<option value="' + d.code + '">' + d.name + '</option>';
+                        $("#categoryId").append(option);
+                    });
+                    $('#categoryId').select2({
+                        multiple:true,
+                    });
+                } else {
+                    $.growl.error({title: "错误标题", message: data.info});
+                }
+            }
+        });
+    };
 </script>

@@ -1,0 +1,247 @@
+<script type="text/javascript">
+
+    var securityContext = JSON.parse(sessionStorage.getItem('securityContext'));
+
+    var path = sessionStorage.getItem('path');
+</script>
+<!DOCTYPE html>
+<html style="overflow: hidden;">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+    <title>尺寸列表</title>
+
+    <script src="/APPLETPC/js/jquery/jquery-3.4.1.min.js"></script>
+<body style="font-size:12px;">
+<div class="content-wrap">
+    <div class="main">
+        <!-- /# row -->
+        <section class="mainSection">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="card">
+                        <div id="size">
+                            <button class="btn  btn-sm btn-success" onclick="addSize();">
+                                <i class="glyphicon glyphicon-plus"></i>&nbsp;新建尺寸
+                            </button>
+                            <button class="btn  btn-sm btn-warning" onclick="editSize();">
+                                <i class="glyphicon glyphicon-edit"></i>&nbsp;编辑尺寸
+                            </button>
+                            <button class="btn  btn-sm btn-danger" onclick="deleteSize();">
+                                <i class="glyphicon glyphicon-remove"></i>&nbsp;删除尺寸
+                            </button>
+                        </div>
+
+
+                        <table id="sizeTable"
+                               class="table table-condensed "
+                               data-toolbar="#size"
+                               data-icon-size="sm"
+                               data-data-type="json"
+                               data-query-params="queryParams"
+                               data-pagination="true"
+                               data-side-pagination="server"
+                               data-pagination="true"
+                               data-page-size="15"
+
+                               data-page-list="[15,20,25,30,ALL]"
+                               data-undefined-text=""
+                               data-show-columns="true"
+                        >
+                            <thead>
+                            <tr>
+                                <th data-field="categoryId" data-halign="center" data-align="center">所属大类</th>
+                                <th data-field="eurCode" data-halign="center" data-align="center">欧洲码</th>
+                                <th data-field="cnCode" data-halign="center" data-align="center">中国码</th>
+                                <th data-field="bodyType" data-halign="center" data-align="center">体型</th>
+                                <th data-field="height" data-halign="center" data-align="center">身高</th>
+                                <th data-field="chestCircle" data-halign="center" data-align="center">胸围</th>
+                                <th data-field="hYiChang" data-halign="center" data-align="center">后衣长</th>
+                                <th data-field="hipCircle" data-halign="center" data-align="center">臀围</th>
+                                <th data-field="jianWidth" data-halign="center" data-align="center">肩宽</th>
+                                <th data-field="waistCircle" data-halign="center" data-align="center">腰围</th>
+                                <th data-field="qYiChang" data-halign="center" data-align="center">前衣长</th>
+                                <th data-field="xiuChang" data-halign="center" data-align="center">袖长</th>
+                                <th data-field="xiuFei" data-halign="center" data-align="center">袖肥</th>
+                                <th data-field="xiuKou" data-halign="center" data-align="center">袖口</th>
+                                <th data-field="deleteFlag" data-halign="center" data-align="center" data-formatter="sizeStatus">是否删除</th>
+                            </tr>
+                            </thead>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+</body>
+</html>
+
+<script type="text/javascript">
+    var searchCondition;
+    var sizeId;
+    $(document).ready(function () {
+        $('#sizeTable').bootstrapTable({
+            url: path + "app/system/size/getSizeList",
+            ajaxOptions: {
+                headers: {"Authorization": securityContext.Authorization}
+            }
+        });
+        $("#sizeTable").on('click-row.bs.table', function (e, row, $element) {
+            $('.warning').removeClass('warning');
+            $($element).addClass('warning');
+            sizeId = row.sizeId;
+
+        });
+
+        $("#sizeTable").on('dbl-click-row.bs.table', function (e, row, $element) {
+            $('.warning').removeClass('warning');
+            $($element).addClass('warning');
+            sizeId = row.sizeId;
+            editSize();
+        });
+
+    });
+
+    function queryParams(params) {
+        return {
+            "pageNum": (params.offset / params.limit) + 1,
+            "pageSize": params.limit, search: searchCondition
+        };
+    }
+
+    function redresh() {
+        $('#sizeTable').bootstrapTable('refresh');
+    }
+
+    // 新建尺寸
+    function addSize() {
+        var url = "/APPLETPC/html/modules/size/SizeAdd.html";
+        var SizeAddFrame = '<iframe id="SizeAddFrame" class="my-modal-iframe" width="100%" height="500px" src="' + url + '"></iframe>';
+        window.top.bootbox.dialog({
+            title: "尺寸-新建",
+            message: SizeAddFrame,
+            buttons: {
+                saveType: {
+                    label: "保存",
+                    className: "btn-success",
+                    callback: function () {
+                        var result = window.top.document.getElementById("SizeAddFrame").contentWindow.doAddSize();
+                        if (result) {
+                            $.growl.notice({title: "提示信息", message: "保存成功"});
+                            redresh();
+                        }
+                        return result;
+                    }
+                },
+                cancelType: {
+                    label: "取消",
+                    className: "btn-default",
+                    callback: function () {
+                        return true;
+                    }
+                }
+            }
+        });
+    }
+
+    // 编辑尺寸
+    function editSize() {
+        if (!sizeId) {
+            $.growl.warning({title: "警告标题", message: "请先选择尺寸"});
+            return;
+        }
+        var url = "/APPLETPC/html/modules/size/SizeEdit.html";
+        sessionStorage.setItem('sizeId', sizeId);
+        var SizeEditFrame = '<iframe id="SizeEditFrame" class="my-modal-iframe" width="100%" height="600px" src="' + url + '"></iframe>';
+
+        window.top.bootbox.dialog({
+            title: "尺寸-编辑",
+            message: SizeEditFrame,
+            buttons: {
+                saveType: {
+                    label: "保存",
+                    className: "btn-success",
+                    callback: function () {
+                        var result = window.top.document.getElementById("SizeEditFrame").contentWindow.doEditSize();
+                        if (result) {
+                            $.growl.notice({title: "提示信息", message: "保存成功"});
+                            redresh();
+                        }
+                        return result;
+                    }
+                },
+                cancelType: {
+                    label: "取消",
+                    className: "btn-default",
+                    callback: function () {
+                        return true;
+                    }
+                }
+            }
+        });
+    }
+
+    //删除尺寸
+    function deleteSize() {
+
+        if (!sizeId) {
+            $.growl.warning({title: "警告标题", message: "请先选择尺寸"});
+            return;
+        }
+        window.top.bootbox.dialog({
+            title: "提示信息",
+            message: "请确认是否删除尺寸",
+            size: "middle",
+            buttons: {
+                OkType: {
+                    label: "确定",
+                    className: "btn-info",
+                    callback: function () {
+                        var url = path + "app/system/size/removeSize";
+                        url += "?t=" + new Date();
+                        $.ajax({
+                            type: "POST",
+                            url: url,
+                            headers: {"Authorization": securityContext.Authorization},
+                            data: {"sizeId": sizeId},
+                            success: function (data) {
+                                if (data.code == "S") {
+
+                                    $.growl.notice({title: "提示标题", message: "删除尺寸成功"});
+                                    redresh();
+                                    return true;
+                                } else {
+                                    result = false;
+                                    $.growl.error({title: "错误标题", message: data.data});
+                                }
+                                return false;
+                            }
+                        });
+                    }
+                },
+                cancelType: {
+                    label: "取消",
+                    className: "btn-warning",
+                    callback: function () {
+                        return true;
+                    }
+                }
+            }
+        });
+
+    }
+
+    function sizeStatus(value){
+        var sizeStatus = "";
+        if(value == "N") {
+             sizeStatus = '<span style="color:#34df48;font-weight:bold;">正常</span>';
+        }else{
+             sizeStatus = '<span style="color:#f50a05;font-weight:bold;">已删除</span>';
+        }
+        return sizeStatus;
+    }
+
+</script>

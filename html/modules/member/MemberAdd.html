@@ -1,0 +1,251 @@
+<script type="text/javascript">
+
+    var securityContext = JSON.parse(sessionStorage.getItem('securityContext'));
+    var path = sessionStorage.getItem('path');
+</script>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+    <title>会员新建</title>
+    <script src="/APPLETPC/js/jquery/jquery-3.4.1.min.js"></script>
+    <script type='text/javascript' src='/APPLETPC/js/json/model/AppMember.js'></script>
+    <link rel="stylesheet" href="/APPLETPC/js/plugins/layDate/laydate.css" type="text/css">
+    <script type="text/javascript" src="/APPLETPC/js/plugins/layDate/laydate.js"></script>
+
+
+</head>
+<body class="my-body-content">
+
+<div class="content-wrap">
+    <div class="main">
+        <!-- /# row -->
+        <section class="subSection">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="card">
+                        <form id="memberAddForm" name="memberAddForm" class="my-form-content">
+                            <table class="my-form-table-content">
+
+                                <tr>
+                                    <td class="my-form-table-td-label" style="width: 80px">
+                                        <label class="control-label" style="margin:7px;padding:0px;">手机号</label>
+                                    </td>
+                                    <td class="my-form-table-td-content" style="width: 180px">
+                                        <input id="memberTel" name="memberTel" type="text" class="form-control input-sm"
+                                               style="width:160px;padding:7px;float:left;">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="my-form-table-td-label">
+                                        <label class="control-label" style="margin:7px;padding:0px;">用户名</label>
+                                    </td>
+                                    <td class="my-form-table-td-content">
+                                        <input id="userName" name="userName" type="text" class="form-control input-sm"
+                                               style="width:160px;padding:7px;float:left;">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="my-form-table-td-label">
+                                        <label class="control-label" style="margin:7px;padding:0px;">真实姓名</label>
+                                    </td>
+                                    <td class="my-form-table-td-content">
+                                        <input id="realName" name="realName" type="text" class="form-control input-sm"
+                                               style="width:160px;padding:7px;float:left;">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="my-form-table-td-label">
+                                        <label class="control-label" style="margin:7px;padding:0px;">性别</label>
+                                    </td>
+                                    <td class="my-form-table-td-content">
+                                        <input type="radio" name="sex" value="男"> 男
+                                        <input type="radio" name="sex" value="女"> 女
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="my-form-table-td-label">
+                                        <label class="control-label" style="margin:7px;padding:0px;">身高</label>
+                                    </td>
+                                    <td class="my-form-table-td-content">
+                                        <input id="height" name="height" type="text" class="form-control input-sm"
+                                               style="width:160px;padding:7px;float:left;">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="my-form-table-td-label">
+                                        <label class="control-label" style="margin:7px;padding:0px;">体重</label>
+                                    </td>
+                                    <td class="my-form-table-td-content">
+                                        <input id="weight" name="weight" type="text" class="form-control input-sm"
+                                               style="width:160px;padding:7px;float:left;">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="my-form-table-td-label">
+                                        <label class="control-label" style="margin:7px;padding:0px;">邮箱</label>
+                                    </td>
+                                    <td class="my-form-table-td-content">
+                                        <input id="email" name="email" type="text" class="form-control input-sm"
+                                               style="width:160px;padding:7px;float:left;">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="my-form-table-td-label">
+                                        <label class="control-label" style="margin:7px;padding:0px;">地址</label>
+                                    </td>
+                                    <td class="my-form-table-td-content">
+                                        <input id="address" name="address" type="text" class="form-control input-sm" style="width:160px;padding:7px;float:left;">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="my-form-table-td-label">
+                                        <label class="control-label" style="margin:7px;padding:0px;">生日</label>
+                                    </td>
+                                    <td class="my-form-table-td-content">
+                                            <input id="birthday" name="birthday" type="text" class="form-control input-sm "  style="width:160px;padding:7px;float:left;">
+                                    </td>
+                                </tr>
+                            </table>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+</body>
+</html>
+
+<script type="text/javascript">
+    var validator;
+
+    $(document).ready(function () {
+        //执行一个laydate实例
+        laydate.render({
+            elem: '#birthday', //指定元素
+            calendar: true,
+            trigger: 'click',
+        });
+
+        validator = $("#memberAddForm").validate({
+            debug: true,
+            showErrors: showErrors,
+            rules: {
+                memberTel: {
+                    required: true,
+                    maxlength: 11,
+                    minlength: 11,
+                    number: true,
+                    remote: {
+                        url: path + "app/system/member/checkMemberTel?t=" + new Date(),
+                        type: "get",
+                        headers: {"Authorization": securityContext.Authorization},
+                        data: {
+                            memberTel: function () {
+                                return $('#memberTel').val()
+                            }
+                        }
+                    }
+                },
+                userName: {
+                    required: true,
+                    maxlength: 20
+                },
+                realName: {
+                    required: true,
+                    maxlength: 20,
+                },
+                sex: {
+                    required: true,
+                },
+                height: {
+                    maxlength: 7,
+                    number: true
+                },
+                weight: {
+                    maxlength: 7,
+                    number: true
+                },
+                address: {
+                    maxlength: 50,
+                },
+                email: {
+                    email: true
+                }
+
+            },
+            messages: {
+                memberTel: {
+                    required: "不能为空！",
+                    number: "必须是数字！",
+                    maxlength: "请输入手机号",
+                    minlength: "请输入手机号",
+                    remote: "当前会员已经存在！",
+                },
+                userName: {
+                    maxlength: "最大长度为20！",
+                    required: "不能为空！",
+                },
+                realName: {
+                    maxlength: "最大长度为20！",
+                    required: "不能为空！",
+                },
+                sex: {
+                    required: "不能为空！",
+                },
+                height: {
+                    maxlength: "最大长度为7！",
+                    number: "必须是数字！",
+                },
+                width: {
+                    maxlength: "最大长度为7！",
+                    number: "必须是数字！",
+                },
+                address: {
+                    maxlength: "最大长度为50！",
+                },
+                email: {
+                    email: "请输入邮箱",
+                }
+            }
+        });
+    });
+
+    function doAddMember() {
+        var result = false;
+        if (validator.form()) {
+            var member = new AppMember();
+
+            dwr.util.getValues(member);
+            member.sex = $('input[name="sex"]:checked').val();
+            var url = path + "app/system/member/addMember";
+            url += "?t=" + new Date();
+
+            $.ajax({
+                type: "post",
+                url: url,
+                data: member,
+                async: false,
+                headers: {"Authorization": securityContext.Authorization},
+                success: function (data) {
+
+                    if (data.code == "S") {
+                        result = true;
+                    } else if (data.code == "W") {
+                        result = false;
+                        $.growl.warning({title: "提示信息", message: data.info});
+                    } else {
+                        result = false;
+                        $.growl.error({title: "提示信息", message: "数据加载失败！" + "<br><br>" + data.data});
+                    }
+                }
+            });
+        }
+        return result;
+    }
+
+</script>

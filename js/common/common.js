@@ -321,15 +321,15 @@ function yes_or_no(value,row,index){
 
 //商品上新
 function deleteRedCollarCache(){
-	var url = path+"api/dataPush/deleteRedCollarCache";
+	var url = path+"app/dataPush/deleteRedCollarCache";
 		url += "?t=" + new Date(); 
 		$.ajax({
 			type: "POST",
 		    url: url,
-		    headers:{"token":securityContext.token},
+		    headers:{"Authorization":securityContext.Authorization},
 		    success: function(data){
 				if (data.code == "S") {
-					$.growl.notice({title: "提醒标题", message: "上新成功" });
+					$.growl.notice({title: "提示信息", message: "上新成功" });
 				} else {
 					$.growl.error({    title: "错误标题", message: data.data });
 				}

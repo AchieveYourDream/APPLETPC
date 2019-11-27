@@ -7,7 +7,7 @@ function showErrors() {
         this.settings.highlight && this.settings.highlight.call(this, error.element, this.settings.errorClass, this.settings.validClass);
         var errimg = $("img[for=" + elename + "]");
         if (errimg.length == 0) {
-            errimg = $('<img alt="' + error.message + '"' + ' src="/SPMTMPC/js/plugins/jquery-validate/images/unchecked.gif"' + ' style="padding:1px;"' + ' data-toggle="tooltip"' + ' title="' + error.message + '">');
+            errimg = $('<img alt="' + error.message + '"' + ' src="/APPLETPC/js/plugins/jquery-validate/images/unchecked.gif"' + ' style="padding:1px;"' + ' data-toggle="tooltip"' + ' title="' + error.message + '">');
             errimg.attr({
                 "for": this.idOrName(error.element),
                 generated: true
@@ -25,7 +25,7 @@ function showErrors() {
         $("img[for=" + this.idOrName(this.successList[i]) + "]").hide();
         var successimg = $('img[for="success_' + elename + '"]');
         if (successimg.length == 0) {
-            successimg = $('<img style="padding:1px;" src="/SPMTMPC/js/plugins/jquery-validate/images/checked.gif">');
+            successimg = $('<img style="padding:1px;" src="/APPLETPC/js/plugins/jquery-validate/images/checked.gif">');
             successimg.attr({
                 "for": "success_" + this.idOrName(success),
                 generated: true

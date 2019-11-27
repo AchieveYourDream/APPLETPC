@@ -1,0 +1,268 @@
+<script type="text/javascript">
+    var lineRow = JSON.parse(sessionStorage.getItem('lineRow'));
+</script>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+    <title>订单编辑</title>
+    <script src="/APPLETPC/js/jquery/jquery-3.4.1.min.js"></script>
+    <script type='text/javascript' src='/APPLETPC/js/json/model/AppMember.js'></script>
+
+
+</head>
+<body class="my-body-content">
+<div class="content-wrap">
+    <div class="main">
+        <!-- /# row -->
+        <section class="subSection">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="card">
+
+                        <div id="tabs">
+                            <!-- Nav tabs -->
+                            <ul class="nav nav-tabs" role="tablist" style="padding-left:1px;padding-right:1px;">
+
+                                <li role="presentation" id="tab_tab_M0101" class="active">
+                                    <a href="#tab_M0101" aria-controls="tab_M0101" role="tab" data-toggle="tab" style="border-radius:0px;font-size:13px;font-weight:600;" aria-expanded="true">订单详情</a>
+                                </li>
+                                <li role="presentation" id="tab_tab_M0102" class="">
+                                    <a href="#tab_M0102" aria-controls="tab_M0102" role="tab" data-toggle="tab" style="border-radius:0px;font-size:13px;font-weight:600;" aria-expanded="true">商品详情</a>
+                                </li>
+                                <li role="presentation" id="tab_tab_M0103" class="">
+                                    <a href="#tab_M0103" aria-controls="tab_M0103" role="tab" data-toggle="tab" style="border-radius:0px;font-size:13px;font-weight:600;" aria-expanded="true">收货信息</a>
+                                </li>
+                                <li role="presentation" id="tab_tab_M0104" class="">
+                                    <a href="#tab_M0104" aria-controls="tab_M0104" role="tab" data-toggle="tab" style="border-radius:0px;font-size:13px;font-weight:600;" aria-expanded="true">支付信息</a>
+                                </li>
+                                <li role="presentation" id="tab_tab_M0105" class="">
+                                    <a href="#tab_M0105" aria-controls="tab_M0105" role="tab" data-toggle="tab" style="border-radius:0px;font-size:13px;font-weight:600;" aria-expanded="true">物流信息</a>
+                                </li>
+                            </ul>
+
+
+                            <!-- Tab panes -->
+                            <div class="tab-content">
+                                <div role="tabpanel" class="tab-pane active" id="tab_M0101" style="margin-bottom:0px;padding-bottom:0px;">
+                                    <!--<form id="memberAddForm" name="memberAddForm" class="my-form-content">-->
+                                        <table class="my-form-table-content">
+                                            <tr>
+                                                <td class="my-form-table-td-label" style="width: 80px">
+                                                    <label class="control-label" style="margin:7px;padding:0px;">订单号</label></td>
+                                                <td class="my-form-table-td-content" style="width: 180px">
+                                                    <input id="clothId" name="memberTel" type="text" class="form-control input-sm"style="width:160px;padding:7px;float:left;">
+                                                </td>
+                                                <td class="my-form-table-td-label">
+                                                    <label class="control-label" style="margin:7px;padding:0px;">总单号</label>
+                                                </td>
+                                                <td class="my-form-table-td-content">
+                                                    <input id="packagecode" type="text" class="form-control input-sm" style="width:160px;padding:7px;float:left;">
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="my-form-table-td-label" >
+                                                    <label class="control-label" style="margin:7px;padding:0px;">创建时间</label></td>
+                                                <td class="my-form-table-td-content" >
+                                                    <input id="createDate" type="text" class="form-control input-sm"style="width:160px;padding:7px;float:left;">
+                                                </td>
+                                                <td class="my-form-table-td-label">
+                                                    <label class="control-label" style="margin:7px;padding:0px;">付款时间</label>
+                                                </td>
+                                                <td class="my-form-table-td-content">
+                                                    <input id="payDate" type="text" class="form-control input-sm" style="width:160px;padding:7px;float:left;">
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="my-form-table-td-label" >
+                                                    <label class="control-label" style="margin:7px;padding:0px;">交货日期</label></td>
+                                                <td class="my-form-table-td-content" >
+                                                    <input id="deliveryDate"  type="text" class="form-control input-sm"style="width:160px;padding:7px;float:left;">
+                                                </td>
+                                                <td class="my-form-table-td-label">
+                                                    <label class="control-label" style="margin:7px;padding:0px;">推送工厂时间</label>
+                                                </td>
+                                                <td class="my-form-table-td-content">
+                                                    <input id="pushFactoryDate" name="userName" type="text" class="form-control input-sm" style="width:160px;padding:7px;float:left;">
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="my-form-table-td-label" >
+                                                    <label class="control-label" style="margin:7px;padding:0px;">推送工厂状态</label></td>
+                                                <td class="my-form-table-td-content" >
+                                                    <input id="pushFactoryState"  type="text" class="form-control input-sm"style="width:160px;padding:7px;float:left;">
+                                                </td>
+                                                <td class="my-form-table-td-label">
+                                                    <label class="control-label" style="margin:7px;padding:0px;">推送工厂信息</label>
+                                                </td>
+                                                <td class="my-form-table-td-content">
+                                                    <input id="pushFactoryMessage"  type="text" class="form-control input-sm" style="width:160px;padding:7px;float:left;">
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    <!--</form>-->
+
+                                </div>
+                                <div id="order">
+                                    <button class="btn  btn-sm btn-info" onclick="viewOrder();">
+                                        <i class="glyphicon glyphicon-eye-open"></i>&nbsp;查看详情
+                                    </button>
+                                </div>
+                                <div role="tabpanel" class="tab-pane" id="tab_M0102" style="margin-bottom:0px;padding:10px;">
+                                    <table id="orderInfoTable"
+                                           class="table table-condensed"
+                                           data-toggle="table"
+                                           data-icon-size="sm"
+                                           data-height="200"
+                                           data-toolbar="#order"
+                                    >
+                                        <thead>
+                                        <tr>
+                                            <th data-field="orderId"            data-halign="center"     data-align="center"  >订单号</th>
+                                            <th data-field="clothId"             data-halign="center"     data-align="center"  >服装品类</th>
+                                            <th data-field="clothStyle"          data-halign="center"     data-align="center"  >着装风格</th>
+                                            <th data-field="amount"              data-halign="center"     data-align="center"  >数量</th>
+                                            <th data-field="fabricCode"          data-halign="center"     data-align="center"  >面料号</th>
+                                            <th data-field="price"               data-halign="center"     data-align="center"  >零售价</th>
+                                            <th data-field="actualAmount"        data-halign="center"     data-align="center"  >实收金额</th>
+                                        </tr>
+                                        </thead>
+                                    </table>
+                                </div>
+                                <div role="tabpanel" class="tab-pane" id="tab_M0103" style="margin-bottom:0px;padding:10px;">
+                                    <table class="my-form-table-content">
+                                        <tr>
+                                            <td class="my-form-table-td-label" style="width: 80px">
+                                                <label class="control-label" style="margin:7px;padding:0px;">收货人</label></td>
+                                            <td class="my-form-table-td-content" style="width: 180px">
+                                                <input id="memberName"  type="text" class="form-control input-sm"style="width:160px;padding:7px;float:left;">
+                                            </td>
+                                            <td class="my-form-table-td-label">
+                                                <label class="control-label" style="margin:7px;padding:0px;">收货人电话</label>
+                                            </td>
+                                            <td class="my-form-table-td-content">
+                                                <input id="memberTel" type="text" class="form-control input-sm" style="width:160px;padding:7px;float:left;">
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="my-form-table-td-label">
+                                                <label class="control-label" style="margin:7px;padding:0px;">省份</label>
+                                            </td>
+                                            <td class="my-form-table-td-content">
+                                                <input id="province" type="text" class="form-control input-sm" style="width:160px;padding:7px;float:left;">
+                                            </td>
+                                            <td class="my-form-table-td-label">
+                                                <label class="control-label" style="margin:7px;padding:0px;">城市</label>
+                                            </td>
+                                            <td class="my-form-table-td-content">
+                                                <input id="city" type="text" class="form-control input-sm" style="width:160px;padding:7px;float:left;">
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="my-form-table-td-label" >
+                                                <label class="control-label" style="margin:7px;padding:0px;">地区</label></td>
+                                            <td class="my-form-table-td-content" >
+                                                <input id="county"  type="text" class="form-control input-sm"style="width:160px;padding:7px;float:left;">
+                                            </td>
+                                            <td class="my-form-table-td-label">
+                                                <label class="control-label" style="margin:7px;padding:0px;">详细信息</label>
+                                            </td>
+                                            <td class="my-form-table-td-content">
+                                                <input id="street" name="userName" type="text" class="form-control input-sm" style="width:160px;padding:7px;float:left;">
+                                            </td>
+                                        </tr>
+                                    </table>
+
+                                </div>
+
+
+                                <div role="tabpanel" class="tab-pane" id="tab_M0104" style="margin-bottom:0px;padding:10px;">
+                                    <table class="my-form-table-content">
+                                        <tr>
+                                            <td class="my-form-table-td-label" style="width: 80px">
+                                                <label class="control-label" style="margin:7px;padding:0px;">付款人</label></td>
+                                            <td class="my-form-table-td-content" style="width: 180px">
+                                                <input id="memberId"  type="text" class="form-control input-sm"style="width:160px;padding:7px;float:left;">
+                                            </td>
+                                            <td class="my-form-table-td-label">
+                                                <label class="control-label" style="margin:7px;padding:0px;">支付方式</label>
+                                            </td>
+                                            <td class="my-form-table-td-content">
+                                                <input id="payType" type="text" class="form-control input-sm" style="width:160px;padding:7px;float:left;">
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="my-form-table-td-label">
+                                                <label class="control-label" style="margin:7px;padding:0px;">商品总价</label>
+                                            </td>
+                                            <td class="my-form-table-td-content">
+                                                <input id="orderPrice" type="text" class="form-control input-sm" style="width:160px;padding:7px;float:left;">
+                                            </td>
+                                            <td class="my-form-table-td-label">
+                                                <label class="control-label" style="margin:7px;padding:0px;">实际支付</label>
+                                            </td>
+                                            <td class="my-form-table-td-content">
+                                                <input id="payPrice" type="text" class="form-control input-sm" style="width:160px;padding:7px;float:left;">
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="my-form-table-td-label" >
+                                                <label class="control-label" style="margin:7px;padding:0px;">流水号</label></td>
+                                            <td class="my-form-table-td-content" >
+                                                <input id="payNum"  type="text" class="form-control input-sm"style="width:160px;padding:7px;float:left;">
+                                            </td>
+                                        </tr>
+                                    </table>
+
+                                </div>
+
+                                <div role="tabpanel" class="tab-pane" id="tab_M0105" style="margin-bottom:0px;padding:10px;">
+                                    暂时没有物流信息!
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+    </div>
+</div>
+</section>
+</div>
+</div>
+</body>
+</html>
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        $("#orderInfoTable").bootstrapTable("append",lineRow)
+        dwr.util.setValues(lineRow);
+
+    });
+
+    // 查看详情
+    function viewOrder() {
+        var url = "/APPLETPC/html/modules/order/OrderTechnology.html";
+        var OrderTechnologyFrame = '<iframe id="OrderTechnologyFrame" class="my-modal-iframe" width="100%" height="600px" src="' + url + '"></iframe>';
+
+        window.top.bootbox.dialog({
+            title: "订单-详情",
+            message: OrderTechnologyFrame,
+            size: "large",
+            buttons: {
+                cancelType: {
+                    label: "取消",
+                    className: "btn-default",
+                    callback: function () {
+                        return true;
+                    }
+                }
+            }
+        });
+    }
+</script>

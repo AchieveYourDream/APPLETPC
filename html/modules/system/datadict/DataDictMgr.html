@@ -1,7 +1,5 @@
 <script type="text/javascript">
-    if (sessionStorage.getItem('securityContext') == null) {
-        window.location.href = "/APPLETPC/login.html";
-    }
+
     var securityContext = JSON.parse(sessionStorage.getItem('securityContext'));
     var path = sessionStorage.getItem('path');
 </script>
@@ -52,7 +50,6 @@
                                            data-icon-size="sm"
                                            data-pagination="true"
                                            data-page-size="15"
-                                           data-height="650"
                                            data-page-list="[15,20,25,30,ALL]"
                                            data-striped="true"
                                            data-search="true">
@@ -94,7 +91,7 @@
                                            class="table table-condensed"
                                            data-toggle="table"
                                            data-toolbar="#itemToolbar"
-                                           data-height="650"
+
                                            data-icon-size="sm"
                                            data-pagination="true"
                                            data-page-size="15"
@@ -326,7 +323,7 @@
                             data:{"typeCode":currentTypeCode},
                             success: function(data){
                                 if (data.code== "S") {
-                                    $.growl.notice({    title: "错误标题", message:"删除成功"});
+                                    $.growl.notice({    title: "提示标题", message:"删除成功"});
                                     queryDataDictTypeList();
                                     currentTypeCode = null;
                                     currentTypeName = null;
@@ -469,7 +466,7 @@
                             data:{"typeCode":currentTypeCode,"itemCode":currentItemCode},
                             success: function(data){
                                 if (data.code== "S") {
-                                    $.growl.notice({    title: "错误标题", message:"删除成功"});
+                                    $.growl.notice({    title: "提示标题", message:"删除成功"});
                                     queryDataDictItemList();
                                     currentItemCode = null;
                                     currentItemName = null;

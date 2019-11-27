@@ -1,7 +1,5 @@
 <script type="text/javascript">
-    if (sessionStorage.getItem('securityContext') == null) {
-        window.location.href = "../../../login.html";
-    }
+
     var securityContext = JSON.parse(sessionStorage.getItem('securityContext'));
 
     var path = sessionStorage.getItem('path');
@@ -59,7 +57,7 @@
                                data-side-pagination="server"
                                data-pagination="true"
                                data-page-size="10"
-                               data-height="650"
+
                                data-page-list="[10,15,20,25,30,ALL]"
                                data-undefined-text=""
                                data-show-columns="true"
@@ -255,7 +253,7 @@
                             success: function (data) {
                                 if (data.code == "S") {
 
-                                    $.growl.notice({title: "错误标题", message: "删除用户成功"});
+                                    $.growl.notice({title: "提示标题", message: "删除用户成功"});
                                     redresh();
                                     return true;
                                 } else {
@@ -294,7 +292,7 @@
             data: {"userName": username},
             success: function (data) {
                 if (data.code == "S") {
-                    $.growl.notice({title: "错误标题", message: "修改成功"});
+                    $.growl.notice({title: "提示标题", message: "修改成功"});
                     redresh();
                     return true;
                 } else {
@@ -321,7 +319,7 @@
             data: {"userName": username, "userState": userState},
             success: function (data) {
                 if (data.code == "S") {
-                    $.growl.notice({title: "错误标题", message: "修改成功"});
+                    $.growl.notice({title: "提示标题", message: "修改成功"});
                     redresh();
                     return true;
                 } else {
@@ -335,18 +333,17 @@
 function  headPortrait (value){
     var image=""
         if(value!=null){
-            image='<img src="'+path+'static/getImages/user/'+value+'" style="height:50px;width:50px">';
+            image='<img src="'+path+'static/getImages/user/'+value+'" style="height:50px;width:50px;border-radius:50%">';
         }
-        console.log(image)
         return image;
 }
 
 function userStatus(value){
         var userStatus = "";
         if(value == "有效") {
-            var userStatus = '<span style="color:#34df48;font-weight:bold;">有效</span>';
+             userStatus = '<span style="color:#34df48;font-weight:bold;">有效</span>';
         }else{
-            var userStatus = '<span style="color:#f50a05;font-weight:bold;">无效</span>';
+             userStatus = '<span style="color:#f50a05;font-weight:bold;">无效</span>';
         }
         return userStatus;
     }

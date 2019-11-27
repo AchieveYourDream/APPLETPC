@@ -1,0 +1,177 @@
+<script type="text/javascript">
+    var securityContext = JSON.parse(sessionStorage.getItem('securityContext'));
+    var path = sessionStorage.getItem('path');
+</script>
+<!DOCTYPE html>
+<html style="overflow: hidden;">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+    <title>工艺冲突列表</title>
+
+    <script src="/APPLETPC/js/jquery/jquery-3.4.1.min.js"></script>
+<body style="font-member:12px;">
+<div class="content-wrap">
+    <div class="main">
+        <!-- /# row -->
+        <section class="mainSection">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="card">
+                        <div id="technologyConflict">
+                            <button class="btn  btn-sm btn-success" onclick="addTechnologyConflict();">
+                                <i class="glyphicon glyphicon-plus"></i>&nbsp;新建工艺冲突
+                            </button>
+                            <button class="btn  btn-sm btn-danger" onclick="deleteTechnologyConflict();">
+                                <i class="glyphicon glyphicon-remove"></i>&nbsp;删除工艺冲突
+                            </button>
+                        </div>
+
+
+                        <table id="technologyConflictTable"
+                               class="table table-condensed "
+                               data-toolbar="#technologyConflict"
+                               data-icon-member="sm"
+                               data-data-type="json"
+                               data-query-params="queryParams"
+                               data-pagination="true"
+                               data-side-pagination="server"
+                               data-page-member="15"
+                               data-page-list="[15,20,25,30,ALL]"
+                               data-undefined-text=""
+                               data-show-columns="true"
+                        >
+                            <thead>
+                            <tr>
+                                <th data-field="aTechnologyCode" data-halign="center" data-align="center">A工艺编码</th>
+                                <th data-field="aTechnologyName" data-halign="center" data-align="center">A工艺名称</th>
+                                <th data-field="bTechnologyCode" data-halign="center" data-align="center">B工艺编码</th>
+                                <th data-field="bTechnologyName" data-halign="center" data-align="center">B工艺名称</th>
+                            </tr>
+                            </thead>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+</body>
+</html>
+
+<script type="text/javascript">
+    var searchCondition;
+    var id;
+    $(document).ready(function () {
+        $('#technologyConflictTable').bootstrapTable({
+            url: path + "app/system/technologyConflict/getTechnologyConflictList",
+            ajaxOptions: {
+                headers: {"Authorization": securityContext.Authorization}
+            }
+        });
+        $("#technologyConflictTable").on('click-row.bs.table', function (e, row, $element) {
+            $('.warning').removeClass('warning');
+            $($element).addClass('warning');
+            id = row.id;
+
+        });
+
+    });
+
+    function queryParams(params) {
+        return {
+            "pageNum": (params.offset / params.limit) + 1,
+            "pageSize": params.limit, search: searchCondition
+        };
+    }
+
+    function redresh() {
+        $('#technologyConflictTable').bootstrapTable('refresh');
+    }
+
+    // 新建工艺冲突
+    function addTechnologyConflict() {
+        var url = "/APPLETPC/html/modules/technologyConflict/TechnologyConflictAdd.html";
+        var TechnologyConflictAddFrame = '<iframe id="TechnologyConflictAddFrame" class="my-modal-iframe" width="100%" height="500px" src="' + url + '"></iframe>';
+        window.top.bootbox.dialog({
+            title: "工艺冲突-新建",
+            message: TechnologyConflictAddFrame,
+            size:"small",
+            buttons: {
+                saveType: {
+                    label: "保存",
+                    className: "btn-success",
+                    callback: function () {
+                        var result = window.top.document.getElementById("TechnologyConflictAddFrame").contentWindow.addTechnologyConflict();
+                        if (result) {
+                            $.growl.notice({title: "提示信息", message: "保存成功"});
+                            redresh();
+                        }
+                        return result;
+                    }
+                },
+                cancelType: {
+                    label: "取消",
+                    className: "btn-default",
+                    callback: function () {
+                        return true;
+                    }
+                }
+            }
+        });
+    }
+
+
+    //删除工艺冲突
+    function deleteTechnologyConflict() {
+
+        if (!id) {
+            $.growl.warning({title: "警告标题", message: "请先选择工艺冲突"});
+            return;
+        }
+        window.top.bootbox.dialog({
+            title: "提示信息",
+            message: "请确认是否删除工艺冲突",
+            size: "middle",
+            buttons: {
+                OkType: {
+                    label: "确定",
+                    className: "btn-info",
+                    callback: function () {
+                        var url = path + "app/system/technologyConflict/removeTechnologyConflict";
+                        url += "?t=" + new Date();
+                        $.ajax({
+                            type: "POST",
+                            url: url,
+                            headers: {"Authorization": securityContext.Authorization},
+                            data: {"id": id},
+                            success: function (data) {
+                                if (data.code == "S") {
+
+                                    $.growl.notice({title: "提示标题", message: "删除工艺冲突成功"});
+                                    redresh();
+                                    return true;
+                                } else {
+                                    result = false;
+                                    $.growl.error({title: "错误标题", message: data.data});
+                                }
+                                return false;
+                            }
+                        });
+                    }
+                },
+                cancelType: {
+                    label: "取消",
+                    className: "btn-warning",
+                    callback: function () {
+                        return true;
+                    }
+                }
+            }
+        });
+
+    }
+
+</script>

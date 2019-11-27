@@ -1,0 +1,328 @@
+<script type="text/javascript">
+
+    var securityContext = JSON.parse(sessionStorage.getItem('securityContext'));
+
+    var path = sessionStorage.getItem('path');
+</script>
+<!DOCTYPE html>
+<html style="overflow: hidden;">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+    <title>刺绣列表</title>
+
+    <script src="/APPLETPC/js/jquery/jquery-3.4.1.min.js"></script>
+<body style="font-size:12px;">
+<div class="content-wrap">
+    <div class="main">
+        <!-- /# row -->
+        <section class="mainSection">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="card">
+                        <div class="row" style="margin:0px;padding:0px;">
+                        <div class="col-lg-9">
+                        <div id="stitchWork">
+                            <button class="btn  btn-sm btn-info" onclick="redresh()">
+                                <i class="glyphicon glyphicon-repeat"></i>&nbsp;刷新
+                            </button>
+                            <button class="btn  btn-sm btn-success" onclick="addStitchWork();">
+                                <i class="glyphicon glyphicon-plus"></i>&nbsp;新建刺绣
+                            </button>
+                            <button class="btn  btn-sm btn-warning" onclick="editStitchWork();">
+                                <i class="glyphicon glyphicon-edit"></i>&nbsp;编辑刺绣
+                            </button>
+                            <button class="btn  btn-sm btn-danger" onclick="deleteStitchWork();">
+                                <i class="glyphicon glyphicon-remove"></i>&nbsp;删除刺绣
+                            </button>
+
+                        </div>
+
+
+                        <table id="stitchWorkTable"
+                               class="table table-condensed "
+                               data-toolbar="#stitchWork"
+                               data-icon-size="sm"
+                               data-data-type="json"
+                               data-query-params="queryParams"
+                               data-pagination="true"
+                               data-side-pagination="server"
+                               data-page-size="10"
+                               data-page-list="[10,15,20,25,30,ALL]"
+                               data-undefined-text=""
+                               data-show-columns="true"
+                               data-search="true"
+                        >
+                            <thead>
+                            <tr>
+                                <th data-field="stitchWorkName" data-halign="center" data-align="center">刺绣名称</th>
+                                <th data-field="factoryCode" data-halign="center" data-align="center">工厂编码</th>
+                                <th data-field="description" data-halign="center" data-align="center">描述</th>
+                                <th data-field="stitchWorkImg" data-halign="center" data-align="center"   data-formatter="stitchWorkImage">刺绣图片</th>
+                            </tr>
+                            </thead>
+                        </table>
+                        </div>
+
+                        <div class="col-lg-3">
+
+
+                        <div id="stitchRelationWork">
+                            <button class="btn  btn-sm btn-info" onclick="getStitchWorkRelationList()">
+                                <i class="glyphicon glyphicon-repeat"></i>&nbsp;刷新
+                            </button>
+                            <button class="btn  btn-sm btn-success" onclick="updateStitchWorkPositionRelation();">
+                                <i class="glyphicon glyphicon-plus"></i>&nbsp;保存
+                            </button>
+
+                        </div>
+
+
+                        <table id="stitchWorkRelationTable"
+                               data-toggle="table"
+                               class="table table-condensed "
+                               data-toolbar="#stitchRelationWork"
+                               data-icon-size="sm"
+                               data-pagination="false"
+                               data-undefined-text=""
+                        >
+                            <thead>
+                            <tr>
+                                <th data-field="state" data-checkbox="true" data-halign="center" data-align="center" ></th>
+                                <th data-field="positionName" data-halign="center" data-align="center">位置名称</th>
+                                <th data-field="categoryCode" data-halign="center" data-align="center">品类</th>
+                            </tr>
+                            </thead>
+                        </table>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+</body>
+</html>
+
+<script type="text/javascript">
+    var id;
+    $(document).ready(function () {
+        $('#stitchWorkTable').bootstrapTable({
+            url: path + "app/system/stitchWork/getStitchWorkList",
+            ajaxOptions: {
+                headers: {"Authorization": securityContext.Authorization}
+            }
+        });
+
+
+        $("#stitchWorkTable").on('click-row.bs.table', function (e, row, $element) {
+            $('.warning').removeClass('warning');
+            $($element).addClass('warning');
+            id = row.id;
+            getStitchWorkRelationList();
+        });
+
+        $("#stitchWorkTable").on('dbl-click-row.bs.table', function (e, row, $element) {
+            $('.warning').removeClass('warning');
+            $($element).addClass('warning');
+            id = row.id;
+            editStitchWork();
+        });
+
+    });
+
+    function queryParams(params) {
+        return {
+            "pageNum": (params.offset / params.limit) + 1,
+            "pageSize": params.limit, search: params.search
+        };
+    }
+
+    function redresh() {
+        $('#stitchWorkTable').bootstrapTable('refresh');
+    }
+
+
+    // 新建刺绣
+    function addStitchWork() {
+        var url = "/APPLETPC/html/modules/stitchWork/StitchWorkAdd.html";
+        var fabricAddFrame = '<iframe id="fabricAddFrame" class="my-modal-iframe" width="100%" height="600px" src="' + url + '"></iframe>';
+        window.top.bootbox.dialog({
+            title: "刺绣-新建",
+            message: fabricAddFrame,
+            size: "large",
+            buttons: {
+                saveType: {
+                    label: "保存",
+                    className: "btn-success",
+                    callback: function () {
+                        var result = window.top.document.getElementById("fabricAddFrame").contentWindow.uploadImage();
+                        if (result) {
+                            $.growl.notice({title: "提示信息", message: "保存成功"});
+                            redresh();
+                        }
+                        return result;
+                    }
+                },
+                cancelType: {
+                    label: "取消",
+                    className: "btn-default",
+                    callback: function () {
+                        return true;
+                    }
+                }
+            }
+        });
+    }
+
+    // 编辑刺绣
+    function editStitchWork() {
+        if (!id) {
+            $.growl.warning({title: "警告标题", message: "请先选择刺绣"});
+            return;
+        }
+        var url = "/APPLETPC/html/modules/stitchWork/StitchWorkEdit.html";
+        sessionStorage.setItem('id', id);
+        var fabricEditFrame = '<iframe id="fabricEditFrame" class="my-modal-iframe" width="100%" height="600px" src="' + url + '"></iframe>';
+
+        window.top.bootbox.dialog({
+            title: "刺绣-编辑",
+            message: fabricEditFrame,
+            size: "large",
+            buttons: {
+                saveType: {
+                    label: "保存",
+                    className: "btn-success",
+                    callback: function () {
+                        var result = window.top.document.getElementById("fabricEditFrame").contentWindow.doEditStitchWork();
+                        if (result) {
+                            $.growl.notice({title: "提示信息", message: "保存成功"});
+                            redresh();
+                        }
+                        return result;
+                    }
+                },
+                cancelType: {
+                    label: "取消",
+                    className: "btn-default",
+                    callback: function () {
+                        return true;
+                    }
+                }
+            }
+        });
+    }
+
+    //删除刺绣
+    function deleteStitchWork() {
+
+        if (!id) {
+            $.growl.warning({title: "警告标题", message: "请先选择刺绣"});
+            return;
+        }
+        window.top.bootbox.dialog({
+            title: "提示信息",
+            message: "请确认是否删除刺绣",
+            size: "middle",
+            buttons: {
+                OkType: {
+                    label: "确定",
+                    className: "btn-info",
+                    callback: function () {
+                        var url = path + "app/system/stitchWork/removeStitchWork";
+                        url += "?t=" + new Date();
+                        $.ajax({
+                            type: "POST",
+                            url: url,
+                            headers: {"Authorization": securityContext.Authorization},
+                            data: {"id": id},
+                            success: function (data) {
+                                if (data.code == "S") {
+
+                                    $.growl.notice({title: "提示标题", message: "删除刺绣成功"});
+                                    redresh();
+                                    return true;
+                                } else {
+                                    result = false;
+                                    $.growl.error({title: "错误标题", message: data.data});
+                                }
+                                return false;
+                            }
+                        });
+                    }
+                },
+                cancelType: {
+                    label: "取消",
+                    className: "btn-warning",
+                    callback: function () {
+                        return true;
+                    }
+                }
+            }
+        });
+
+    }
+
+    // 获取关系列表
+    function getStitchWorkRelationList() {
+        if (!id) {
+            $.growl.warning({title: "警告标题", message: "请先选择刺绣"});
+            return;
+        }
+        var url = path + "app/system/stitchWork/getStitchWorkRelationList";
+        $.ajax({
+            type: "get",
+            url: url,
+            headers: {"Authorization": securityContext.Authorization},
+            data:{"stitchWorkId":id},
+            success: function (data) {
+                if (data.code == "S") {
+                    $("#stitchWorkRelationTable").bootstrapTable("load", data.data);
+                } else {
+                    $.growl.error({title: "提示信息", message:"数据加载失败！" + "<br><br>" + data.data});
+                }
+            }
+        });
+    }
+    //修改刺绣与位置关系
+    function updateStitchWorkPositionRelation() {
+        var positionArr = new Array();
+        var rows = $("#stitchWorkRelationTable").bootstrapTable("getSelections");
+        console.log(rows);
+        if (rows.length == 0) {
+            $.growl.warning({title: "提示信息", message: "请先选择刺绣位置",});
+            return false;
+        }
+        for (var i = 0; i < rows.length; i++) {
+            positionArr.push(rows[i].id);
+        }
+
+        var url = path + "app/system/stitchWork/updateStitchWorkPositionRelation";
+        $.ajax({
+            type: "post",
+            url: url,
+            headers: {"Authorization": securityContext.Authorization},
+            data:{"stitchWorkId":id,"positionArray":positionArr.join(",")},
+            success: function (data) {
+                if (data.code == "S") {
+                    $.growl.notice({title: "提示标题", message: "保存成功"});
+                    getStitchWorkRelationList();
+                } else {
+                    $.growl.error({title: "提示信息", message:"数据加载失败！" + "<br><br>" + data.data});
+                }
+            }
+        });
+    }
+
+function  stitchWorkImage (value){
+    var image=""
+        if(value!=null && value!=''){
+            image='<img src="'+path+'static/getImages/stitchWork/'+value+'" style="height:50px;width:50px">';
+        }
+        return image;
+}
+
+</script>

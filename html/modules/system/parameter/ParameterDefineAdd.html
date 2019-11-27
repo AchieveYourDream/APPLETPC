@@ -1,7 +1,5 @@
 <script type="text/javascript">
-    if (sessionStorage.getItem('securityContext') == null) {
-        window.location.href = "/APPLETPC/login.html";
-    }
+
     var securityContext = JSON.parse(sessionStorage.getItem('securityContext'));
     var path = sessionStorage.getItem('path');
     var typeCode = sessionStorage.getItem('typeCode');

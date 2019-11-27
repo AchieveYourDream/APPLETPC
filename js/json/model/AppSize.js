@@ -1,0 +1,21 @@
+function AppSize() {
+	this.sizeId = null;
+	this.bodyType = null;
+	this.chestCircle = null;
+	this.comboCode = null;
+	this.deleteFlag = null;
+	this.hYiChang = null;
+	this.hipCircle = null;
+	this.jianWidth = null;
+	this.waistCircle = null;
+	this.eurCode = null;
+	this.qYiChang = null;
+	this.xiuChang = null;
+	this.xiuFei = null;
+	this.xiuKou = null;
+	this.categoryId = null;
+	this.height = null;
+	this.cnCode = null;
+	this.createDate = null;
+	this.updateDate = null;
+}

@@ -325,7 +325,7 @@
                             success: function(data){
                                 if (data.code== "S") {
 
-                                    $.growl.notice({    title: "错误标题", message:"删除成功"});
+                                    $.growl.notice({    title: "提示标题", message:"删除成功"});
                                     queryParameterTypeList();
                                     currentTypeCode = null;
                                     currentParameterCode = null;
@@ -465,7 +465,7 @@
                             data:{"parameterCode":currentParameterCode},
                             success: function(data){
                                 if (data.code== "S") {
-                                    $.growl.notice({    title: "错误标题", message:"删除成功"});
+                                    $.growl.notice({    title: "提示标题", message:"删除成功"});
                                     queryParameterDefineList();
                                     currentParameterCode = null;
                                     return  true;

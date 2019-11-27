@@ -1,7 +1,5 @@
 <script type="text/javascript">
-    if (sessionStorage.getItem('securityContext') == null) {
-        window.location.href = "/APPLETPC/login.html";
-    }
+
     var securityContext = JSON.parse(sessionStorage.getItem('securityContext'));
 
     var path = sessionStorage.getItem('path');
@@ -65,7 +63,7 @@
                                        data-page-size="15"
                                        data-page-list="[15,20,25,30,35,ALL]"
                                        data-undefined-text=""
-                                       data-height="650"
+
                                        data-show-columns="true"
                                 >
                                     <thead>
@@ -210,7 +208,7 @@
             data: {"informationId": informationId, "isvisible": isvisible},
             success: function (data) {
                 if (data.code == "S") {
-                    $.growl.notice({title: "错误标题", message: "修改成功"});
+                    $.growl.notice({title: "提示标题", message: "修改成功"});
                     selectAppInformationList();
                     return true;
                 } else {

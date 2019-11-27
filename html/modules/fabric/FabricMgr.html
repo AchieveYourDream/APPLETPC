@@ -1,7 +1,5 @@
 <script type="text/javascript">
-    if (sessionStorage.getItem('securityContext') == null) {
-        window.location.href = "../../../login.html";
-    }
+
     var securityContext = JSON.parse(sessionStorage.getItem('securityContext'));
 
     var path = sessionStorage.getItem('path');
@@ -168,7 +166,7 @@
                     label: "保存",
                     className: "btn-success",
                     callback: function () {
-                        var result = window.top.document.getElementById("fabricAddFrame").contentWindow.uploadImage();
+                        var result = window.top.document.getElementById("fabricAddFrame").contentWindow.doAddFabric('1');
                         if (result) {
                             $.growl.notice({title: "提示信息", message: "保存成功"});
                             redresh();

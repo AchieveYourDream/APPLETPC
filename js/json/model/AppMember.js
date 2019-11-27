@@ -1,0 +1,24 @@
+function AppMember() {
+	this.memberTel = null;
+	this.memberSource = null;
+	this.memberType = null;
+	this.memberLevel = null;
+	this.userName = null;
+	this.realName = null;
+	this.sex = null;
+	this.height = null;
+	this.weight = null;
+	this.email = null;
+	this.address = null;
+	this.referrerName = null;
+	this.referrerMobilephone = null;
+	this.deleteStatus = null;
+	this.storeCode = null;
+	this.createDate = null;
+	this.lastUpdateDate = null;
+	this.birthday = null;
+	this.attribute2 = null;
+	this.attribute3 = null;
+	this.attribute4 = null;
+	this.attribute5 = null;
+}

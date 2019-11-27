@@ -289,7 +289,7 @@
         classes: 'table table-hover',
         locale: undefined,
         height: undefined,
-        undefinedText: '-',
+        undefinedText: '',
         sortName: undefined,
         sortOrder: 'asc',
         sortStable: false,
@@ -603,7 +603,7 @@
             this.options.paginationVAlign === 'top' || this.options.paginationVAlign === 'both' ?
                 '<div class="fixed-table-pagination" style="clear: both;"></div>' :
                 '',
-            '<div class="fixed-table-container" style="height:200px;">',
+            '<div class="fixed-table-container" style="height:650px" >',
             '<div class="fixed-table-header"><table></table></div>',
             '<div class="fixed-table-body">',
             '<div class="fixed-table-loading">',

@@ -1,0 +1,347 @@
+<script type="text/javascript">
+
+    let securityContext = JSON.parse(sessionStorage.getItem('securityContext'));
+
+    var path = sessionStorage.getItem('path');
+    var sizeId = sessionStorage.getItem('sizeId');
+</script>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+    <title>数据字典项-编辑</title>
+    <script src="/APPLETPC/js/jquery/jquery-3.4.1.min.js"></script>
+    <script type='text/javascript' src='/APPLETPC/js/json/model/AppSize.js'></script>
+
+</head>
+<body class="my-body-content">
+<div class="content-wrap">
+    <div class="main">
+        <!-- /# row -->
+        <section class="subSection">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="card">
+
+                        <form id="sizeEditForm" name="sizeEditForm" class="my-form-content">
+                            <input id="sizeId" style="display: none">
+                            <input id="categoryId" style="display: none">
+                            <input id="bodyType" style="display: none">
+                            <input id="eurCode" style="display: none">
+                            <table class="my-form-table-content">
+                                <tr>
+                                    <td class="my-form-table-td-label">
+                                        <label class="control-label" style="margin:7px;padding:0px;">中国码</label>
+                                    </td>
+                                    <td class="my-form-table-td-content">
+                                        <input id="cnCode" name="cnCode" type="text" class="form-control input-sm"
+                                               style="width:110px;padding:7px;float:left;">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="my-form-table-td-label">
+                                        <label class="control-label" style="margin:7px;padding:0px;">身高</label>
+                                    </td>
+                                    <td class="my-form-table-td-content">
+                                        <input id="height" name="height" type="text" class="form-control input-sm"
+                                               style="width:110px;padding:7px;float:left;">
+                                    </td>
+
+                                    <td class="my-form-table-td-label">
+                                        <label class="control-label" style="margin:7px;padding:0px;">胸围</label>
+                                    </td>
+                                    <td class="my-form-table-td-content">
+                                        <input id="chestCircle" name="chestCircle" type="text"
+                                               class="form-control input-sm"
+                                               style="width:110px;padding:7px;float:left;">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="my-form-table-td-label">
+                                        <label class="control-label" style="margin:7px;padding:0px;">后衣长</label>
+                                    </td>
+                                    <td class="my-form-table-td-content">
+                                        <input id="hYiChang" name="hYiChang" type="text" class="form-control input-sm"
+                                               style="width:110px;padding:7px;float:left;">
+                                    </td>
+
+                                    <td class="my-form-table-td-label">
+                                        <label class="control-label" style="margin:7px;padding:0px;">臀围</label>
+                                    </td>
+                                    <td class="my-form-table-td-content">
+                                        <input id="hipCircle" name="hipCircle" type="text" class="form-control input-sm"
+                                               style="width:110px;padding:7px;float:left;">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="my-form-table-td-label">
+                                        <label class="control-label" style="margin:7px;padding:0px;">肩宽</label>
+                                    </td>
+                                    <td class="my-form-table-td-content">
+                                        <input id="jianWidth" name="jianWidth" type="text" class="form-control input-sm"
+                                               style="width:110px;padding:7px;float:left;">
+                                    </td>
+                                    <td class="my-form-table-td-label">
+                                        <label class="control-label" style="margin:7px;padding:0px;">腰围</label>
+                                    </td>
+                                    <td class="my-form-table-td-content">
+                                        <input id="waistCircle" name="waistCircle" type="text"
+                                               class="form-control input-sm"
+                                               style="width:110px;padding:7px;float:left;">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="my-form-table-td-label">
+                                        <label class="control-label" style="margin:7px;padding:0px;">前衣长</label>
+                                    </td>
+                                    <td class="my-form-table-td-content">
+                                        <input id="qYiChang" name="qYiChang" type="text" class="form-control input-sm"
+                                               style="width:110px;padding:7px;float:left;">
+                                    </td>
+                                    <td class="my-form-table-td-label">
+                                        <label class="control-label" style="margin:7px;padding:0px;">袖长</label>
+                                    </td>
+                                    <td class="my-form-table-td-content">
+                                        <input id="xiuChang" name="xiuChang" type="text"
+                                               class="form-control input-sm"
+                                               style="width:110px;padding:7px;float:left;">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="my-form-table-td-label">
+                                        <label class="control-label" style="margin:7px;padding:0px;">袖肥</label>
+                                    </td>
+                                    <td class="my-form-table-td-content">
+                                        <input id="xiuFei" name="xiuFei" type="text"
+                                               class="form-control input-sm"
+                                               style="width:110px;padding:7px;float:left;">
+                                    </td>
+                                    <td class="my-form-table-td-label">
+                                        <label class="control-label" style="margin:7px;padding:0px;">袖口</label>
+                                    </td>
+                                    <td class="my-form-table-td-content">
+                                        <input id="xiuKou" name="xiuKou" type="text"
+                                               class="form-control input-sm"
+                                               style="width:110px;padding:7px;float:left;">
+                                    </td>
+                                </tr>
+                            </table>
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+</body>
+</html>
+
+<script type="text/javascript">
+    var validator;
+
+    $(document).ready(function () {
+        getMainSelectInfo();
+        validator = $("#sizeEditForm").validate({
+            debug: true,
+            showErrors: showErrors,
+            rules: {
+                categoryId: {
+                    required: true,
+                },
+                eurCode: {
+                    required: true,
+                    maxlength: 7,
+                    number:true
+                },
+                cnCode: {
+                    required: true,
+                    maxlength: 7,
+                    number:true
+                },
+                bodyType: {
+                    required: true,
+                },
+                height: {
+                    maxlength: 7,
+                    number:true
+                },
+                chestCircle: {
+                    maxlength: 7,
+                    number:true
+                },
+                hYiChang: {
+                    maxlength: 7,
+                    number:true
+                },
+                hipCircle: {
+                    maxlength: 7,
+                    number:true
+                },
+                jianWidth: {
+                    maxlength: 7,
+                    number:true
+                },
+                waistCircle: {
+                    maxlength: 7,
+                    number:true
+                },
+                qYiChang: {
+                    maxlength: 7,
+                    number:true
+                },
+                xiuChang: {
+                    maxlength: 7,
+                    number:true
+                },
+                xiuFei: {
+                    maxlength: 7,
+                    number:true
+                },
+                xiuKou: {
+                    maxlength: 7,
+                    number:true
+                }
+
+            },
+            messages: {
+                categoryId: {
+                    required: "不能为空！",
+                },
+                eurCode: {
+                    maxlength: "最大长度为7！",
+                    number: "必须是数字！",
+                },
+                cnCode: {
+                    maxlength: "最大长度为7！",
+                    number: "必须是数字！",
+                },
+                bodyType: {
+                    required: "不能为空！",
+                },
+                height: {
+                    maxlength: "最大长度为7！",
+                    number: "必须是数字！",
+                },
+                chestCircle: {
+                    maxlength: "最大长度为7！",
+                    number: "必须是数字！",
+                },
+                hYiChang: {
+                    maxlength: "最大长度为7！",
+                    number: "必须是数字！",
+                },
+                hipCircle: {
+                    maxlength: "最大长度为7！",
+                    number: "必须是数字！",
+                },
+                jianWidth: {
+                    maxlength: "最大长度为7！",
+                    number: "必须是数字！",
+                },
+                waistCircle: {
+                    maxlength: "最大长度为7！",
+                    number: "必须是数字！",
+                },
+                qYiChang: {
+                    maxlength: "最大长度为7！",
+                    number: "必须是数字！",
+                },
+                xiuChang: {
+                    maxlength: "最大长度为7！",
+                    number: "必须是数字！",
+                },
+                xiuFei: {
+                    maxlength: "最大长度为7！",
+                    number: "必须是数字！",
+                },
+                xiuKou: {
+                    maxlength: "最大长度为7！",
+                    number: "必须是数字！",
+                }
+            }
+        });
+
+        var url = path + "app/system/size/getSizeInfoBySizeId";
+        url += "?t=" + new Date();
+
+        $.ajax({
+            type: "get",
+            url: url,
+            async: false,
+            headers: {"Authorization": securityContext.Authorization},
+            data:{"sizeId":sizeId},
+            success: function (data) {
+
+                if (data.code == "S") {
+
+                    var size =data.data;
+                    dwr.util.setValues(size);
+                } else {
+                    $.growl.error({title: "提示信息", message:"数据加载失败！" + "<br><br>" + data.data});
+                }
+            }
+        });
+    });
+
+    function doEditSize() {
+        var result = false;
+        if (validator.form()) {
+            var size = new AppSize();
+
+            dwr.util.getValues(size);
+
+
+            var url = path + "app/system/size/editSize";
+            url += "?t=" + new Date();
+
+
+            $.ajax({
+                type: "post",
+                url: url,
+                data: size,
+                async: false,
+                headers: {"Authorization":securityContext.Authorization},
+                success: function (data) {
+                    if (data.code == "S") {
+                        result = true;
+                    } else if(data.code == "W"){
+                        result = false;
+                        $.growl.warning({title: "提示信息", message:  data.info});
+                    } else {
+                        result = false;
+
+                        $.growl.error({title: "提示信息", message: "数据加载失败！" + "<br><br>" + data.data});
+                    }
+                }
+                });
+        }
+        return result;
+    }
+
+    //初始主菜单
+    function getMainSelectInfo() {
+        var url = path + "app/appGoods/getMainSelectInfo";
+        $.ajax({
+            type: "POST",
+            url: url,
+            async: false,
+            headers: {"Authorization":securityContext.Authorization},
+            success: function (data) {
+                if (data.code == "S") {
+                    $("#categoryId").html("")
+                    $.each(data.data, function (index, d) {
+                        var option = '<option value="' + d.code + '">' + d.name + '</option>';
+                        $("#categoryId").append(option);
+                    });
+                    $("#categoryId").trigger("chosen:updated");
+                } else {
+                    $.growl.error({title: "错误标题", message: data.info});
+                }
+            }
+        });
+    };
+</script>

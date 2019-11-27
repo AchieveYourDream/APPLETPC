@@ -1,0 +1,158 @@
+<script type="text/javascript">
+
+    var securityContext = JSON.parse(sessionStorage.getItem('securityContext'));
+
+    var path = sessionStorage.getItem('path');
+</script>
+<!DOCTYPE html>
+<html >
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+    <title>订单列表</title>
+
+    <script src="/APPLETPC/js/jquery/jquery-3.4.1.min.js"></script>
+    <script src="/APPLETPC/js/common/common.js"></script>
+    <style>
+
+        .bootstrap-table{
+            width: 200%;
+        }
+
+
+    </style>
+
+<body style="font-size:12px;">
+<div class="content-wrap">
+    <div class="main">
+        <!-- /# row -->
+        <section class="mainSection">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="card" style="overflow: auto">
+                        <div id="order">
+                            <button class="btn  btn-sm btn-info" onclick="viewOrder();">
+                                <i class="glyphicon glyphicon-eye-open"></i>&nbsp;查看详情
+                            </button>
+                        </div>
+
+
+                        <table id="orderTable"
+                               class="table table-condensed "
+                               data-toolbar="#order"
+                               data-icon-size="sm"
+                               data-data-type="json"
+                               data-query-params="queryParams"
+                               data-side-pagination="server"
+                               data-pagination="true"
+                               data-page-order="15"
+                               data-page-list="[15,20,25,30,ALL]"
+                               data-undefined-text=""
+                               data-show-columns="true"
+                        >
+                            <thead>
+                            <tr>
+                                <th data-field="orderId"             data-halign="center"     data-align="center"  >订单号</th>
+                                <th data-field="clothId"             data-halign="center"     data-align="center"  >服装品类</th>
+                                <th data-field="clothName"           data-halign="center"     data-align="center"  >服装名称</th>
+                                <th data-field="clothStyle"          data-halign="center"     data-align="center"  >着装风格</th>
+                                <th data-field="amount"              data-halign="center"     data-align="center"  >数量</th>
+                                <th data-field="fabricCode"          data-halign="center"     data-align="center"  >面料号</th>
+                                <th data-field="price"               data-halign="center"     data-align="center"  >零售价</th>
+                                <th data-field="actualAmount"        data-halign="center"     data-align="center"  >实收金额</th>
+                                <th data-field="liningType"          data-halign="center"     data-align="center"  >衬类型</th>
+                                <th data-field="size"                data-halign="center"     data-align="center"  >尺码</th>
+                                <th data-field="bonusPrice"          data-halign="center"     data-align="center"  >红包金额</th>
+                                <th data-field="giftCardPrice"       data-halign="center"     data-align="center"  >礼品卡金额</th>
+                                <th data-field="payStatus"           data-halign="center"     data-align="center"  >支付状态</th>
+                                <th data-field="payType"             data-halign="center"     data-align="center"  >支付方式</th>
+                                <th data-field="payPrice"            data-halign="center"     data-align="center"  >支付价格</th>
+                                <th data-field="memberName"          data-halign="center"     data-align="center"  >客户名称</th>
+                                <th data-field="memberTel"           data-halign="center"     data-align="center"  >客户手机号</th>
+                                <th data-field="deliveryDate"        data-halign="center"     data-align="center"  >交货日期</th>
+                                <th data-field="deliveryCode"        data-halign="center"     data-align="center"  >物流编号</th>
+                                <th data-field="finalDeliveryDate"   data-halign="center"     data-align="center"  >发货日期</th>
+                                <th data-field="isDelete"            data-halign="center"     data-align="center"  data-formatter="yes_or_no">是否删除</th>
+                                <th data-field="pushFactoryState"    data-halign="center"     data-align="center"  >推送工厂状态</th>
+                                <th data-field="pushFactoryDate"     data-halign="center"     data-align="center"  >推送工厂时间</th>
+                                <th data-field="pushFactoryMessage"  data-halign="center"     data-align="center"  >推送工厂信息</th>
+                            </tr>
+                            </thead>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+</body>
+</html>
+
+<script type="text/javascript">
+    var searchCondition;
+    var lineRow;
+    $(document).ready(function () {
+        $('#orderTable').bootstrapTable({
+            url: path + "app/system/order/getOrderList",
+            ajaxOptions: {
+                headers: {"Authorization": securityContext.Authorization}
+            }
+        });
+        $("#orderTable").on('click-row.bs.table', function (e, row, $element) {
+            $('.warning').removeClass('warning');
+            $($element).addClass('warning');
+            lineRow = row;
+
+        });
+
+        $("#orderTable").on('dbl-click-row.bs.table', function (e, row, $element) {
+            $('.warning').removeClass('warning');
+            $($element).addClass('warning');
+            lineRow = row;
+            viewOrder();
+        });
+
+    });
+
+    function queryParams(params) {
+        return {
+            "pageNum": (params.offset / params.limit) + 1,
+            "pageOrder": params.limit, search: searchCondition
+        };
+    }
+
+    function redresh() {
+        $('#orderTable').bootstrapTable('refresh');
+    }
+
+
+    // 查看详情
+    function viewOrder() {
+        if (!lineRow) {
+            $.growl.warning({title: "警告标题", message: "请先选择订单"});
+            return;
+        }
+        var url = "/APPLETPC/html/modules/order/OrderInfo.html";
+        sessionStorage.setItem('lineRow',  JSON.stringify(lineRow));
+        var OrderEditFrame = '<iframe id="OrderEditFrame" class="my-modal-iframe" width="100%" height="400px" src="' + url + '"></iframe>';
+
+        window.top.bootbox.dialog({
+            title: "订单-详情",
+            message: OrderEditFrame,
+            size: "large",
+            buttons: {
+                cancelType: {
+                    label: "取消",
+                    className: "btn-default",
+                    callback: function () {
+                        return true;
+                    }
+                }
+            }
+        });
+    }
+
+
+</script>

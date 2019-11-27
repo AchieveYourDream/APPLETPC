@@ -1,0 +1,275 @@
+<script type="text/javascript">
+
+    var securityContext = JSON.parse(sessionStorage.getItem('securityContext'));
+
+    var path = sessionStorage.getItem('path');
+</script>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>刺绣位置新建</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <script src="/APPLETPC/js/jquery/jquery-3.4.1.min.js"></script>
+    <script src="/APPLETPC/js/json/model/AppStitchWorkPosition.js"></script>
+    <link rel="stylesheet" href="/APPLETPC/js/plugins/jquery-chosen/css/chosen.css">
+    <script src="/APPLETPC/js/plugins/jquery-chosen/js/chosen.jquery.js"></script>
+</head>
+<body class="my-body-content">
+<div class="content-wrap">
+    <div class="main">
+        <!-- /# row -->
+        <section class="subSection">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="card">
+                        <form id="StitchWorkPositionAddForm" name="StitchWorkPositionAddForm" class="my-form-content">
+                            <div style="width:90%">
+                                <div class="item">
+                                    <img class="addImg" onclick="clickImg(this);"
+                                         src="/APPLETPC/img/addImg.png"/>
+                                    <input name="url" type="file" class="upload_input" onchange="change(this)"/>
+                                    <div class="preBlock">
+                                        <img class="preview" id="preview" alt="" name="pic" width="190" height="190"/>
+                                    </div>
+                                    <img class="delete" onclick="deleteImg(this)"
+                                         src="/APPLETPC/img/delete.png"/>
+                                </div>
+                            </div>
+                            <table class="my-form-table-content" style="margin-top: 80px;">
+                                <tr>
+                                    <td class="my-form-table-td-label">
+                                        <label class="control-label" style="margin:5px;padding:0px;">刺绣位置名称</label>
+                                    </td>
+                                    <td class="my-form-table-td-content" style="width:310px">
+                                        <input id="positionName" name="positionName" type="text" class="form-control input-sm" style="width:240px;padding:5px;float:left;">
+                                    </td>
+                                    <td class="my-form-table-td-label">
+                                        <label class="control-label" style="margin:5px;padding:0px;">工厂编码</label>
+                                    </td>
+                                    <td class="my-form-table-td-content" style="width:260px">
+                                        <input id="factoryCode" name="factoryCode" type="text" class="form-control input-sm"  style="width:240px;padding:5px;float:left;">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="my-form-table-td-label">
+                                        <label class="control-label" style="margin:5px;padding:0px;">品类编码</label>
+                                    </td>
+                                    <td class="my-form-table-td-content">
+                                        <select id="categoryCode" name="categoryCode" class="dept_select"  style="width:240px;padding:5px;float:left;">
+                                        </select>
+                                    </td>
+                                    <td class="my-form-table-td-label">
+                                        <label class="control-label" style="margin:5px;padding:0px;">描述</label>
+                                    </td>
+                                    <td class="my-form-table-td-content">
+                                        <input id="description" name="description" type="text" class="form-control input-sm"  style="width:240px;padding:5px;float:left;">
+                                    </td>
+                                </tr>
+
+                            </table>
+
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+</body>
+</html>
+<script type="text/javascript">
+    var validator;
+    $(document).ready(function () {
+        $(".dept_select").chosen({disable_search: true, width: "240px"});
+        getMainSelectInfo();
+
+
+        validator = $("#StitchWorkPositionAddForm").validate({
+            debug: true,
+            showErrors: showErrors,
+            rules: {
+                factoryCode: {
+                    required: true,
+                    maxlength: 20,
+                    isCode: true,
+                    remote: {
+                        url: path + "app/system/stitchWork/getStitchWorkPositionInfoByFactoryCode?t=" + new Date(),
+                        type: "get",
+                        headers: {"Authorization": securityContext.Authorization},
+                        data: {
+                            factoryCode: function () {
+                                return $('#factoryCode').val()
+                            }
+                        }
+                    }
+                },
+                positionName: {
+                    required: true,
+                    maxlength: 30,
+                },
+                description: {
+                    maxlength: 50,
+                }
+            },
+            messages: {
+                factoryCode: {
+                    required: "工厂编码不能为空！",
+                    maxlength: "工厂编码最大长度为20！",
+                    remote: "当前工厂编码已经存在！",
+                    isCode: "只能输入数字字母！"
+                },
+                positionName: {
+                    required: "位置名称不能为空！",
+                    maxlength: "最大长度为30！",
+                },
+                description: {
+                    maxlength: "最大长度为50！",
+                }
+            }
+        });
+
+
+    });
+
+    //刺绣位置新建
+    function doAddStitchWorkPosition(imagePath) {
+        var result = false;
+        var asp = new AppStitchWorkPosition();
+        dwr.util.getValues(asp);
+        asp.positionImg = imagePath;
+        var url = path + "app/system/stitchWork/addStitchWorkPosition";
+
+        $.ajax({
+            type: "POST",
+            url: url,
+            data: asp,
+            headers: {"Authorization": securityContext.Authorization},
+            async: false,
+            success: function (data) {
+                if (data.code == "S") {
+                    result = true;
+                } else {
+                    result = false;
+                    $.growl.warning({title: "错误标题", message: data.data});
+                }
+            }
+        });
+        return result;
+    }
+
+    //上传图片
+    function uploadImage() {
+        var result = false;
+        if (validator.form()) {
+            var url = path + "static/uploadingImages/stitchWork";
+            url += "?t=" + new Date();
+
+            var pic = new FormData();
+            if ($(".upload_input")[0].files[0] == null) {
+                $.growl.warning({title: "错误标题", message: "请上传刺绣位置图片"});
+                return false;
+            }
+            if ($(".upload_input")[0].files[0].size > 300000) {
+                $.growl.warning({title: "错误标题", message: "图片不符合规范,为保证访问速度请图片大小在300K以下"});
+                return false;
+            }
+                pic.append("pic", $(".upload_input")[0].files[0]);
+                $.ajax({
+                    url: url,
+                    type: 'POST',
+                    cache: false,
+                    data: pic,
+                    processData: false,
+                    contentType: false,
+                    async: false,
+                    headers: {"Authorization": securityContext.Authorization},
+                    success: function (data) {
+
+                        if (data.code == "S") {
+                            result = doAddStitchWorkPosition(data.data)
+                        } else {
+                            result = false;
+                            $.growl.error({title: "错误标题", message: data.info});
+                        }
+                    }
+                });
+        }
+        return result;
+    }
+
+    //点击
+    var clickImg = function (obj) {
+        $(obj).parent().find('.upload_input').click();
+    }
+    //删除
+    var deleteImg = function (obj) {
+        $(obj).parent().find('input').val('');
+        $(obj).parent().find('img.preview').attr("src", "");
+        $(obj).parent().find('img.preview').hide();
+        //IE9以下
+        $(obj).parent().find('img.preview').css("filter", "");
+        $(obj).hide();
+        $(obj).parent().find('.addImg').show();
+    }
+
+    //选择图片
+    function change(file) {
+        //预览
+        var pic = $(file).parent().find(".preview");
+        //添加按钮
+        var addImg = $(file).parent().find(".addImg");
+        //删除按钮
+        var deleteImg = $(file).parent().find(".delete");
+
+        var ext = file.value.substring(file.value.lastIndexOf(".") + 1).toLowerCase();
+
+        // gif在IE浏览器暂时无法显示
+        if (ext != 'png' && ext != 'jpg' && ext != 'jpeg') {
+            if (ext != '') {
+                alert("图片的格式必须为png或者jpg或者jpeg格式！");
+            }
+            return;
+        }
+        html5Reader(file, pic, addImg, deleteImg);
+    }
+
+    //H5渲染
+    function html5Reader(file, pic, addImg, deleteImg) {
+        var file = file.files[0];
+        var reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = function (e) {
+            pic.attr("src", this.result);
+        }
+        addImg.hide();
+        deleteImg.show();
+        pic.show();
+        pic.parent().show();
+
+    }
+
+
+    //初始主菜单
+    function getMainSelectInfo() {
+        var url = path + "app/appGoods/getMainSelectInfo";
+        $.ajax({
+            type: "POST",
+            url: url,
+            headers: {"Authorization":securityContext.Authorization},
+            success: function (data) {
+                if (data.code == "S") {
+                    $("#categoryCode").html("")
+                    $.each(data.data, function (index, d) {
+                        var option = '<option value="' + d.code + '">' + d.name + '</option>';
+                        $("#categoryCode").append(option);
+                    });
+                    $("#categoryCode").trigger("chosen:updated");
+                } else {
+                    $.growl.error({title: "错误标题", message: data.info});
+                }
+            }
+        });
+    };
+</script>

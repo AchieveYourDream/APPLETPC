@@ -267,7 +267,7 @@ span.badge {
 .modal-dialog {
   margin: 30px auto;
   position: relative;
-  top: 30%;
+  top: 40%;
   transform: translateY(-50%) !important;
   width: 70%;
 }
@@ -2719,8 +2719,8 @@ tbody tr td {
 .table > tfoot > tr > th,
 .table > thead > tr > td,
 .table > thead > tr > th {
-  line-height: 32px;
-  vertical-align: top;
+  line-height: 22px;
+  vertical-align: middle;
 }
 .table > thead > tr > th {
   border-bottom: 1px solid #e7e7e7;
@@ -2760,10 +2760,10 @@ tbody tr td {
     margin-top: 8px;
   }
 }
-.table td,
-.table th {
-  padding: 0.55rem;
-}
+/*.table td,*/
+/*.table th {*/
+  /*padding: 0.55rem;*/
+/*}*/
 .table .round-img img {
   width: 38px;
 }
@@ -4507,8 +4507,9 @@ h6.h1 {
     display: inline-block !important;
   }
 }
+
 .mainSection{
-  padding-top:30px;
+  margin-top:30px;
 }
 iframe{
   border: 0;
@@ -4523,4 +4524,117 @@ iframe{
 }
 .subSection .col-lg-12 .card{
   height: 92%;
+}
+
+.warnBtn{
+  border: 0px;
+  color: #d49f1a;
+  font-size:12px;
+}
+.warnBtn:hover{
+  color:#8e7023;
+  text-decoration:blink;
+}
+
+.successBtn{
+  border: 0px;
+  color: #28a745;
+  font-size:12px;
+}
+.successBtn:hover{
+  color:#186128;
+  text-decoration:blink;
+  cursor:pointer;
+}
+
+.dangerBtn{
+  border: 0px;
+  color: #bd2130;
+  font-size:12px;
+}
+.dangerBtn:hover{
+  color:#71151e;
+  text-decoration:blink;
+  cursor:pointer;
+}
+
+.infoBtn{
+  border: 0px;
+  color: #03a9f4;
+  font-size:12px;
+}
+.infoBtn:hover{
+  color:#0d7fb3;
+  text-decoration:blink;
+  cursor:pointer;
+}
+
+.primaryBtn{
+  border: 0px;
+  color: #5873fe;
+  font-size:12px;
+}
+.primaryBtn:hover{
+  color:#192f9e;
+  text-decoration:blink;
+  cursor:pointer;
+}
+.item {
+  width: 200px;
+  height: 200px;
+  position: relative;
+  left: 200px;
+}
+
+.addImg {
+  width: 200px;
+  height: 200px;
+  position: absolute;
+  left: 55px;
+  top: 0;
+  z-index: 2;
+  cursor: pointer;
+}
+
+.preview, .preBlock {
+  position: absolute;
+  display: none;
+  width: 200px;
+  height: 200px;
+  left: 28px;
+  top: 0;
+}
+
+.delete {
+  width: 20px;
+  position: absolute;
+  right: -55px;
+  top: 0px;
+  cursor: pointer;
+  display: none;
+}
+
+.preBlock img {
+  display: block;
+  width: 200px;
+  height: 200px;
+}
+
+.upload_input {
+  display: block;
+  width: 0;
+  height: 0;
+  -webkit-opacity: 0.0;
+  /* Netscape and Older than Firefox 0.9 */
+  -moz-opacity: 0.0;
+  /* Safari 1.x (pre WebKit!) 老式khtml内核的Safari浏览器*/
+  -khtml-opacity: 0.0;
+  /* IE9 + etc...modern browsers */
+  opacity: .0;
+  /* IE 4-9 */
+  filter: alpha(opacity=0);
+  /*This works in IE 8 & 9 too*/
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+  /*IE4-IE9*/
+  filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=0);
 }

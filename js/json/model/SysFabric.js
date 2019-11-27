@@ -1,0 +1,20 @@
+function SysFabric() {
+	this.id = null;
+	this.code = null;
+	this.category = null;
+	this.color = null;
+	this.component = null;
+	this.brand = null;
+	this.yarn = null;
+	this.flower = null;
+	this.status = null;
+	this.similar = null;
+	this.proportion = null;
+	this.imageName = null;
+	this.imagePath = null;
+	this.replacecode = null;
+	this.repertory = null;
+	this.stockcode = null;
+	this.createDate = null;
+	this.lastUpdateDate = null;
+}

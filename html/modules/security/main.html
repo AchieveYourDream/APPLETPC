@@ -28,7 +28,7 @@
     <div class="nano">
         <div class="nano-content">
             <ul>
-                <div class="logo"><a href="index.html"><span>Applet</span></a></div>
+                <div class="logo"><img  id="headPortrait" src="/APPLETPC/img/default.png" style="height:60px;width:60px;border-radius:50%"></div>
 
                 <li class="label" id="sidebarMenu">欢迎使用Applet管理系统</li>
             </ul>
@@ -188,13 +188,13 @@
                     </div>
                     <div class="dropdown dib" onclick="showSubMenu(this)">
                          <div class="header-icon" data-toggle="dropdown">
-                            <span class="user-avatar">王斌
-                          <i class="ti-angle-down f-s-10"></i>
+                            <span class="user-avatar" id="lastname2">
+
                              </span>
                             <div class="drop-down dropdown-profile dropdown-menu dropdown-menu-right submenu"
                                  style="position: absolute; transform: translate3d(-124px, 51px, 0px); top: 0px; left: 0px; will-change: transform;">
                                 <div class="dropdown-content-heading">
-                                    <span class="text-left">王斌</span>
+                                    <span class="text-left" id="lastname"></span>
                                 </div>
                                 <div class="dropdown-content-body">
                                     <ul>
@@ -240,6 +240,12 @@
 <script type="text/javascript">
     var menuTreeHtml = '';
     $(document).ready(function () {
+        if(securityContext.headPortrait!=null && securityContext.headPortrait!=''){
+            $("#headPortrait").attr("src",path+"static/getImages/user/"+securityContext.headPortrait)
+        }
+        $("#lastname").html(securityContext.lastname);
+        $("#lastname2").html(securityContext.lastname+"<i class=\"ti-angle-down f-s-10\"></i>");
+
         // 初始化菜单
         revealTreeMenu();
     });
@@ -312,7 +318,12 @@
 
     //跳转地址
     function openPath(url) {
-        $('#homeFrame').attr('src', url);
+        if (sessionStorage.getItem('securityContext') == null) {
+            window.location.href = "/APPLETPC/login.html";
+        }else{
+            $('#homeFrame').attr('src', url);
+        }
+
     }
 
 </script>

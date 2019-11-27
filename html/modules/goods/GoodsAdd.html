@@ -1,7 +1,5 @@
 <script type="text/javascript">
-    if (sessionStorage.getItem('securityContext') == null) {
-        window.location.href = "../../../login.html";
-    }
+
     var securityContext = JSON.parse(sessionStorage.getItem('securityContext'));
 
     var path = sessionStorage.getItem('path');
@@ -20,6 +18,74 @@
 
 
 </head>
+
+<style type="text/css">
+    .item {
+        width: 170px;
+        height: 170px;
+        float: left;
+        position: relative;
+        margin: 20px;
+        left: 60px;
+    }
+    .addImg {
+        width: 170px;
+        height: 170px;
+        position: absolute;
+        left: 0;
+        top: 0;
+        z-index: 2;
+        cursor: pointer;
+    }
+    .preview,.preBlock{
+        position: absolute;
+        display: none;
+        width: 170px;
+        height: 170px;
+        left: 0;
+        top: 0;
+    }
+    .delete {
+        width: 30px;
+        position: absolute;
+        right: 0;
+        top: 0;
+        cursor: pointer;
+        display: none;
+    }
+    .preBlock img {
+        display: block;
+        width: 170px;
+        height: 170px;
+    }
+
+    .describe{
+        position: absolute;
+        left: 62px;
+        top: 25px;
+        z-index: 2;
+        font-weight: bold;
+        color: #1dde46;
+    }
+    .upload_input{
+        display: block;
+        width: 0;
+        height: 0;
+        -webkit-opacity: 0.0;
+        /* Netscape and Older than Firefox 0.9 */
+        -moz-opacity: 0.0;
+        /* Safari 1.x (pre WebKit!) 老式khtml内核的Safari浏览器*/
+        -khtml-opacity: 0.0;
+        /* IE9 + etc...modern browsers */
+        opacity: .0;
+        /* IE 4-9 */
+        filter:alpha(opacity=0);
+        /*This works in IE 8 & 9 too*/
+        -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+        /*IE4-IE9*/
+        filter:progid:DXImageTransform.Microsoft.Alpha(Opacity=0);
+    }
+</style>
 <body class="my-body-content">
 <div class="content-wrap">
     <div class="main">
@@ -86,6 +152,43 @@
                                         </select>
                                     </td>
 
+                                </tr>
+                                <tr>
+                                    <td class="my-form-table-td-label" style="width:80px">
+                                        <label class="control-label" style="margin:5px;padding:0px;">西服价格</label>
+                                    </td>
+                                    <td class="my-form-table-td-content" style="width:240px">
+                                        <input id="xfPrice" name="xfPrice" type="text"
+                                               class="form-control input-sm"
+                                               style="width:220px;padding:5px;float:left;">
+                                    </td>
+                                    <td class="my-form-table-td-label">
+                                        <label class="control-label" style="margin:5px;padding:0px;">西裤价格</label>
+                                    </td>
+                                    <td class="my-form-table-td-content">
+                                        <input id="xkPrice" name="xkPrice" type="text"
+                                               class="form-control input-sm"
+                                               style="width:220px;padding:5px;float:left;">
+                                    </td>
+
+                                </tr>
+                                <tr>
+                                    <td class="my-form-table-td-label" style="width:80px">
+                                        <label class="control-label" style="margin:5px;padding:0px;">马甲价格</label>
+                                    </td>
+                                    <td class="my-form-table-td-content" style="width:240px">
+                                        <input id="mjPrice" name="mjPrice" type="text"
+                                               class="form-control input-sm"
+                                               style="width:220px;padding:5px;float:left;">
+                                    </td>
+                                    <td class="my-form-table-td-label">
+                                        <label class="control-label" style="margin:5px;padding:0px;">衬类型</label>
+                                    </td>
+                                    <td class="my-form-table-td-content">
+                                        <select id="liningType" name="liningType" class="dept_select dimension_coding"
+                                                style="width:220px;padding:5px;float:left;">
+                                        </select>
+                                    </td>
                                 </tr>
 
                                 <tr>
@@ -171,7 +274,7 @@
                                         <label class="control-label" style="margin:5px;padding:0px;">是否生成详情</label>
                                     </td>
                                     <td class="my-form-table-td-content">
-                                        <select id="appIndexShow" name="appIndexShow"
+                                        <select id="needDetailGenerate" name="needDetailGenerate"
                                                 class="dept_select dimension_coding"
                                                 style="width:220px;padding:5px;float:left;">
                                             <option value="Y">是</option>

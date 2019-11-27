@@ -1,7 +1,5 @@
 <script type="text/javascript">
-    if (sessionStorage.getItem('securityContext') == null) {
-        window.location.href = "/APPLETPC/login.html";
-    }
+
     var securityContext = JSON.parse(sessionStorage.getItem('securityContext'));
 
     var path = sessionStorage.getItem('path');
@@ -48,7 +46,7 @@
                                    class="table table-condensed"
                                    data-toggle="table"
                                    data-toolbar="#typeToolbar"
-                                   data-height="650"
+
                                    data-pagination="true"
                                    data-page-size="10"
                                    data-page-list="[10,15,20,25]"

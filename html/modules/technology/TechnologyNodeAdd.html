@@ -1,0 +1,176 @@
+<script type="text/javascript">
+
+    var securityContext = JSON.parse(sessionStorage.getItem('securityContext'));
+
+    var path = sessionStorage.getItem('path');
+    var parentNodeCode = sessionStorage.getItem('parentNodeCode');
+</script>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+    <title>数据结构工艺节点-新建</title>
+
+    <script src="/APPLETPC/js/jquery/jquery-3.4.1.min.js"></script>
+    <script type='text/javascript' src='/APPLETPC/js/json/model/AppTechnologyNode.js'></script>
+
+</head>
+<body class="my-body-content">
+<div class="content-wrap">
+    <div class="main">
+        <!-- /# row -->
+        <section class="subSection">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="card">
+                        <form id="technologyNodeAddForm" name="technologyNodeAddForm" class="my-form-content">
+                            <input id="parentNodeCode" name="parentNodeCode" style="display: none">
+                            <table class="my-form-table-content">
+                                <tr >
+                                    <td class="my-form-table-td-label" style="width:120px;">
+                                        <label class="control-label" style="margin:5px;padding:0px;">工艺节点编码</label>
+                                    </td>
+                                    <td class="my-form-table-td-content" style="width:140px;">
+                                        <input id="nodeCode" name="nodeCode" type="text" class="form-control input-sm"  style="width:120px;padding:5px;float:left;">
+                                    </td>
+                                </tr>
+                                <tr >
+                                    <td class="my-form-table-td-label" style="width:120px;">
+                                        <label class="control-label" style="margin:5px;padding:0px;">工艺节点名称</label>
+                                    </td>
+                                    <td class="my-form-table-td-content" style="width:140px;">
+                                        <input id="treeNodeName" name="treeNodeName" type="text" class="form-control input-sm"  style="width:120px;padding:5px;float:left;">
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td class="my-form-table-td-label">
+                                        <label class="control-label" style="margin:5px;padding:0px;">是否有效</label>
+                                    </td>
+                                    <td class="my-form-table-td-content">
+                                        <input id="enabledFlag" name="enabledFlag" type="checkbox" checked>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td class="my-form-table-td-label">
+                                        <label class="control-label" style="margin:5px;padding:0px;">说明</label>
+                                    </td>
+                                    <td class="my-form-table-td-content">
+                                        <input id="description" name="description" type="text" class="form-control input-sm" style="width:120px;padding:5px;float:left;">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="my-form-table-td-label">
+                                        <label class="control-label" style="margin:5px;padding:0px;">显示顺序</label>
+                                    </td>
+                                    <td class="my-form-table-td-content">
+                                        <input id="displayOrder" name="displayOrder" type="text" class="form-control input-sm" style="width:120px;padding:5px;float:left;">
+                                    </td>
+                                </tr>
+                            </table>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+</body>
+</html>
+
+<script type="text/javascript">
+    var validator;
+    $("#parentNodeCode").val(parentNodeCode);
+
+    $(document).ready(function () {
+        validator = $("#technologyNodeAddForm").validate({
+            debug: true,
+            showErrors: showErrors,
+            rules: {
+                nodeCode: {
+                    required: true,
+                    maxlength: 50,
+                    isCode: true,
+                    remote: {
+                        url: path + "app/system/technology/checkTechnologyNodeCode?t=" + new Date(),
+                        type: "get",
+                        headers: {"Authorization":securityContext.Authorization},
+                        data: {
+                            nodeCode: function () {
+                                return $('#nodeCode').val()
+                            },
+                        }
+                    }
+                },
+                treeNodeName: {
+                    required: true,
+                    maxlength: 100
+                },
+                'displayOrder': {
+                    maxlength: 5,
+                    number: true
+                },
+                'description': {
+                    maxlength: 200
+                }
+            },
+            messages: {
+                nodeCode: {
+                    required: "[工艺节点编码]不能为空！",
+                    maxlength: "[工艺节点编码]最大长度为50！",
+                    remote: "当前工艺节点编码已经存在！"
+                },
+                treeNodeName: {
+                    required: "[工艺节点名称]不能为空！",
+                    maxlength: "[工艺节点名称]最大长度为100！"
+                },
+                'displayOrder': {
+                    maxlength: "[显示顺序]最大值为99999！",
+                    number: "[显示顺序]必须是数字！"
+                },
+                'description': {
+                    maxlength: "[说明]最大长度为200！"
+                }
+            }
+        });
+    });
+
+    function addTechnologyNode() {
+        var result = false;
+        if (validator.form()) {
+            var appTechnologyNode = new AppTechnologyNode();
+            dwr.util.getValues(appTechnologyNode);
+            appTechnologyNode.nodeName=$("#treeNodeName").val()
+            if ($("#enabledFlag").prop("checked")) {
+                appTechnologyNode.enabledFlag = "Y";
+            } else {
+                appTechnologyNode.enabledFlag = "N";
+            }
+
+            var url = path + "app/system/technology/addTechnologyNode";
+            url += "?t=" + new Date();
+
+            $.ajax({
+                type: "post",
+                url: url,
+                data: appTechnologyNode,
+                async: false,
+                headers: {"Authorization":securityContext.Authorization},
+                success: function (data) {
+
+                    if (data.code == "S") {
+                        result = true;
+                    } else {
+                        result = false;
+                        $.growl.error({title: "提示信息", message:"数据加载失败！" + "<br><br>" + data.data});
+                    }
+                }
+            });
+        }
+        return result;
+    }
+</script>

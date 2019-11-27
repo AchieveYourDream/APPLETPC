@@ -1,0 +1,199 @@
+<script type="text/javascript">
+
+    var securityContext = JSON.parse(sessionStorage.getItem('securityContext'));
+    var path = sessionStorage.getItem('path');
+</script>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+    <title>工艺冲突新建</title>
+    <script src="/APPLETPC/js/jquery/jquery-3.4.1.min.js"></script>
+    <script type='text/javascript' src='/APPLETPC/js/json/model/SysTechnologyConflict.js'></script>
+    <link rel="stylesheet" href="/APPLETPC/js/plugins/bootstarp-select2/css/select2.min.css" type="text/css"></link>
+    <script type="text/javascript" src="/APPLETPC/js/plugins/bootstarp-select2/js/select2.min.js"></script>
+    <script type="text/javascript" src="/APPLETPC/js/plugins/bootstarp-select2/js/i18n/zh-CN.js"></script>
+
+
+</head>
+<body class="my-body-content">
+
+<div class="content-wrap">
+    <div class="main">
+        <!-- /# row -->
+        <section class="subSection">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="card">
+                        <form id="technologyConflictAddForm" name="technologyConflictAddForm" class="my-form-content">
+                            <table class="my-form-table-content">
+
+                                <tr>
+                                    <td class="my-form-table-td-label" >
+                                        <label class="control-label" style="margin:5px;padding:0px;">A工艺编码</label>
+                                    </td>
+                                    <td class="my-form-table-td-content" >
+                                        <select class=" form-control input-sm "  id="aTechnologyCode" name="aTechnologyCode" style="width:160px;padding:5px;float:left;">
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="my-form-table-td-label">
+                                        <label class="control-label" style="margin:7px;padding:0px;">A工艺名称</label>
+                                    </td>
+                                    <td class="my-form-table-td-content">
+                                        <input id="aTechnologyName" name="aTechnologyName" type="text" class="form-control input-sm"
+                                               style="width:160px;padding:7px;float:left;">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="my-form-table-td-label" >
+                                        <label class="control-label" style="margin:5px;padding:0px;">B工艺编码</label>
+                                    </td>
+                                    <td class="my-form-table-td-content" >
+                                        <select class=" form-control input-sm "  id="bTechnologyCode" name="bTechnologyCode" style="width:160px;padding:5px;float:left;">
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="my-form-table-td-label">
+                                        <label class="control-label" style="margin:7px;padding:0px;">B工艺名称</label>
+                                    </td>
+                                    <td class="my-form-table-td-content">
+                                        <input id="bTechnologyName" name="bTechnologyName" type="text" class="form-control input-sm"
+                                               style="width:160px;padding:7px;float:left;">
+                                    </td>
+                                </tr>
+                            </table>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+</body>
+</html>
+
+<script type="text/javascript">
+    var validator;
+
+    $(document).ready(function () {
+
+        $('#aTechnologyCode').select2({
+            ajax: {
+                url: path+"app/system/technologyConflict/getTechnologyList",
+                dataType: 'json',
+                type: 'get',
+                headers: {"Authorization": securityContext.Authorization},
+                data: function (params) {
+                    return  {search:params.term};
+                },
+                processResults: function (resp) {
+                    return {
+                        results: resp        //返回数据
+                    };
+                },
+                cache: true
+            },
+            language: 'zh-CN',
+            minimumInputLength:1,
+            maximumInputLength:20,
+            placeholder: '请输入关键字',
+        });
+        $("#aTechnologyCode").on("select2:select",function(e){
+            $("#aTechnologyName").val( $("#aTechnologyCode").text().trim());
+        })
+        $('#bTechnologyCode').select2({
+            ajax: {
+                url: path+"app/system/technologyConflict/getTechnologyList",
+                dataType: 'json',
+                type: 'get',
+                headers: {"Authorization": securityContext.Authorization},
+                data: function (params) {
+                    return  {search:params.term};
+                },
+                processResults: function (resp) {
+                    return {
+                        results: resp        //返回数据
+                    };
+                },
+                cache: true
+            },
+            language: 'zh-CN',
+            minimumInputLength:1,
+            maximumInputLength:20,
+            placeholder: '请输入关键字',
+        });
+        $("#bTechnologyCode").on("select2:select",function(e){
+            $("#bTechnologyName").val( $("#bTechnologyCode").text().trim());
+
+        })
+
+        validator = $("#technologyConflictAddForm").validate({
+            debug: true,
+            showErrors: showErrors,
+            rules: {
+                aTechnologyName: {
+                    required: true,
+                },
+                bTechnologyName: {
+                    required: true,
+                },
+
+
+            },
+            messages: {
+                aTechnologyName: {
+                    required: "不能为空！",
+                },
+                bTechnologyName: {
+                    required: "不能为空！",
+                }
+            }
+        });
+    });
+
+    function addTechnologyConflict() {
+        var result = false;
+        if(!$("#aTechnologyCode").val()||!$("#bTechnologyCode").val()){
+            $.growl.warning({title: "提示信息", message: "请选择工艺"});
+            return result;
+        }
+        if (validator.form()) {
+
+
+
+               var tc = new SysTechnologyConflict();
+
+            dwr.util.getValues(tc);
+            var url = path + "app/system/technologyConflict/addTechnologyConflict";
+            url += "?t=" + new Date();
+
+            $.ajax({
+                type: "post",
+                url: url,
+                data: tc,
+                async: false,
+                headers: {"Authorization": securityContext.Authorization},
+                success: function (data) {
+
+                    if (data.code == "S") {
+                        result = true;
+                    } else if (data.code == "W") {
+                        result = false;
+                        $.growl.warning({title: "提示信息", message: data.info});
+                    } else {
+                        result = false;
+                        $.growl.error({title: "提示信息", message: "数据加载失败！" + "<br><br>" + data.data});
+                    }
+                }
+            });
+        }
+        return result;
+    }
+
+</script>
