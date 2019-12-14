@@ -2,7 +2,7 @@
 
     var securityContext = JSON.parse(sessionStorage.getItem('securityContext'));
     var path = sessionStorage.getItem('path');
-    var lineRow = JSON.parse(sessionStorage.getItem('lineRow'));
+    var lineId = sessionStorage.getItem('lineId');
 </script>
 <!DOCTYPE html>
 <html>
@@ -35,10 +35,9 @@
                         >
                             <thead>
                             <tr>
-                                <th data-field="technologyName" data-halign="center" data-align="center">工艺名称</th>
-                                <th data-field="content" data-halign="center" data-align="center">工艺内容</th>
-                                <th data-field="factoryCode" data-halign="center" data-align="center">工厂编码</th>
-                                <th data-field="price" data-halign="center" data-align="center">工厂编码</th>
+                                <th data-field="technology_name" data-halign="center" data-align="center">工艺名称</th>
+                                <th data-field="factory_code" data-halign="center" data-align="center">工厂编码</th>
+                                <th data-field="technology_img" data-halign="center" data-align="center" data-formatter="technologyImage">图片</th>
                             </tr>
                             </thead>
                         </table>
@@ -59,7 +58,7 @@
                                 <th data-field="sizeId" data-halign="center" data-align="center">尺寸</th>
                                 <th data-field="iconName" data-halign="center" data-align="center">刺绣图片名称</th>
                                 <th data-field="content" data-halign="center" data-align="center">刺绣内容</th>
-                                <th data-field="price" data-halign="center" data-align="center">刺绣内容</th>
+                                <th data-field="price" data-halign="center" data-align="center">价格</th>
                             </tr>
                             </thead>
                         </table>
@@ -79,7 +78,7 @@
             $.ajax({
                 type: "get",
                 url: url,
-                data: {"detailId":lineRow.lineId},
+                data: {"detailId":lineId},
                 headers: {"Authorization": securityContext.Authorization},
                 async: false,
                 success: function (data) {
@@ -95,6 +94,24 @@
             });
     });
 
-
+    function  technologyImage (value){
+        var image=""
+        if(value!=null && value!=''){
+            image='<img src="'+path+'static/getImages/technology/'+value+'" style="height:50px;width:50px">';
+        }
+        return image;
+    }
 
 </script>
+
+
+
+
+
+
+
+
+
+
+
+

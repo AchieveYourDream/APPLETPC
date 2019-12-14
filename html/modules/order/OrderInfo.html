@@ -1,5 +1,7 @@
 <script type="text/javascript">
+    var securityContext = JSON.parse(sessionStorage.getItem('securityContext'));
     var lineRow = JSON.parse(sessionStorage.getItem('lineRow'));
+    var path = sessionStorage.getItem('path');
 </script>
 <!DOCTYPE html>
 <html>
@@ -54,7 +56,7 @@
                                                 <td class="my-form-table-td-label" style="width: 80px">
                                                     <label class="control-label" style="margin:7px;padding:0px;">订单号</label></td>
                                                 <td class="my-form-table-td-content" style="width: 180px">
-                                                    <input id="clothId" name="memberTel" type="text" class="form-control input-sm"style="width:160px;padding:7px;float:left;">
+                                                    <input id="orderId" name="orderId" type="text" class="form-control input-sm"style="width:160px;padding:7px;float:left;">
                                                 </td>
                                                 <td class="my-form-table-td-label">
                                                     <label class="control-label" style="margin:7px;padding:0px;">总单号</label>
@@ -121,9 +123,9 @@
                                     >
                                         <thead>
                                         <tr>
-                                            <th data-field="orderId"            data-halign="center"     data-align="center"  >订单号</th>
+
+                                            <th data-field="clothName"             data-halign="center"     data-align="center"  >服装品类</th>
                                             <th data-field="clothId"             data-halign="center"     data-align="center"  >服装品类</th>
-                                            <th data-field="clothStyle"          data-halign="center"     data-align="center"  >着装风格</th>
                                             <th data-field="amount"              data-halign="center"     data-align="center"  >数量</th>
                                             <th data-field="fabricCode"          data-halign="center"     data-align="center"  >面料号</th>
                                             <th data-field="price"               data-halign="center"     data-align="center"  >零售价</th>
@@ -191,7 +193,7 @@
                                                 <label class="control-label" style="margin:7px;padding:0px;">支付方式</label>
                                             </td>
                                             <td class="my-form-table-td-content">
-                                                <input id="payType" type="text" class="form-control input-sm" style="width:160px;padding:7px;float:left;">
+                                                <input id="payStatus" type="text" class="form-control input-sm" style="width:160px;padding:7px;float:left;">
                                             </td>
                                         </tr>
                                         <tr>
@@ -238,18 +240,56 @@
 </html>
 
 <script type="text/javascript">
-
+    var lineId;
     $(document).ready(function () {
-        $("#orderInfoTable").bootstrapTable("append",lineRow)
+        $("#orderInfoTable").on('click-row.bs.table', function (e, row, $element) {
+            $('.warning').removeClass('warning');
+            $($element).addClass('warning');
+            lineId = row.lineId;
+        });
+
+        $("#orderInfoTable").on('dbl-click-row.bs.table', function (e, row, $element) {
+            $('.warning').removeClass('warning');
+            $($element).addClass('warning');
+            lineId = row.lineId;
+            viewOrder();
+        });
+
+
+        var url = path + "app/system/order/getOrderDetailsList";
+        url += "?currentTime=" + new Date();
+
+        $.ajax({
+            type: "get",
+            url: url,
+            async: false,
+            headers: {"Authorization": securityContext.Authorization},
+            data:{"infoId":lineRow.infoId},
+            success: function (data) {
+
+                if (data.code == "S") {
+                    $("#orderInfoTable").bootstrapTable("load", data.data);
+
+                } else {
+                    $.growl.error({title: "提示信息", message:"数据加载失败！" + "<br><br>" + data.data});
+                }
+            }
+        });
+
         dwr.util.setValues(lineRow);
 
     });
 
     // 查看详情
     function viewOrder() {
+
+        if (!lineId) {
+            $.growl.warning({title: "提示信息", message:"请先选择订单！"});
+            return;
+        }
         var url = "/APPLETPC/html/modules/order/OrderTechnology.html";
         var OrderTechnologyFrame = '<iframe id="OrderTechnologyFrame" class="my-modal-iframe" width="100%" height="600px" src="' + url + '"></iframe>';
-
+        sessionStorage.setItem('lineId', lineId);
         window.top.bootbox.dialog({
             title: "订单-详情",
             message: OrderTechnologyFrame,

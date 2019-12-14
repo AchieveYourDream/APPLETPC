@@ -1,0 +1,186 @@
+<script type="text/javascript">
+
+    var securityContext = JSON.parse(sessionStorage.getItem('securityContext'));
+    var path = sessionStorage.getItem('path');
+</script>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+    <title>衬类型新建</title>
+    <script src="/APPLETPC/js/jquery/jquery-3.4.1.min.js"></script>
+    <script type='text/javascript' src='/APPLETPC/js/json/model/AppLining.js'></script>
+    <link rel="stylesheet" href="/APPLETPC/js/plugins/jquery-chosen/css/chosen.css">
+    <script src="/APPLETPC/js/plugins/jquery-chosen/js/chosen.jquery.js"></script>
+
+
+</head>
+<body class="my-body-content">
+
+<div class="content-wrap">
+    <div class="main">
+        <!-- /# row -->
+        <section class="subSection">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="card">
+                        <form id="liningAddForm" name="liningAddForm" class="my-form-content">
+                            <table class="my-form-table-content">
+
+                                <tr>
+                                    <td class="my-form-table-td-label" style="width: 100px">
+                                        <label class="control-label" style="margin:7px;padding:0px;">品类</label>
+                                    </td>
+                                    <td class="my-form-table-td-content" style="width: 160px">
+                                        <select id="category" name="category" class="dept_select dimension_coding"   style="padding:7px;float:left;">
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="my-form-table-td-label">
+                                        <label class="control-label" style="margin:7px;padding:0px;">衬类型编码</label>
+                                    </td>
+                                    <td class="my-form-table-td-content">
+                                        <input id="liningCode" name="liningCode" type="text" class="form-control input-sm"
+                                               style="width:140px;padding:7px;float:left;">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="my-form-table-td-label">
+                                        <label class="control-label" style="margin:7px;padding:0px;">衬类型名称</label>
+                                    </td>
+                                    <td class="my-form-table-td-content">
+                                        <input id="liningName" name="liningName" type="text" class="form-control input-sm"
+                                               style="width:140px;padding:7px;float:left;">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="my-form-table-td-label">
+                                        <label class="control-label" style="margin:7px;padding:0px;">显示顺序</label>
+                                    </td>
+                                    <td class="my-form-table-td-content">
+                                        <input id="displayOrder" name="displayOrder" type="text" class="form-control input-sm"
+                                               style="width:140px;padding:7px;float:left;">
+                                    </td>
+                                </tr>
+                            </table>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+</body>
+</html>
+
+<script type="text/javascript">
+    var validator;
+
+    $(document).ready(function () {
+        $(".dept_select").chosen({disable_search: true, width: "140px"});
+        getMainSelectInfo();
+        validator = $("#liningAddForm").validate({
+            debug: true,
+            showErrors: showErrors,
+            rules: {
+                liningCode: {
+                    required: true,
+                    maxlength: 20,
+                    remote: {
+                        url: path + "app/system/lining/checkLiningCode?t=" + new Date(),
+                        type: "get",
+                        headers: {"Authorization": securityContext.Authorization},
+                        data: {
+                            liningCode: function () {
+                                return $('#liningCode').val()
+                            },
+                            category: function () {
+                                return $('#category').val()
+                            },
+                        }
+                    }
+                },
+                liningName: {
+                    required: true,
+                    maxlength: 20
+                },
+                displayOrder: {
+                    required: true,
+                    number:true,
+                    maxlength: 2
+                },
+
+            },
+            messages: {
+                liningCode: {
+                    required: "不能为空！",
+                    remote: "当前衬类型已经存在！",
+                    maxlength: "最大长度为20！",
+                },
+                liningName: {
+                    maxlength: "最大长度为20！",
+                    required: "不能为空！",
+                },
+                displayOrder: {
+                    maxlength: "最大长度为2！",
+                    required: "不能为空！",
+                    number:"只能输入数字"
+                },
+            }
+        });
+    });
+
+    function doAddLining() {
+        var result = false;
+        if (validator.form()) {
+            var lining = new AppLining();
+            dwr.util.getValues(lining);
+            var url = path + "app/system/lining/addLining";
+            url += "?t=" + new Date();
+
+            $.ajax({
+                type: "post",
+                url: url,
+                data: lining,
+                async: false,
+                headers: {"Authorization": securityContext.Authorization},
+                success: function (data) {
+
+                    if (data.code == "S") {
+                        result = true;
+                    } else {
+                        result = false;
+                        $.growl.error({title: "提示信息", message: "数据加载失败！" + "<br><br>" + data.data});
+                    }
+                }
+            });
+        }
+        return result;
+    }
+    //初始主菜单
+    function getMainSelectInfo() {
+        var url = path + "app/appGoods/getMainSelectInfo";
+        $.ajax({
+            type: "POST",
+            url: url,
+            async:false,
+            headers: {"Authorization":securityContext.Authorization},
+            success: function (data) {
+                if (data.code == "S") {
+                    $("#category").html("")
+                    $.each(data.data, function (index, d) {
+                        var option = '<option value="' + d.code + '">' + d.name + '</option>';
+                        $("#category").append(option);
+                    });
+                    $("#category").trigger("chosen:updated");
+                } else {
+                    $.growl.error({title: "错误标题", message: data.info});
+                }
+            }
+        });
+    };
+</script>

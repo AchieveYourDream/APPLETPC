@@ -9,10 +9,10 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
-    <title>会员列表</title>
+    <title>衬类型列表</title>
 
     <script src="/APPLETPC/js/jquery/jquery-3.4.1.min.js"></script>
-<body style="font-member:12px;">
+<body style="font-lining:12px;">
 <div class="content-wrap">
     <div class="main">
         <!-- /# row -->
@@ -20,46 +20,39 @@
             <div class="row">
                 <div class="col-lg-12">
                     <div class="card">
-                        <div id="member">
-                            <button class="btn  btn-sm btn-success" onclick="addMember();">
-                                <i class="glyphicon glyphicon-plus"></i>&nbsp;新建会员
+                        <div id="lining">
+                            <button class="btn  btn-sm btn-success" onclick="addLining();">
+                                <i class="glyphicon glyphicon-plus"></i>&nbsp;新建衬类型
                             </button>
-                            <button class="btn  btn-sm btn-warning" onclick="editMember();">
-                                <i class="glyphicon glyphicon-edit"></i>&nbsp;编辑会员
+                            <button class="btn  btn-sm btn-warning" onclick="editLining();">
+                                <i class="glyphicon glyphicon-edit"></i>&nbsp;编辑衬类型
                             </button>
-                            <button class="btn  btn-sm btn-danger" onclick="deleteMember();">
-                                <i class="glyphicon glyphicon-remove"></i>&nbsp;删除会员
+                            <button class="btn  btn-sm btn-danger" onclick="deleteLining();">
+                                <i class="glyphicon glyphicon-remove"></i>&nbsp;删除衬类型
                             </button>
                         </div>
 
 
-                        <table id="memberTable"
+                        <table id="liningTable"
                                class="table table-condensed "
-                               data-toolbar="#member"
+                               data-toolbar="#lining"
                                data-icon-size="sm"
                                data-data-type="json"
                                data-query-params="queryParams"
                                data-pagination="true"
                                data-side-pagination="server"
-                               data-pagination="true"
-                               data-page-member="15"
-
+                               data-page-size="15"
                                data-page-list="[15,20,25,30,ALL]"
                                data-undefined-text=""
-                               data-show-columns="true"
+                               data-search="true"
                         >
                             <thead>
                             <tr>
-                                <th data-field="memberTel" data-halign="center" data-align="center">会员手机号</th>
-                                <th data-field="userName" data-halign="center" data-align="center">用户名</th>
-                                <th data-field="realName" data-halign="center" data-align="center">真实姓名</th>
-                                <th data-field="sex" data-halign="center" data-align="center">性别</th>
-                                <th data-field="height" data-halign="center" data-align="center">身高</th>
-                                <th data-field="weight" data-halign="center" data-align="center">体重</th>
-                                <th data-field="email" data-halign="center" data-align="center">邮箱</th>
-                                <th data-field="address" data-halign="center" data-align="center">地址</th>
-                                <th data-field="birthday" data-halign="center" data-align="center">生日</th>
-                                <th data-field="deleteStatus" data-halign="center" data-align="center" data-formatter="memberStatus">是否删除</th>
+                                <th data-field="category" data-halign="center" data-align="center">品类编码</th>
+                                <th data-field="categoryName" data-halign="center" data-align="center">品类名称</th>
+                                <th data-field="liningCode" data-halign="center" data-align="center">衬类型编码</th>
+                                <th data-field="liningName" data-halign="center" data-align="center">衬类型名称</th>
+                                <th data-field="displayOrder" data-halign="center" data-align="center">显示顺序</th>
                             </tr>
                             </thead>
                         </table>
@@ -74,26 +67,26 @@
 
 <script type="text/javascript">
     var searchCondition;
-    var memberTel;
+    var id;
     $(document).ready(function () {
-        $('#memberTable').bootstrapTable({
-            url: path + "app/system/member/getMemberList",
+        $('#liningTable').bootstrapTable({
+            url: path + "app/system/lining/getLiningList",
             ajaxOptions: {
                 headers: {"Authorization": securityContext.Authorization}
             }
         });
-        $("#memberTable").on('click-row.bs.table', function (e, row, $element) {
+        $("#liningTable").on('click-row.bs.table', function (e, row, $element) {
             $('.warning').removeClass('warning');
             $($element).addClass('warning');
-            memberTel = row.memberTel;
+            id = row.id;
 
         });
 
-        $("#memberTable").on('dbl-click-row.bs.table', function (e, row, $element) {
+        $("#liningTable").on('dbl-click-row.bs.table', function (e, row, $element) {
             $('.warning').removeClass('warning');
             $($element).addClass('warning');
-            memberTel = row.memberTel;
-            editMember();
+            id = row.id;
+            editLining();
         });
 
     });
@@ -101,28 +94,28 @@
     function queryParams(params) {
         return {
             "pageNum": (params.offset / params.limit) + 1,
-            "pageSize": params.limit, search: searchCondition
+            "pageSize": params.limit, search: params.search
         };
     }
 
     function redresh() {
-        $('#memberTable').bootstrapTable('refresh');
+        $('#liningTable').bootstrapTable('refresh');
     }
 
-    // 新建会员
-    function addMember() {
-        var url = "/APPLETPC/html/modules/member/MemberAdd.html";
-        var MemberAddFrame = '<iframe id="MemberAddFrame" class="my-modal-iframe" width="100%" height="500px" src="' + url + '"></iframe>';
+    // 新建衬类型
+    function addLining() {
+        var url = "/APPLETPC/html/modules/lining/LiningAdd.html";
+        var LiningAddFrame = '<iframe id="LiningAddFrame" class="my-modal-iframe" width="100%" height="500px" src="' + url + '"></iframe>';
         window.top.bootbox.dialog({
-            title: "会员-新建",
-            message: MemberAddFrame,
+            title: "衬类型-新建",
+            message: LiningAddFrame,
             size:"small",
             buttons: {
                 saveType: {
                     label: "保存",
                     className: "btn-success",
                     callback: function () {
-                        var result = window.top.document.getElementById("MemberAddFrame").contentWindow.doAddMember();
+                        var result = window.top.document.getElementById("LiningAddFrame").contentWindow.doAddLining();
                         if (result) {
                             $.growl.notice({title: "提示信息", message: "保存成功"});
                             redresh();
@@ -141,26 +134,26 @@
         });
     }
 
-    // 编辑会员
-    function editMember() {
-        if (!memberTel) {
-            $.growl.warning({title: "警告标题", message: "请先选择会员"});
+    // 编辑衬类型
+    function editLining() {
+        if (!id) {
+            $.growl.warning({title: "警告标题", message: "请先选择衬类型"});
             return;
         }
-        var url = "/APPLETPC/html/modules/member/MemberEdit.html";
-        sessionStorage.setItem('memberTel', memberTel);
-        var MemberEditFrame = '<iframe id="MemberEditFrame" class="my-modal-iframe" width="100%" height="600px" src="' + url + '"></iframe>';
+        var url = "/APPLETPC/html/modules/lining/LiningEdit.html";
+        sessionStorage.setItem('id', id);
+        var LiningEditFrame = '<iframe id="LiningEditFrame" class="my-modal-iframe" width="100%" height="600px" src="' + url + '"></iframe>';
 
         window.top.bootbox.dialog({
-            title: "会员-编辑",
-            message: MemberEditFrame,
+            title: "衬类型-编辑",
+            message: LiningEditFrame,
             size:"small",
             buttons: {
                 saveType: {
                     label: "保存",
                     className: "btn-success",
                     callback: function () {
-                        var result = window.top.document.getElementById("MemberEditFrame").contentWindow.doEditMember();
+                        var result = window.top.document.getElementById("LiningEditFrame").contentWindow.doEditLining();
                         if (result) {
                             $.growl.notice({title: "提示信息", message: "保存成功"});
                             redresh();
@@ -179,33 +172,33 @@
         });
     }
 
-    //删除会员
-    function deleteMember() {
+    //删除衬类型
+    function deleteLining() {
 
-        if (!memberTel) {
-            $.growl.warning({title: "警告标题", message: "请先选择会员"});
+        if (!id) {
+            $.growl.warning({title: "警告标题", message: "请先选择衬类型"});
             return;
         }
         window.top.bootbox.dialog({
             title: "提示信息",
-            message: "请确认是否删除会员",
+            message: "请确认是否删除衬类型",
             size: "middle",
             buttons: {
                 OkType: {
                     label: "确定",
                     className: "btn-info",
                     callback: function () {
-                        var url = path + "app/system/member/removeMember";
+                        var url = path + "app/system/lining/removeLining";
                         url += "?t=" + new Date();
                         $.ajax({
                             type: "POST",
                             url: url,
                             headers: {"Authorization": securityContext.Authorization},
-                            data: {"memberTel": memberTel},
+                            data: {"id": id},
                             success: function (data) {
                                 if (data.code == "S") {
 
-                                    $.growl.notice({title: "提示标题", message: "删除会员成功"});
+                                    $.growl.notice({title: "提示标题", message: "删除衬类型成功"});
                                     redresh();
                                     return true;
                                 } else {
@@ -229,14 +222,5 @@
 
     }
 
-    function memberStatus(value){
-        var memberStatus = "";
-        if(value == "N") {
-             memberStatus = '<span style="color:#34df48;font-weight:bold;">正常</span>';
-        }else{
-             memberStatus = '<span style="color:#f50a05;font-weight:bold;">已删除</span>';
-        }
-        return memberStatus;
-    }
 
 </script>

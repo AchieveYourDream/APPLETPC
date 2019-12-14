@@ -42,4 +42,5 @@ function AppGoods() {
 	this.xkPrice = null;
 	this.mjPrice = null;
 	this.liningType = null;
+	this.fabricList = null;
 }

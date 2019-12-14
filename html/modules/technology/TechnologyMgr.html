@@ -523,4 +523,14 @@
         }
         return image;
     }
+
+    function sizeStatus(value){
+        var sizeStatus = "";
+        if(value == "N") {
+            sizeStatus = '<span style="color:#34df48;font-weight:bold;">正常</span>';
+        }else{
+            sizeStatus = '<span style="color:#f50a05;font-weight:bold;">已删除</span>';
+        }
+        return sizeStatus;
+    }
 </script>

@@ -15,6 +15,9 @@
     <link rel="stylesheet" href="/APPLETPC/js/plugins/jquery-chosen/css/chosen.css">
     <script src="/APPLETPC/js/plugins/jquery-chosen/js/chosen.jquery.js"></script>
     <script src="/APPLETPC/js/json/model/AppGoods.js"></script>
+    <link rel="stylesheet" href="/APPLETPC/js/plugins/bootstarp-select2/css/select2.min.css" type="text/css"></link>
+    <script type="text/javascript" src="/APPLETPC/js/plugins/bootstarp-select2/js/select2.min.js"></script>
+    <script type="text/javascript" src="/APPLETPC/js/plugins/bootstarp-select2/js/i18n/zh-CN.js"></script>
 
 
 </head>
@@ -135,6 +138,15 @@
                                     </td>
                                 </tr>
                                 <tr>
+                                    <td class="my-form-table-td-label">
+                                        <label class="control-label" style="margin:5px;padding:0px;">产品大类</label>
+                                    </td>
+                                    <td class="my-form-table-td-content">
+                                        <select id="mainStyle" name="mainStyle" class="dept_select dimension_coding"
+                                                style="width:220px;padding:5px;float:left;"
+                                                onchange="getSubSelectInfo()">
+                                        </select>
+                                    </td>
                                     <td class="my-form-table-td-label" style="width:80px">
                                         <label class="control-label" style="margin:5px;padding:0px;">商品价格</label>
                                     </td>
@@ -143,14 +155,14 @@
                                                class="form-control input-sm"
                                                style="width:220px;padding:5px;float:left;">
                                     </td>
-                                    <td class="my-form-table-td-label">
-                                        <label class="control-label" style="margin:5px;padding:0px;">产品风格</label>
-                                    </td>
-                                    <td class="my-form-table-td-content">
-                                        <select id="styleType" name="styleType" class="dept_select dimension_coding"
-                                                style="width:220px;padding:5px;float:left;">
-                                        </select>
-                                    </td>
+                                    <!--<td class="my-form-table-td-label">-->
+                                        <!--<label class="control-label" style="margin:5px;padding:0px;">产品风格</label>-->
+                                    <!--</td>-->
+                                    <!--<td class="my-form-table-td-content">-->
+                                        <!--<select id="styleType" name="styleType" class="dept_select dimension_coding"-->
+                                                <!--style="width:220px;padding:5px;float:left;">-->
+                                        <!--</select>-->
+                                    <!--</td>-->
 
                                 </tr>
                                 <tr>
@@ -226,27 +238,19 @@
                                             <option value="N">否</option>
                                         </select>
                                     </td>
-                                    <td class="my-form-table-td-label">
-                                        <label class="control-label" style="margin:5px;padding:0px;">套装单品</label>
-                                    </td>
-                                    <td class="my-form-table-td-content">
-                                        <select id="isSuit" name="isSuit" class="dept_select dimension_coding"
-                                                style="width:220px;padding:5px;float:left;">
-                                            <option value="Y">是</option>
-                                            <option value="N">否</option>
-                                        </select>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="my-form-table-td-label">
-                                        <label class="control-label" style="margin:5px;padding:0px;">产品大类</label>
-                                    </td>
-                                    <td class="my-form-table-td-content">
-                                        <select id="mainStyle" name="mainStyle" class="dept_select dimension_coding"
-                                                style="width:220px;padding:5px;float:left;"
-                                                onchange="getSubSelectInfo()">
-                                        </select>
-                                    </td>
+                                    <!--<td class="my-form-table-td-label">-->
+                                        <!--<label class="control-label" style="margin:5px;padding:0px;">套装单品</label>-->
+                                    <!--</td>-->
+                                    <!--<td class="my-form-table-td-content">-->
+                                        <!--<select id="isSuit" name="isSuit" class="dept_select dimension_coding"-->
+                                                <!--style="width:220px;padding:5px;float:left;">-->
+                                            <!--<option value="Y">是</option>-->
+                                            <!--<option value="N">否</option>-->
+                                        <!--</select>-->
+                                    <!--</td>-->
+                                <!--</tr>-->
+                                <!--<tr>-->
+
                                     <td class="my-form-table-td-label">
                                         <label class="control-label" style="margin:5px;padding:0px;">详细分类</label>
                                     </td>
@@ -270,19 +274,19 @@
                                         </select>
                                     </td>
 
-                                    <td class="my-form-table-td-label">
-                                        <label class="control-label" style="margin:5px;padding:0px;">是否生成详情</label>
-                                    </td>
-                                    <td class="my-form-table-td-content">
-                                        <select id="needDetailGenerate" name="needDetailGenerate"
-                                                class="dept_select dimension_coding"
-                                                style="width:220px;padding:5px;float:left;">
-                                            <option value="Y">是</option>
-                                            <option value="N">否</option>
-                                        </select>
-                                    </td>
-                                </tr>
-                                <tr>
+                                    <!--<td class="my-form-table-td-label">-->
+                                        <!--<label class="control-label" style="margin:5px;padding:0px;">是否生成详情</label>-->
+                                    <!--</td>-->
+                                    <!--<td class="my-form-table-td-content">-->
+                                        <!--<select id="needDetailGenerate" name="needDetailGenerate"-->
+                                                <!--class="dept_select dimension_coding"-->
+                                                <!--style="width:220px;padding:5px;float:left;">-->
+                                            <!--<option value="Y">是</option>-->
+                                            <!--<option value="N">否</option>-->
+                                        <!--</select>-->
+                                    <!--</td>-->
+                                <!--</tr>-->
+                                <!--<tr>-->
                                     <td class="my-form-table-td-label">
                                         <label class="control-label" style="margin:5px;padding:0px;">APP显示顺序</label>
                                     </td>
@@ -291,24 +295,31 @@
                                                class="form-control input-sm"
                                                style="width:220px;padding:5px;float:left;">
                                     </td>
-                                    <td class="my-form-table-td-label">
-                                        <label class="control-label" style="margin:5px;padding:0px;">详情URL</label>
-                                    </td>
-                                    <td class="my-form-table-td-content">
-                                        <input id="detailsIntroUrl" name="detailsIntroUrl" type="text"
-                                               class="form-control input-sm"
-                                               style="width:220px;padding:5px;float:left;">
-                                    </td>
+                                    <!--<td class="my-form-table-td-label">-->
+                                        <!--<label class="control-label" style="margin:5px;padding:0px;">详情URL</label>-->
+                                    <!--</td>-->
+                                    <!--<td class="my-form-table-td-content">-->
+                                        <!--<input id="detailsIntroUrl" name="detailsIntroUrl" type="text"-->
+                                               <!--class="form-control input-sm"-->
+                                               <!--style="width:220px;padding:5px;float:left;">-->
+                                    <!--</td>-->
+                                </tr>
+                                <tr>
+                                <td class="my-form-table-td-label" >
+                                    <label class="control-label" style="margin:5px;padding:0px;">可用面料</label>
+                                </td>
+                                <td class="my-form-table-td-content" colspan="3" >
+                                    <select class=" form-control input-sm "  id="fabricList" style="width:570px;padding:5px;float:left;" multiple=”multiple”>
+                                    </select>
+                                </td>
                                 </tr>
                                 <tr>
 
                                     <td class="my-form-table-td-label" style="width:80px">
                                         <label class="control-label" style="margin:5px;padding:0px;">商品描述</label>
                                     </td>
-                                    <td class="my-form-table-td-content" style="width:240px">
-                                        <input id="goodsDescription" name="goodsDescription" type="text"
-                                               class="form-control input-sm"
-                                               style="width:220px;padding:5px;float:left;">
+                                    <td class="my-form-table-td-content" style="width:590px" colspan="3" >
+                                        <input id="goodsDescription" name="goodsDescription" type="text"   class="form-control input-sm"  style="width:570px;padding:5px;float:left;">
                                     </td>
                                 </tr>
                             </table>
@@ -465,7 +476,7 @@
     var validator;
     $(document).ready(function () {
         $(".dept_select").chosen({disable_search: true, width: "220px"});
-        initGoodsStyle();
+        // initGoodsStyle();
         getMainSelectInfo();
 
         validator = $("#GoodsAddForm").validate({
@@ -521,6 +532,31 @@
         });
 
 
+        // 获取品类下面面料信息
+        $('#fabricList').select2({
+            ajax: {
+                url: path+"app/appGoods/getFabricByCategory",
+                dataType: 'json',
+                type: 'get',
+                headers: {"Authorization":securityContext.Authorization},
+                data: function (params) {
+                    return  {category:$("#mainStyle").val(),search:params.term};
+                },
+                processResults: function (resp) {
+                    return {
+                        results: resp        //返回数据
+                    };
+                },
+                cache: true
+            },
+            language: 'zh-CN',
+            minimumInputLength:3,
+            maximumInputLength:20,
+            placeholder: '请输入面料号',
+            multiple:true,
+        });
+
+
     });
 
 
@@ -535,6 +571,7 @@
 
             var ag = new AppGoods();
             dwr.util.getValues(ag);
+            ag.fabricList=$("#fabricList").val().join(",");
             var url = path + "app/appGoods/insertAppGoods";
             url += "?t=" + new Date();
 
@@ -651,6 +688,7 @@
                     });
                     $("#mainStyle").trigger("chosen:updated");
                     getSubSelectInfo();
+                    initLiningType();
                 } else {
                     $.growl.error({title: "错误标题", message: data.info});
                 }
@@ -660,6 +698,21 @@
 
     //初始子菜单
     function getSubSelectInfo() {
+        initLiningType( $("#mainStyle").val())
+        if( $("#mainStyle").val()=='T' ||$("#mainStyle").val()=='S' ){
+            $("#xkPrice").removeAttr("readonly");
+            $("#xfPrice").removeAttr("readonly");
+            $("#mjPrice").removeAttr("readonly");
+        }else{
+            $("#xkPrice").val("");
+            $("#xfPrice").val("");
+            $("#mjPrice").val("");
+            $("#xkPrice").attr("readonly","readonly");
+            $("#xfPrice").attr("readonly","readonly");
+            $("#mjPrice").attr("readonly","readonly");
+        }
+
+
         var url = path + "app/appGoods/getSubSelectInfo";
         $.ajax({
             type: "POST",
@@ -681,22 +734,48 @@
         });
     };
 
-    // 初始化服装风格
-    function initGoodsStyle() {
-        var url = path + "app/system/datadict/getSingleDataDictItemList";
-        url += "?typeCode=app_goos_style";
+    // // 初始化服装风格
+    // function initGoodsStyle() {
+    //     var url = path + "app/system/datadict/getSingleDataDictItemList";
+    //     url += "?typeCode=app_goos_style";
+    //
+    //     $.ajax({
+    //         type: "get",
+    //         url: url,
+    //         headers: {"Authorization":securityContext.Authorization},
+    //         success: function (data) {
+    //             if (data.code == "S") {
+    //                 $("#styleType").html('<option value="">空</option>');
+    //                 $.each(data.data, function (index, d) {
+    //                     $("#styleType").append('<option value="' + d.itemCode + '">' + d.itemName + '</option>')
+    //                 });
+    //                 $("#styleType").trigger("chosen:updated");
+    //             } else {
+    //                 $.growl.error({
+    //                     title: "提示信息",
+    //                     message: "数据加载失败！" + "<br><br>" + data.data,
+    //                 });
+    //             }
+    //         }
+    //     });
+    // }
+
+    // 获取衬类型根据品类
+    function initLiningType() {
+        var url = path + "app/system/lining/getLiningListByCategory";
 
         $.ajax({
             type: "get",
             url: url,
             headers: {"Authorization":securityContext.Authorization},
+            data:{"category":$("#mainStyle").val()},
             success: function (data) {
                 if (data.code == "S") {
-                    $("#styleType").html('<option value="">空</option>');
+                    $("#liningType").html("");
                     $.each(data.data, function (index, d) {
-                        $("#styleType").append('<option value="' + d.itemCode + '">' + d.itemName + '</option>')
+                        $("#liningType").append('<option value="' + d.lining_code + '">' + d.lining_name + '</option>')
                     });
-                    $("#styleType").trigger("chosen:updated");
+                    $("#liningType").trigger("chosen:updated");
                 } else {
                     $.growl.error({
                         title: "提示信息",
@@ -706,5 +785,7 @@
             }
         });
     }
+
+
 
 </script>
